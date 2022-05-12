@@ -52,9 +52,9 @@ Nhu cầu kiểm kê thiết bị của bộ phận mua hàng.
 - Backend: scala & finatra & mysql / mariadb
 
 ## Điều kiện chấm bài:
-Thời gian: 2 tháng kể từ ngày đọc đề
-Hoàn thiện tính năng: 6Đ (hoàn thành tất cả yêu cầu của đề bài)
-Code và tổ chức code: 4Đ (rõ ràng, logic, dễ phát triển thêm sau này)
-Lỗi: -0.25Đ / Lỗi
+- Thời gian: 2 tháng kể từ ngày đọc đề
+- Hoàn thiện tính năng: 6Đ (hoàn thành tất cả yêu cầu của đề bài)
+- Code và tổ chức code: 4Đ (rõ ràng, logic, dễ phát triển thêm sau này)
+- Lỗi: -0.25Đ / Lỗi
 
 => Đạt yêu cầu: 8/10
