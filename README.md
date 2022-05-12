@@ -1,53 +1,58 @@
-# Quản lý thư viện
+# Quản lý thiết bị
 
 Đề bài:
-Xây dựng website quản lý thư viện hỗ trợ công tác quản lý cho thủ thư & tra cứu thông tin cho thành viên.
+Xây dựng website quản lý thiết bị hỗ trợ công tác quản lý cho bộ phận mua hàng.
 Ứng dụng cần đáp ứng được các yêu cầu sau:
 
-## 1. Quản lý đầu sách & sách:
+## 1. Quản lý thiết bị & danh mục thiết bị:
 
-- Mỗi đầu sách thư viện sẽ nhập về một số lượng sách khác nhau
-- Mỗi đầu sách sẽ có giá tiền nhất định (tùy vào nhà sản xuất)
-- Tùy vào mỗi đợt nhập sách vào thư viện, giá của đầu sách có thể khác nhau ở mỗi lần nhập.
-
-
-## 2. Kiểm thư viện:
-
-Tổng số lượng sách mà thư viện có
-Tổng số sách đang hiện diện ở thư viện phân loại theo đầu sách
-Tổng số sách đang cho mượn phân loại theo đầu sách
-Tổng số sách đã bị quá hạn chưa trả phân loại theo đầu sách
-Tổng số sách bị mất, thất lạc phân loại theo đầu sách
-Tổng số sách đã được đền bù phân loại theo đầu sách
+- Mỗi thiết bị sẽ được phân loại thành danh mục và được đánh mã số riêng biệt, có hình ảnh khi mới nhập về.
+- Thông tin thiết bị sẽ bao gồm cả tình trạng khi nhập thiết bị vào cty và giá tiền khi nhập (VD: thiết bị mới, 40tr,...)
+- Mỗi thiết bị có giá tiền và khấu hao khác nhau (Khấu hao tính theo tháng. VD: Laptop Dell 30tr - khấu hao 5 năm (60 tháng) thì giá trị khấu hao mỗi năm sẽ là 6%)
+- Mỗi lần nhập thiết bị, giá tiền và khấu hao sẽ có thể khác những lần trước đó.
 
 
-## 3. Quản lý mượn sách:
+## 2. Kiểm kho
+Nhu cầu kiểm kê thiết bị của bộ phận mua hàng.
 
-Mỗi thành viên được mượn tối đa 5 cuốn sách khác nhau cho mỗi lần (không được phép mượn 2 cuốn sách giống nhau).
-Điều kiện để mượn sách:
+- Tổng số thiết bị đang có trong kho (chưa có bàn giao), phân loại theo danh mục
+- Tổng số thiết bị đang được nhân viên sử dụng, phân loại theo danh mục
+- Tổng số thiết bị đã bị mất & được đền bù, phân loại theo danh mục
+- Tổng số thiết bị đã bị mất & chưa được đền bù, phân loại theo danh mục
+- Thống kê số thiết bị nhập mới & tổng tiền trong tháng / quý / năm
+- Thống kê số thiết bị đã bàn giao & tổng tiền trong tháng / quý / năm
 
-Thành viên phải đặt cọc 200,000 VND thì mới được phép mượn sách
-Thành viên phải hoàn trả toàn bộ sách đã mượn (nếu như có mượn trước đó) thì mới được phép mượn tiếp.
-Thành viên sẽ bị phạt khi trả sách bị trễ:
+## 3. Bàn giao & thu hồi thiết bị:
 
-Nếu thành viên trả sách trễ N ngày thì sau N ngày kể từ ngày trả sách thành viên mới được phép tiếp tục mượn sách ở thư viện.
-Trong trường hợp sách bị mất, thành viên phải bồi thường số tiền tương ứng với số tiền của cuốn sách. Nếu thành viên không bồi thường thì thư viện sẽ từ chối không cho thành viên mượn sách nữa và lấy số tiền cọc sách để bù vào các cuốn sách bị mất.
+### 3.1 Bàn giao thiết bị
+- Bộ phận mua hàng cần ghi nhận thời gian bàn giao thiết bị, hình ảnh bàn giao, giấy tờ và chứng từ
+- Một nhân viên có thể được bàn giao nhiều thiết bị
+
+### 3.2 Thu hồi thiết bị
+- Bộ phận mua hàng cần ghi nhận thời gian thu hồi thiết bị kèm lý do thu hồi, hình ảnh bàn giao, giấy tờ và chứng từ.
+- Khi thu hồi thiết bị, nếu thiết bị bị mất thì nhân viên phải đền bù, giá trị đền bù sẽ dựa vào giá tiền và khấu hao .
 
 ## 4. Tra cứu thông tin
-- Website có tính năng cho phép mọi người có thể tra cứu được các cuốn sách đang sẵn có ở thư viện. Ngoài ra họ có thể nhập mã thành viên của mình để tra cứu tình trạng mượn sách.
+- Bộ phận mua hàng có thể tra cứu được nhân viên nào đang sử dụng các thiết bị nào. Giá trị cũng như khấu hao của thiết bị.
 
 ## Lưu ý:
-
-Sau khi không còn nhu cầu mượn sách & đã hoàn trả toàn bộ sách đã mượn cho thư viện thì thành viên được phép lấy lại tiền sách đã cọc.
-
+- Nhân viên phải hoàn trả toàn bộ các thiết bị khi nghỉ việc.
+- Nếu thiết bị đã hết khấu hao thì không cần hoàn trả.
+- Trong quá trình nhân viên sử dụng thiết bị, nếu có hư hỏng và chính sách cty hỗ trợ việc sửa chữa thì bộ phận mua hàng cần có nơi lưu trữ hành động sửa chữa thiết bị: 
+   - Thông tin về thiết bị
+   - Nhân viên
+   - Thời gian
+   - Chi phí sửa chữa 
+   - Giấy tờ & chứng từ liên quan
+   - Hình ảnh thiết bị
+   - Lý do sửa chữa
 
 ## Yêu cầu khác:
 Frontend: Sử dụng Vue 3 & Typescript
 Backend: scala & finatra & mysql / mariadb
 
-
 ## Điều kiện chấm bài:
-
+Thời gian: 2 tháng kể từ ngày đọc đề
 Hoàn thiện tính năng: 6Đ (hoàn thành tất cả yêu cầu của đề bài)
 Code và tổ chức code: 4Đ (rõ ràng, logic, dễ phát triển thêm sau này)
 Lỗi: -0.25Đ / Lỗi
