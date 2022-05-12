@@ -48,8 +48,8 @@ Nhu cầu kiểm kê thiết bị của bộ phận mua hàng.
    - Lý do sửa chữa
 
 ## Yêu cầu khác:
-Frontend: Sử dụng Vue 3 & Typescript
-Backend: scala & finatra & mysql / mariadb
+- Frontend: Sử dụng Vue 3 & Typescript
+- Backend: scala & finatra & mysql / mariadb
 
 ## Điều kiện chấm bài:
 Thời gian: 2 tháng kể từ ngày đọc đề
