@@ -45,6 +45,11 @@
             <artifactId>gson</artifactId>
             <version>2.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.fintrospect</groupId>
+            <artifactId>fintrospect-core_2.12</artifactId>
+            <version>15.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
