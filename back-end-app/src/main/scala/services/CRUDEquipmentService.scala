@@ -1,13 +1,21 @@
 package services
 
 import com.fasterxml.jackson.databind.util.JSONPObject
-import com.google.gson.Gson
-import models.{Equipment}
+import com.google.gson.{Gson, JsonArray}
+import com.twitter.finatra.http.fileupload.MultipartItem
+import com.twitter.util.jackson.JSON
+import jdk.nashorn.internal.objects.NativeJSON
+import models.{Equipment, UploadFile}
+import net.liftweb.json.JsonAST.RenderSettings.compact
+import net.liftweb.json.{DefaultFormats, Serialization, parse}
+import org.apache.commons.io.FilenameUtils
 import utils.DataConnection
 
-import java.sql.SQLException
+import java.nio.file.{Files, Paths, StandardOpenOption}
+import java.sql.{SQLException, SQLType, Types}
 import java.util
-import scala.util.parsing.json.JSONObject
+import scala.util.control.Breaks.break
+import scala.util.parsing.json.{JSONArray, JSONObject}
 
 
 class CRUDEquipmentService {
@@ -68,6 +76,7 @@ class CRUDEquipmentService {
 
 
         equipments.add(e)
+
       }
       con.close();
       return equipments
@@ -153,6 +162,32 @@ class CRUDEquipmentService {
     }
   }
 
+  def updateMetaDataById(uploadfiles : util.ArrayList[UploadFile],equipment_id :Int ): Int = {
+
+    try{
+      val sql = """UPDATE equipment SET metadata_info = ? WHERE id = ?;"""
+
+      var con = (new DataConnection).getConnection()
+      val pst = con.prepareStatement(sql)
+      val files =JSON.write(uploadfiles)
+      pst.setString(1,
+        s"""
+          |{"files": $files}
+          |""".stripMargin)
+
+      pst.setInt(2, equipment_id)
+      val rs = pst.executeUpdate()
+      con.close();
+      return rs
+    }catch {
+      case ex: SQLException =>{
+        println(ex)
+        return -1
+
+      }
+    }
+  }
+
   def searchById(equipment_id:Int): Equipment = {
     try{
       val sql = """
@@ -209,6 +244,44 @@ class CRUDEquipmentService {
 
   }
 
+  def searchMetaDataById(equipment_id:Int): Map[String, UploadFile] = {
+    try{
+      val sql = """
+      SELECT e.metadata_info
+      FROM equipment_management.equipment e
+      WHERE e.device_status != ? and e.id = ?;"""
+
+      var con = (new DataConnection).getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setInt(1,-1)
+      pst.setInt(2, equipment_id)
+      val rs = pst.executeQuery()
+      var result :Any =null
+      while ( rs.next) {
+        result = rs.getObject("metadata_info")
+      }
+      con.close();
+      val images =parse(result.toString)
+      implicit val formats = DefaultFormats
+      var map : Map[String,UploadFile] = Map()
+      for (image <- (images \\ "files" ).children.toArray){
+        //val file: UploadFile = image.extract[UploadFile]
+        println(image)
+        //map = map + (file.fileName -> file)
+      }
+
+      return map
+
+    }catch {
+      case ex: SQLException =>{
+        println(ex)
+        return null
+
+      }
+    }
+
+  }
+
   def updateById(e: Equipment): Int={
     try{
       val sql =
@@ -240,6 +313,36 @@ class CRUDEquipmentService {
 
       con.close();
       return rs
+
+    }catch {
+      case ex: SQLException =>{
+        println(ex)
+        return -1
+
+      }
+    }
+  }
+
+  def getIdEquipmentDESC():Int = {
+    try{
+      val sql = """
+      SELECT *
+      FROM equipment_management.equipment e where  e.device_status != ?
+      order by e.id desc limit 1;"""
+
+      var con = (new DataConnection).getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setInt(1,-1)
+
+      val rs = pst.executeQuery()
+      var id:Int = -1
+      while ( rs.next) {
+        id = rs.getInt("id")
+      }
+
+
+      con.close();
+      return id
 
     }catch {
       case ex: SQLException =>{
@@ -288,13 +391,39 @@ class CRUDEquipmentService {
     }
   }
 
-
+  def checkFilesUpload (files: Map[String, MultipartItem]): Int ={
+    for (key <- files.keys){
+      if (key!= "information" ){
+        val image = files.get(key)
+        if ( image.get.data.length > 5000000 ){
+         return 0
+        }
+        else if (image.get.contentType.get.split("/")(0) != "image"){
+         return -1
+        }
+      }
+    }
+    return 1
+  }
 }
 
 
 object test {
   def main (args :Array[String]): Unit ={
-    //val test = TestUpdate("tuongvy123","DELL")
+//    val test = (new CRUDEquipmentService).searchById(9)
+//    val test2 = (new CRUDEquipmentService).addImagesById(test,9)
+    val result = (new CRUDEquipmentService).searchMetaDataById(13)
+   println(result)
+//    for (i <- result.children){
+//      println(""+i)
+//      val test3 = JSON.parse(i.toString)
+//      println(test3)
+//    }
+//var arr = (new CRUDEquipmentService).search(null,null,null,null,null,5,0).toArray
+//
+//    var arr1  = JSON.write(arr).toArray
+//    println(arr1)
+//    println(arr1.getClass)
     //var result= (new CRUDEquipmentService).updateById(4,test)
    // println(result)
 //    if (con == null){

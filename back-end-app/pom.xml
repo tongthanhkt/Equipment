@@ -50,6 +50,13 @@
             <artifactId>fintrospect-core_2.12</artifactId>
             <version>15.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.liftweb</groupId>
+            <artifactId>lift-json_2.12</artifactId>
+            <version>3.4.3</version>
+        </dependency>
+
     </dependencies>
+
 
 </project>

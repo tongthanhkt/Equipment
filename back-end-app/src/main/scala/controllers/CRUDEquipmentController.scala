@@ -10,16 +10,23 @@ import com.twitter.finagle.http.exp.Multipart
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.finatra.http.request.RequestUtils
 import com.twitter.io.{Buf, Reader}
-import models.{DeleteEquipmentRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, UploadFile}
+import com.twitter.util.jackson.JSON
+import models.{DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, UploadFile}
 import services.CRUDEquipmentService
 
 import java.io.{ByteArrayInputStream, File, IOException, ObjectInputStream, PrintWriter}
 import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import java.sql.SQLException
 import java.util
 import javax.inject.Inject
+import net.liftweb.json._
+import org.apache.commons.io.FilenameUtils
+
 import scala.collection.convert.ImplicitConversions.`list asScalaBuffer`
+import scala.tools.nsc.classpath.FileUtils
+import scala.util.control.Breaks.{break, breakable}
 
 
 
@@ -34,13 +41,9 @@ class CRUDEquipmentController  extends Controller {
       val takeover_status = req.getParam("take_over_status",null)
       val device_status = req.getParam("device_status",null)
       val current_page  = req.getIntParam("page",1)
-      val limit = req.getIntParam("size",5)
+      val limit = req.getIntParam("size",10)
       var crud_equipment_service = new CRUDEquipmentService
-      println(keyword)
-      println(category)
-      println(takeover_person)
-      println(current_page)
-      println(limit)
+
       try {
         val total_equipments = crud_equipment_service.countBySearch(keyword,category,takeover_person,takeover_status,device_status)
 
@@ -78,7 +81,7 @@ class CRUDEquipmentController  extends Controller {
       }
     }}
 
-    delete("/del"){req: DeleteEquipmentRequest => {
+    delete("/delete"){req: DeleteEquipmentRequest => {
       val equipment_id = req.equipment_id
 
       try {
@@ -93,8 +96,7 @@ class CRUDEquipmentController  extends Controller {
       } catch {
         case ex: SQLException =>{
           println("Error exception")
-          response.internalServerError.
-            body(ex)
+          response.internalServerError
 
         }
       }
@@ -102,8 +104,8 @@ class CRUDEquipmentController  extends Controller {
 
     }
 
-    get("/:id"){req: SearchEquipmentByIdRequest =>{
-      val equipment_id = req.id
+    get("/:id"){request: SearchEquipmentByIdRequest =>{
+      val equipment_id = request.id
       try {
         val result = (new CRUDEquipmentService).searchById(equipment_id)
         if (result==null)
@@ -124,38 +126,14 @@ class CRUDEquipmentController  extends Controller {
 
     }
 
-//    post("/update/:id"){req:TestUpdateRequest=>{
-//      val equipment_id = req.id
-//      val entity: TestUpdate = req.entity
-//
-//      try {
-//        val result = (new CRUDEquipmentService).updateById(equipment_id,entity)
-//        if (result ==1)
-//          response.created.body(s"Delete equipment with id = $equipment_id successfully. ")
-//        else
-//          response.internalServerError.
-//            body("Cannot delete equipment. ")
-//
-//
-//      } catch {
-//        case ex: SQLException =>{
-//          println("Error exception")
-//          response.internalServerError.
-//            body(ex)
-//
-//        }
-//      }
-//    }}
-
-    post("/add"){req:Equipment=>{
-
+    get("/:equipment_id/images/delete"){request: DeleteImageByIdRequest =>{
+      val equipment_id = request.equipment_id
+      var crud_equipment_service = new CRUDEquipmentService
       try {
-        val result = (new CRUDEquipmentService).add(req)
-        if (result ==1)
-          response.created.body(s"Add equipment successfully. ")
-        else
-          response.internalServerError.
-            body("Cannot add equipment. ")
+        val result = crud_equipment_service.searchMetaDataById(equipment_id)
+        if (result==null)
+          response.noContent
+        else response.ok.body(result)
 
 
       } catch {
@@ -166,9 +144,74 @@ class CRUDEquipmentController  extends Controller {
 
         }
       }
+
+    }
+
+    }
+
+
+    post("/add"){request:Request =>{
+
+      var crud_equipment_service = new CRUDEquipmentService
+      val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
+      val equipment_info  = new String(map.get("information").get.data, StandardCharsets.UTF_8)
+      implicit val formats = DefaultFormats
+
+      try {
+        val equipment = parse(equipment_info).extract[Equipment]
+        var files_upload= new util.ArrayList[UploadFile]
+
+        val dirname :String = System.getProperty("user.dir")+"/images/";
+        var check_files_upload = crud_equipment_service.checkFilesUpload(map);
+        if (check_files_upload == -1 ){
+          response.accepted("Only selected images")
+        }
+        else if (check_files_upload == 0 ){
+          response.accepted("File too large")
+        }
+        else if (check_files_upload == 1 ){
+          val add_row = crud_equipment_service.add(equipment)
+          if (add_row == 1){
+            val new_equipment_id = crud_equipment_service.getIdEquipmentDESC();
+            for (key <- map.keys){
+              if (key!= "information" ){
+                val image = map.get(key)
+                val filename :String = "image"+new_equipment_id+"_"+System.currentTimeMillis();
+                val extension = FilenameUtils.getExtension(key)
+                val basename = filename.concat(".").concat(extension)
+                val path = Paths.get(dirname,basename)
+                val data = image.get.data
+                val size = data.length
+                println(image.get.contentType.get.split("/")(0))
+                Files.write(path,map.get(key).get.data, StandardOpenOption.CREATE)
+                files_upload.add(UploadFile(fileUrl = path.toString,fileName = filename,size = size ,fileExtension=extension))
+
+              }
+
+            }
+            val update_row = crud_equipment_service.updateMetaDataById(files_upload,new_equipment_id);
+            if (update_row == 1 )
+              response.created.body(s"Add equipment successfully. ")
+            else
+              response.internalServerError.
+                body("Cannot add images for equipment.")
+          }
+          else
+            response.internalServerError.
+              body("Cannot add equipment.")
+        }
+
+
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError
+
+        }
+      }
     }}
 
-    put("/update"){req:Equipment=>{
+    put("/update_info"){req:Equipment=>{
 
       try {
         val result = (new CRUDEquipmentService).updateById(req)
@@ -186,33 +229,75 @@ class CRUDEquipmentController  extends Controller {
   }
 
 
-//  post("/milu"){request: Request=> {
-//
-//    val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
-//    val result  = map.get("file")
-//    println(map)
-//    //println((map.get("name").get.data.map(_.toChar)).mkString)
-//    println((map.get("price").get.data.map(_.toChar)).mkString)
-//
+  post("/milu"){request: Request => {
+
+    val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
+    val equipment_info  = new String(map.get("information").get.data, StandardCharsets.UTF_8)
+    implicit val formats = DefaultFormats
+    val equipment = parse(equipment_info).extract[Equipment]
+    println(map)
 //    try {
+//      val result = (new CRUDEquipmentService).add(equipment)
+//      if (result ==1)
+//        response.created.body(s"Add equipment successfully. ")
+//      else
+//        response.internalServerError
 //
-//      //Files.write(Paths.get("name.txt"),map.get("name").get.data, StandardOpenOption.CREATE)
-//     Files.write(Paths.get("test.jpg"),result.get.data, StandardOpenOption.CREATE)
-//      val in = new ObjectInputStream(new ByteArrayInputStream(map.get("price").get.data.))
-//      val alert = in.readObject()
-//      in.close()
-//      println(alert)
+//
+//
 //    } catch {
-//      case ex: Exception =>{
-//        println(ex)
-//
-//
+//      case ex: SQLException =>{
+//        println("Error exception")
+//        response.internalServerError
 //      }
 //    }
-//   //req.body
-//
-//    response.ok("success")
-//  }}
+
+    var files_upload= new util.ArrayList[UploadFile]
+
+    try {
+
+      //val keys = map.keys
+      val crud_equipment_service = (new CRUDEquipmentService)
+      val new_equipment_id = crud_equipment_service.getIdEquipmentDESC();
+      val dirname :String = System.getProperty("user.dir")+"/images/";
+      var check_files_upload = crud_equipment_service.checkFilesUpload(map);
+      if (check_files_upload == -1 ){
+        response.accepted("Only selected images")
+      }
+      else if (check_files_upload == 0 ){
+        response.accepted("File too large")
+      }
+      else if (check_files_upload == 1 ){
+        for (key <- map.keys){
+          if (key!= "information" ){
+            val image = map.get(key)
+            val filename :String = "image"+new_equipment_id+"_"+System.currentTimeMillis();
+            val extension = FilenameUtils.getExtension(key)
+            val basename = filename.concat(".").concat(extension)
+            val path = Paths.get(dirname,basename)
+            val data = image.get.data
+            val size = data.length
+            println(image.get.contentType.get.split("/")(0))
+            Files.write(path,map.get(key).get.data, StandardOpenOption.CREATE)
+            files_upload.add(UploadFile(fileUrl = path.toString,fileName = filename,size = size ,fileExtension=extension))
+
+          }
+
+        }
+        val _ = crud_equipment_service.updateMetaDataById(files_upload,new_equipment_id);
+        response.ok("success")
+      }
+    } catch {
+      case ex: Exception =>{
+        println(ex)
+        response.internalServerError
+
+      }
+    }
+
+
+
+  }}
 
 
 

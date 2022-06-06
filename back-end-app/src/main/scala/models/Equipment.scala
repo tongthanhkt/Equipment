@@ -13,7 +13,7 @@ case class Page(value:Int,isCurrent:Boolean)
 
 case class Equipment(
                              id: Int = 0,
-                             device_id: String,
+                             device_id: String = null,
                              name: String,
                              start_status: Int,
                              price: Double,
@@ -21,11 +21,11 @@ case class Equipment(
                              depreciation_period: Double,
                              period_type: Int,
                              import_date: Long,
-                             takeover_status: Int,
+                             takeover_status: Int = 0 ,
                              category_id: Int,
-                             device_status : Int,
-                             created_by: String,
-                             created_time: Long,
+                             device_status : Int = 0,
+                             created_by: String = null,
+                             created_time: Long = 0,
                              updated_by: String = null,
                              updated_time: Long = 0,
                              takeover_person_id: String = null,
@@ -49,7 +49,25 @@ case class DeleteEquipmentRequest(@QueryParam equipment_id:Int)
 
 case class SearchEquipmentByIdRequest(@RouteParam id :Int)
 
-case class UploadFile(
-                      file : MultipartItem )
+case class UploadFile(fileUrl : String,
+                      fileName: String,
+                      size : Long,
+                      fileExtension: String
+                )
+
+case class DeleteImageByIdRequest(@RouteParam equipment_id :Int,
+                                  @QueryParam image_name:Int)
+
+//class UploadFilesList (){
+//  var files = new util.ArrayList[UploadFile]
+//
+//  def addFile(file: UploadFile): Unit ={
+//    files.add(file)
+//  }
+//}
+
+
+
+
 
 
