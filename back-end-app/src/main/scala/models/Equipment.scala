@@ -35,15 +35,18 @@ case class Equipment(
 case class SearchEquipmentsResponse(equipments: util.ArrayList[Equipment],
                                    empty: Boolean,
                                    totalEquipments: Int,
-                                   totalTakeOverEquipments: Int,
-                                   totalInventoryEquipments: Int,
-                                   totalDamagedEquipments : Int,
-                                   totalLostEquipment: Int,
                                    pageNumbers: util.ArrayList[Page],
                                    firstPage: Boolean,
                                    lastPage: Boolean,
                                    previousPage: Int,
                                    nextPage: Int)
+case class CountEquipmentsResponse(
+                                    totalEquipments: Int,
+                                    totalTakeOverEquipments: Int,
+                                    totalInventoryEquipments: Int,
+                                    totalDamagedEquipments : Int,
+                                    totalLostEquipment: Int,
+                                    )
 
 case class DeleteEquipmentRequest(@QueryParam equipment_id:Int)
 
