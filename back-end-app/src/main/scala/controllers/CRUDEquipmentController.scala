@@ -30,7 +30,9 @@ import scala.util.control.Breaks.{break, breakable}
 
 
 
-class CRUDEquipmentController  extends Controller {
+class CRUDEquipmentController @Inject() (
+                                       equipmentService: CRUDEquipmentService
+                                       )  extends Controller {
 
   prefix("/equipment"){
 
@@ -133,7 +135,7 @@ class CRUDEquipmentController  extends Controller {
     get("/:id"){request: SearchEquipmentByIdRequest =>{
       val equipment_id = request.id
       try {
-        val result = (new CRUDEquipmentService).searchById(equipment_id)
+        val result = equipmentService.searchById(equipment_id)
         if (result==null)
           response.noContent
         else response.ok.body(result)
@@ -152,89 +154,122 @@ class CRUDEquipmentController  extends Controller {
 
     }
 
-    get("/photo/:equipment_id/:filename"){request: DeleteImageByIdRequest =>{
-      val equipment_id = request.equipment_id
+    get("/photo/:equipment_id/:filename"){request: Request =>{
+      val equipmentId = request.getIntParam("equipment_id")
+      val imageName = request.getParam("filename")
       var crud_equipment_service = new CRUDEquipmentService
       try {
-        val result = crud_equipment_service.searchMetaDataById(equipment_id)
-        if (result==null)
-          response.noContent
-        else response.ok.body(result)
+        val currentFiles :  Map[String, UploadFile] = crud_equipment_service.searchMetaDataById(equipmentId)
+        val searchFile = currentFiles.get(imageName)
 
-
-      } catch {
-        case ex: SQLException =>{
-          println("Error exception")
-          response.internalServerError.
-            body(ex)
-
+        if (!searchFile.isEmpty ){
+          response.created.body(searchFile)
         }
-      }
+        else response.internalServerError.json(
+          """
+            |msg: "Can not retrieve images"
+            |""".stripMargin)
 
-    }
-
-    }
-
-    post("/photo/:equipment_id/upload"){request: DeleteImageByIdRequest =>{
-      val equipment_id = request.equipment_id
-      var crud_equipment_service = new CRUDEquipmentService
-      try {
-        val result = crud_equipment_service.searchMetaDataById(equipment_id)
-        if (result==null)
-          response.noContent
-        else response.ok.body(result)
-
-
-      } catch {
-        case ex: SQLException =>{
-          println("Error exception")
-          response.internalServerError.
-            body(ex)
-
-        }
-      }
-
-    }
-
-    }
-
-    delete("/photo/:equipment_id/:filename/delete"){req: DeleteEquipmentRequest => {
-      val equipment_id = req.equipment_id
-
-      try {
-        val result = (new CRUDEquipmentService).deleteById(equipment_id)
-        if (result ==1)
-          response.created.body(s"Delete equipment with id = $equipment_id successfully. ")
-        else
-          response.internalServerError.
-            body("Cannot delete equipment. ")
-
-
-      } catch {
-        case ex: SQLException =>{
-          println("Error exception")
-          response.internalServerError
-
-        }
-      }
-    }
-
-    }
-
-    post("/add"){request:Equipment =>{
-      var crud_equipment_service = new CRUDEquipmentService
-      try {
-          val add_row = crud_equipment_service.add(request)
-          if (add_row == 1 )
-            response.created.body(s"Add equipment successfully. ")
-          else
-            response.internalServerError.
-              body("Cannot add images for equipment.")
       } catch {
         case ex: Exception =>{
           println(ex)
-          response.internalServerError
+          response.internalServerError.jsonError(ex.toString)
+        }
+      }
 
+    }
+
+    }
+
+    post("/photo/:equipment_id/upload"){request: Request =>{
+      val equipmentId = request.getIntParam("equipment_id")
+      var crud_equipment_service = new CRUDEquipmentService
+      val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
+      implicit val formats = DefaultFormats
+      try {
+        var files_upload= new util.ArrayList[UploadFile]
+        val dirname :String = System.getProperty("user.dir")+"/images/";
+        var check_files_upload = crud_equipment_service.checkFilesUpload(map);
+        var uploadfiles : Map[String, UploadFile] = Map();
+        for (key <- map.keys){
+          val image = map.get(key)
+          val filename :String = "image"+equipmentId+"_"+System.currentTimeMillis();
+          val extension = FilenameUtils.getExtension(key)
+          val basename = filename.concat(".").concat(extension)
+          val path = Paths.get(dirname,basename)
+          val data = image.get.data
+          val size = data.length
+          println(image.get.contentType.get.split("/")(0))
+          Files.write(path,data, StandardOpenOption.CREATE)
+          uploadfiles = uploadfiles + (filename -> UploadFile(file_url = path.toString,file_name = filename,size = size ,file_extension=extension))
+        }
+        var currentFiles :  Map[String, UploadFile] = crud_equipment_service.searchMetaDataById(equipmentId)
+        currentFiles = currentFiles ++ uploadfiles;
+        val update_row = crud_equipment_service.updateMetaDataById(currentFiles,equipmentId);
+        if (update_row == 1 ){
+          response.created.body(currentFiles)
+        }
+        else response.internalServerError.json(
+          """
+            |msg: "Can not add images"
+            |""".stripMargin)
+
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.toString)
+        }
+      }
+
+    }
+    }
+
+    delete("/photo/:equipment_id/:filename/delete") {request: Request =>{
+      val equipmentId = request.getIntParam("equipment_id")
+      val imageName = request.getParam("filename")
+      var crud_equipment_service = new CRUDEquipmentService
+      try {
+        val currentFiles :  Map[String, UploadFile] = crud_equipment_service.searchMetaDataById(equipmentId)
+
+
+        if (!currentFiles.isEmpty ){
+          val searchFile = currentFiles.get(imageName)
+          if(!searchFile.isEmpty){
+            currentFiles.-(imageName)
+          }
+          else response.internalServerError.json(
+            """
+              |msg: "Can not delete images"
+              |""".stripMargin)
+
+        }
+        else response.internalServerError.json(
+          """
+            |msg: "Can not delete images"
+            |""".stripMargin)
+
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.toString)
+        }
+      }
+
+    }
+    }
+
+
+    post("/add"){request:Equipment =>{
+      try {
+        val result = (new CRUDEquipmentService).add(request)
+        if (result ==1)
+          response.created.body(s"Add equipment successfully. ")
+        else
+          response.internalServerError
+      } catch {
+        case ex: SQLException =>{
+          println("Error exception")
+          response.internalServerError
         }
       }
     }}
@@ -256,70 +291,44 @@ class CRUDEquipmentController  extends Controller {
   }
 
   post("/milu"){request: Request => {
-
     var crud_equipment_service = new CRUDEquipmentService
     val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
-    val equipment_info  = new String(map.get("information").get.data, StandardCharsets.UTF_8)
     implicit val formats = DefaultFormats
-
     try {
-      val equipment = parse(equipment_info).extract[Equipment]
       var files_upload= new util.ArrayList[UploadFile]
-
       val dirname :String = System.getProperty("user.dir")+"/images/";
       var check_files_upload = crud_equipment_service.checkFilesUpload(map);
-      if (check_files_upload == -1 ){
-        response.accepted("Only selected images")
-      }
-      else if (check_files_upload == 0 ){
-        response.accepted("File too large")
-      }
-      else if (check_files_upload == 1 ){
-        val add_row = crud_equipment_service.add(equipment)
-        if (add_row == 1){
-          val new_equipment_id = crud_equipment_service.getIdEquipmentDESC();
-          for (key <- map.keys){
-            if (key!= "information" ){
-              val image = map.get(key)
-              val filename :String = "image"+new_equipment_id+"_"+System.currentTimeMillis();
-              val extension = FilenameUtils.getExtension(key)
-              val basename = filename.concat(".").concat(extension)
-              val path = Paths.get(dirname,basename)
-              val data = image.get.data
-              val size = data.length
-              println(image.get.contentType.get.split("/")(0))
-              Files.write(path,map.get(key).get.data, StandardOpenOption.CREATE)
-              files_upload.add(UploadFile(fileUrl = path.toString,fileName = filename,size = size ,fileExtension=extension))
-
-            }
-
+      val new_equipment_id = crud_equipment_service.getIdEquipmentDESC();
+      var uploadfiles : Map[String, UploadFile] = Map();
+      for (key <- map.keys){
+          val image = map.get(key)
+          val filename :String = "image"+new_equipment_id+"_"+System.currentTimeMillis();
+          val extension = FilenameUtils.getExtension(key)
+          val basename = filename.concat(".").concat(extension)
+          val path = Paths.get(dirname,basename)
+          val data = image.get.data
+          val size = data.length
+          println(image.get.contentType.get.split("/")(0))
+          Files.write(path,data, StandardOpenOption.CREATE)
+        uploadfiles = uploadfiles + (filename -> UploadFile(file_url = path.toString,file_name = filename,size = size ,file_extension=extension))
+    }
+          var currentFiles :  Map[String, UploadFile] = crud_equipment_service.searchMetaDataById(new_equipment_id)
+          currentFiles = currentFiles ++ uploadfiles;
+          val update_row = crud_equipment_service.updateMetaDataById(currentFiles,new_equipment_id);
+          if (update_row == 1 ){
+            response.created.body(JSON.write(currentFiles))
           }
-          val update_row = crud_equipment_service.updateMetaDataById(files_upload,new_equipment_id);
-          if (update_row == 1 )
-            response.created.body(s"Add equipment successfully. ")
-          else
-            response.internalServerError.
-              body("Cannot add images for equipment.")
-        }
-        else
-          response.internalServerError.
-            body("Cannot add equipment.")
-      }
-
+          else response.internalServerError.json(
+            """
+              |msg: "Can not add images"
+              |""".stripMargin)
 
     } catch {
       case ex: Exception =>{
         println(ex)
-        response.internalServerError
-
+        response.internalServerError.jsonError(ex.toString)
       }
     }
   }}
-
-
-
-
-
-
 
 }

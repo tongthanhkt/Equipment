@@ -8,24 +8,27 @@ import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}
 import com.twitter.finatra.http.routing.HttpRouter
 import controllers.CRUDEquipmentController
-import filters.CORSFilter
+import filters.{CORSFilter, CommonExceptionMapping}
+import modules.{CustomJacksonModule, DependencyModule}
 
 object FinatraServerMain extends FinatraServer
 
 
 class FinatraServer extends HttpServer{
 
-  //override protected def modules: Seq[Module] = super.modules :+ ExampleModule
+  override protected def modules: Seq[Module] = Seq(DependencyModule)
 
   override def defaultHttpPort: String = ":8887"
 
 
+  override protected def jacksonModule: Module = CustomJacksonModule
 
   override def configureHttp(router: HttpRouter): Unit = {
     router
       .filter[CORSFilter](beforeRouting = true)
 
       .add[ CRUDEquipmentController]
+      .exceptionMapper[CommonExceptionMapping]
 
   }
 

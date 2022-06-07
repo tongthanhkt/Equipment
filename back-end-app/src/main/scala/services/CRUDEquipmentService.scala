@@ -56,23 +56,23 @@ class CRUDEquipmentService {
       val rs = pst.executeQuery
       while ( rs.next) {
         val e = Equipment(id=rs.getInt("id"),
-          device_id=rs.getString("device_id"),
+          deviceId=rs.getString("device_id"),
           name=rs.getString("name"),
-          start_status=rs.getInt("start_status"),
+          startStatus=rs.getInt("start_status"),
           price = rs.getDouble("price"),
-          depreciated_value = rs.getDouble("depreciated_value"),
-          depreciation_period = rs.getDouble("depreciation_period"),
-          period_type = rs.getInt("period_type"),
-          import_date = rs.getLong("import_date"),
-          takeover_status=rs.getInt("takeover_status"),
-          category_id = rs.getInt("category_id"),
-          device_status = rs.getInt("device_status"),
-          created_by = rs.getString("created_by"),
-          created_time = rs.getLong("created_time"),
-          updated_by = rs.getString("updated_by"),
-          updated_time = rs.getLong("updated_time"),
-          takeover_person_id = rs.getString("username"),
-          takeover_person_name = rs.getString("fullname"));
+          depreciatedValue = rs.getDouble("depreciated_value"),
+          depreciationPeriod = rs.getDouble("depreciation_period"),
+          periodType = rs.getInt("period_type"),
+          importDate = rs.getLong("import_date"),
+          takeOverStatus=rs.getInt("takeover_status"),
+          categoryId = rs.getInt("category_id"),
+          deviceStatus = rs.getInt("device_status"),
+          createdBy = rs.getString("created_by"),
+          createdTime = rs.getLong("created_time"),
+          updatedBy = rs.getString("updated_by"),
+          updatedTime = rs.getLong("updated_time"),
+          takeOverPersonId = rs.getString("username"),
+          takeOverPersonName = rs.getString("fullname"));
 
 
         equipments.add(e)
@@ -162,7 +162,7 @@ class CRUDEquipmentService {
     }
   }
 
-  def updateMetaDataById(uploadfiles : util.ArrayList[UploadFile],equipment_id :Int ): Int = {
+  def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipment_id :Int ): Int = {
 
     try{
       val sql = """UPDATE equipment SET metadata_info = ? WHERE id = ?;"""
@@ -208,23 +208,23 @@ class CRUDEquipmentService {
       var result :Equipment =null
       while ( rs.next) {
         result = Equipment(id=rs.getInt("id"),
-          device_id=rs.getString("device_id"),
+          deviceId=rs.getString("device_id"),
           name=rs.getString("name"),
-          start_status=rs.getInt("start_status"),
+          startStatus=rs.getInt("start_status"),
           price = rs.getDouble("price"),
-          depreciated_value = rs.getDouble("depreciated_value"),
-          depreciation_period = rs.getDouble("depreciation_period"),
-          period_type = rs.getInt("period_type"),
-          import_date = rs.getLong("import_date"),
-          takeover_status=rs.getInt("takeover_status"),
-          category_id = rs.getInt("category_id"),
-          device_status = rs.getInt("device_status"),
-          created_by = rs.getString("created_by"),
-          created_time = rs.getLong("created_time"),
-          updated_by = rs.getString("updated_by"),
-          updated_time = rs.getLong("updated_time"),
-          takeover_person_id = rs.getString("username"),
-          takeover_person_name = rs.getString("fullname"));
+          depreciatedValue = rs.getDouble("depreciated_value"),
+          depreciationPeriod = rs.getDouble("depreciation_period"),
+          periodType = rs.getInt("period_type"),
+          importDate = rs.getLong("import_date"),
+          takeOverStatus=rs.getInt("takeover_status"),
+          categoryId = rs.getInt("category_id"),
+          deviceStatus = rs.getInt("device_status"),
+          createdBy = rs.getString("created_by"),
+          createdTime = rs.getLong("created_time"),
+          updatedBy = rs.getString("updated_by"),
+          updatedTime = rs.getLong("updated_time"),
+          takeOverPersonId = rs.getString("username"),
+          takeOverPersonName = rs.getString("fullname"));
 
 
 
@@ -244,13 +244,13 @@ class CRUDEquipmentService {
 
   }
 
-  def searchMetaDataById(equipment_id:Int): Map[String, UploadFile] = {
+  def searchMetaDataById (equipment_id:Int): Map[String, UploadFile] = {
+    var map : Map[String,UploadFile] = Map()
     try{
       val sql = """
       SELECT e.metadata_info
       FROM equipment_management.equipment e
       WHERE e.device_status != ? and e.id = ?;"""
-
       var con = (new DataConnection).getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
@@ -261,25 +261,18 @@ class CRUDEquipmentService {
         result = rs.getObject("metadata_info")
       }
       con.close();
-      val images =parse(result.toString)
+      val images = parse(result.toString)
       implicit val formats = DefaultFormats
-      var map : Map[String,UploadFile] = Map()
-      for (image <- (images \\ "files" ).children.toArray){
-        //val file: UploadFile = image.extract[UploadFile]
-        println(image)
-        //map = map + (file.fileName -> file)
+      for (image <- (images \\ "files" ).children){
+        map = image.extract[Map[String,UploadFile]]
       }
-
-      return map
-
+    return map
     }catch {
       case ex: SQLException =>{
         println(ex)
         return null
-
       }
     }
-
   }
 
   def updateById(e: Equipment): Int={
@@ -293,19 +286,19 @@ class CRUDEquipmentService {
 
       var con = (new DataConnection).getConnection()
       val pst = con.prepareStatement(sql)
-      pst.setString(1,e.device_id)
+      pst.setString(1,e.deviceId)
       pst.setString(2, e.name)
-      pst.setInt(3,e.start_status )
-      pst.setInt(4, e.category_id)
+      pst.setInt(3,e.startStatus )
+      pst.setInt(4, e.categoryId)
       pst.setDouble(5,e.price)
-      pst.setDouble(6,e.depreciated_value )
-      pst.setDouble(7, e.depreciation_period)
-      pst.setInt(8, e.period_type)
-      pst.setLong(9,e.import_date)
+      pst.setDouble(6,e.depreciatedValue )
+      pst.setDouble(7, e.depreciationPeriod)
+      pst.setInt(8, e.periodType)
+      pst.setLong(9,e.importDate)
       pst.setInt(10, 0)
-      pst.setInt(11, e.device_status)
-      pst.setString(12,e.updated_by)
-      pst.setLong(13,e.updated_time)
+      pst.setInt(11, e.deviceStatus)
+      pst.setString(12,e.updatedBy)
+      pst.setLong(13,e.updatedTime)
       pst.setInt(14,e.id)
 
 
@@ -362,19 +355,20 @@ class CRUDEquipmentService {
 
       var con = (new DataConnection).getConnection()
       val pst = con.prepareStatement(sql)
-      pst.setString(1,e.device_id)
+      pst.setString(1,e.deviceId)
       pst.setString(2, e.name)
-      pst.setInt(3,e.start_status )
-      pst.setInt(4, e.category_id)
+      pst.setInt(3,e.startStatus )
+      pst.setInt(4, e.categoryId)
       pst.setDouble(5,e.price)
-      pst.setDouble(6,e.depreciated_value )
-      pst.setDouble(7, e.depreciation_period)
-      pst.setInt(8, e.period_type)
-      pst.setLong(9,e.import_date)
+      pst.setDouble(6,e.depreciatedValue )
+      pst.setDouble(7, e.depreciationPeriod)
+      pst.setInt(8, e.periodType)
+      pst.setLong(9,e.importDate)
       pst.setInt(10, 0)
-      pst.setInt(11, e.device_status)
-      pst.setString(12,e.created_by)
-      pst.setLong(13,e.created_time)
+      pst.setInt(11, e.deviceStatus)
+      pst.setString(12,e.createdBy)
+      pst.setLong(13,e.createdTime)
+
 
 
       val rs = pst.executeUpdate()
@@ -412,7 +406,7 @@ object test {
   def main (args :Array[String]): Unit ={
 //    val test = (new CRUDEquipmentService).searchById(9)
 //    val test2 = (new CRUDEquipmentService).addImagesById(test,9)
-    val result = (new CRUDEquipmentService).searchMetaDataById(13)
+    val result = (new CRUDEquipmentService).searchMetaDataById(26)
    println(result)
 //    for (i <- result.children){
 //      println(""+i)

@@ -13,23 +13,23 @@ case class Page(value:Int,isCurrent:Boolean)
 
 case class Equipment(
                              id: Int = 0,
-                             device_id: String = null,
+                             deviceId: String = null,
                              name: String,
-                             start_status: Int,
+                             startStatus: Int,
                              price: Double,
-                             depreciated_value: Double,
-                             depreciation_period: Double,
-                             period_type: Int,
-                             import_date: Long,
-                             takeover_status: Int = 0 ,
-                             category_id: Int,
-                             device_status : Int = 0,
-                             created_by: String = null,
-                             created_time: Long = 0,
-                             updated_by: String = null,
-                             updated_time: Long = 0,
-                             takeover_person_id: String = null,
-                             takeover_person_name : String = null
+                             depreciatedValue: Double,
+                             depreciationPeriod: Double,
+                             periodType: Int,
+                             importDate: Long,
+                             takeOverStatus: Int = 0 ,
+                             categoryId: Int,
+                             deviceStatus : Int = 0,
+                             createdBy: String = null,
+                             createdTime: Long = 0,
+                             updatedBy: String = null,
+                             updatedTime: Long = 0,
+                             takeOverPersonId: String = null,
+                             takeOverPersonName : String = null
                            )
 
 case class SearchEquipmentsResponse(equipments: util.ArrayList[Equipment],
@@ -52,10 +52,10 @@ case class DeleteEquipmentRequest(@QueryParam equipment_id:Int)
 
 case class SearchEquipmentByIdRequest(@RouteParam id :Int)
 
-case class UploadFile(fileUrl : String,
-                      fileName: String,
+case class UploadFile(file_url : String,
+                      file_name: String,
                       size : Long,
-                      fileExtension: String
+                      file_extension: String
                 )
 
 case class DeleteImageByIdRequest(@RouteParam equipment_id :Int,
