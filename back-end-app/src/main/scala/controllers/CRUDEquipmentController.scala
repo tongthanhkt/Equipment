@@ -17,7 +17,7 @@ import services.CRUDEquipmentService
 import java.io.{ByteArrayInputStream, File, IOException, ObjectInputStream, PrintWriter}
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Path, Paths, StandardOpenOption}
+import java.nio.file.{Files, Paths, StandardOpenOption}
 import java.sql.SQLException
 import java.util
 import javax.inject.Inject
@@ -46,11 +46,11 @@ class CRUDEquipmentController  extends Controller {
 
       try {
         val total_equipments = crud_equipment_service.countBySearch(keyword,category,takeover_person,takeover_status,device_status)
-        var nPages:Int = total_equipments/limit;
+        var n_pages:Int = total_equipments/limit;
         if(total_equipments%limit>0)
-          nPages+=1
+          n_pages+=1
         var pageNumbers = new util.ArrayList[Page]
-        for( i <- 1 to nPages){
+        for( i <- 1 to n_pages){
 
           pageNumbers.add(Page(i,i==current_page));
         }
@@ -58,9 +58,9 @@ class CRUDEquipmentController  extends Controller {
 
         val result:util.ArrayList[Equipment] =crud_equipment_service.search(keyword,category,takeover_person,takeover_status,device_status,limit,offset);
         response.ok.body(SearchEquipmentsResponse(equipments = result,
-          empty = result.length==0,totalEquipments= total_equipments,
+          empty = result.length==0,nPages = n_pages,
          pageNumbers = pageNumbers,firstPage = +current_page==1,
-          lastPage = +current_page==nPages,previousPage = +current_page-1,nextPage = +current_page+1))
+          lastPage = +current_page==n_pages,previousPage = +current_page-1,nextPage = +current_page+1))
 
 
       } catch {
@@ -220,6 +220,7 @@ class CRUDEquipmentController  extends Controller {
     }
 
     }
+
     post("/add"){request:Equipment =>{
       var crud_equipment_service = new CRUDEquipmentService
       try {
@@ -239,7 +240,6 @@ class CRUDEquipmentController  extends Controller {
     }}
 
     put("/update"){request:Equipment=>{
-
       try {
         val result = (new CRUDEquipmentService).updateById(request)
         if (result ==1)

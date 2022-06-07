@@ -34,7 +34,7 @@ case class Equipment(
 
 case class SearchEquipmentsResponse(equipments: util.ArrayList[Equipment],
                                    empty: Boolean,
-                                   totalEquipments: Int,
+                                    nPages: Int,
                                    pageNumbers: util.ArrayList[Page],
                                    firstPage: Boolean,
                                    lastPage: Boolean,

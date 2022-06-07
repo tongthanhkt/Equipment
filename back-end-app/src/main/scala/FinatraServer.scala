@@ -23,8 +23,9 @@ class FinatraServer extends HttpServer{
 
   override def configureHttp(router: HttpRouter): Unit = {
     router
+      .filter[CORSFilter](beforeRouting = true)
 
-      .add[CORSFilter, CRUDEquipmentController]
+      .add[ CRUDEquipmentController]
 
   }
 
