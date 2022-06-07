@@ -33,14 +33,14 @@
           <div class="flex flex-col">
             <label class="leading-loose">Danh mục</label>
             <select
+              v-model="equipment.category_id"
               id="country"
               name="country"
               autocomplete="country-name"
               class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option>Máy tính</option>
-              <option>PC</option>
-              <option>Laptop</option>
+              <option value="1">Máy tính</option>
+              <option value="2">Bàn phím PC</option>
             </select>
           </div>
           <div class="flex flex-row">
@@ -51,21 +51,28 @@
                 name="country"
                 autocomplete="country-name"
                 class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                v-model="equipment.start_status"
               >
-                <option>Mới 100%</option>
-                <option>Bị hỏng</option>
+                <option value="1">New</option>
+                <option value="2">Like New loại S (99%)</option>
+                <option value="3">Like New loại A (99%)</option>
+                <option value="4">Like New loại B (97%-98%)</option>
+                <option value="5">Like New loại C (90%-95%)</option>
+                <option value="6">Thiết bị cũ ( second hand)</option>
               </select>
             </div>
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Trạng thái thiết bị</label>
               <select
+                v-model="equipment.device_status"
                 id="country"
                 name="country"
                 autocomplete="country-name"
                 class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option>Sử dụng được</option>
-                <option>Bị hư</option>
+                <option value="0">Bị mất</option>
+                <option value="1">Sử dụng được</option>
+                <option value="2">Bị hư hỏng</option>
               </select>
             </div>
           </div>
@@ -82,6 +89,7 @@
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Tháng / Năm</label>
               <select
+                v-model="equipment.period_type"
                 id="country"
                 name="country"
                 autocomplete="country-name"
@@ -93,7 +101,12 @@
             </div>
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Thời gian khấu hao</label>
-              <DatePicker class="w-48" />
+              <input
+                type="text"
+                class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                placeholder=""
+                v-model="equipment.depreciation_period"
+              />
             </div>
           </div>
           <div class="flex flex-row w-36">
@@ -158,6 +171,7 @@
 import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options } from "vue-property-decorator";
+import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import EquipmentService from "../services/equipments/equipments.api";
 @Options({
   components: {
@@ -166,7 +180,7 @@ import EquipmentService from "../services/equipments/equipments.api";
 })
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
-    category_id: "1",
+    category_id: "",
     created_by: "tatthanh@rever.vn",
     create_time: "51532155215421 ",
     device_id: "",
@@ -174,20 +188,20 @@ export default class AddEquipment extends Vue {
     import_date: "1520215210502",
     name: "",
     price: "",
-    start_status: "1",
+    start_status: "",
     takeover_person_id: "",
     takeover_person_name: "",
-    takeover_status: "1",
+    takeover_status: "0",
     updated_by: "tuongvy@rever.vn",
     updated_time: "",
-    device_status: "1",
+    device_status: "",
     depreciate_value: "",
-    period_type: "1",
-    depreciation_period: "1",
+    period_type: "",
+    depreciation_period: "",
   };
 
-  async saveEquipment() {
-    let data = {
+  saveEquipment() {
+    const data = {
       device_id: this.equipment.device_id,
       name: this.equipment.name,
       start_status: this.equipment.start_status,
@@ -202,8 +216,9 @@ export default class AddEquipment extends Vue {
       created_time: this.equipment.create_time,
       device_status: this.equipment.device_status,
     };
-    console.log(data);
-    EquipmentService.addEquipment();
+    //EquipmentService.addEquipment(data);
+
+    EquipmentDataService.add();
   }
 }
 </script>

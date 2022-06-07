@@ -1,7 +1,15 @@
-import axios from "axios";
-const axiosEquipment = axios.create({
-  baseURL: "http://localhost:8887/equipment",
-});
+// import axios from "axios";
+// const axiosEquipment = axios.create({
+//   baseURL: "http://localhost:8887/equipment",
+//   headers: {
+//     "Content-type": "application/json",
+//   },
+//   // headers: {
+//   //   "Access-Control-Allow-Origin": "*",
+//   //   "Content-Type": "application/json",
+//   // },
+//   // withCredentials: true,
+// });
 // export default async function getAllEquipments() {
 //   try {
 //     const res = await axiosEquipment.get("/search");
@@ -10,27 +18,17 @@ const axiosEquipment = axios.create({
 //     console.log(error);
 //   }
 // }
+import http from "@/http-common";
 class EquipmentService {
   getAllEquipment() {
-    return axiosEquipment.get("/search");
+    return http.get("/search");
   }
-  addEquipment() {
-    const data = {
-      category_id: "1",
-      created_by: "tatthanh@rever.vn",
-      created_time: "51532155215421 ",
-      depreciated_value: "1",
-      depreciation_period: "1",
-      device_id: "ab",
-      device_status: "1",
-      import_date: "1520215210502",
-      name: "a",
-      period_type: "1",
-      price: "1",
-      start_status: "1",
-      takeover_status: "1",
-    };
-    return axiosEquipment.post("/add", data);
+  addEquipment(data: object) {
+    console.log(data);
+    return http.post("/add", data);
+  }
+  deleteEquipment(equipment_id: any) {
+    return http.delete("/delete", equipment_id);
   }
 }
 export default new EquipmentService();
