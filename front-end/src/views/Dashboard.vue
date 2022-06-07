@@ -1,3 +1,9 @@
+<style scoped>
+.list_equipments:hover {
+  background-color: beige;
+  cursor: pointer;
+}
+</style>
 <template>
   <div>
     <div class="h-24">
@@ -26,7 +32,79 @@
         <div class="inline-block category">
           <div class="relative">
             <div
-              class="h-10 bg-white flex border border-gray-200 rounded items-center"
+              class="h-10 bg-white flex border border-gray-200 rounded items-center ml-3"
+            >
+              <input
+                placeholder="Người sử dụng"
+                name="select1"
+                id="select1"
+                class="px-4 appearance-none outline-none text-gray-800 w-full"
+              />
+              <button
+                class="cursor-pointer outline-none focus:outline-none transition-all text-gray-300 hover:text-gray-600"
+              >
+                <svg
+                  class="w-4 h-4 mx-2 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <label
+                for=""
+                class="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-gray-600"
+              >
+                <svg
+                  class="w-4 h-4 mx-2 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+              </label>
+            </div>
+
+            <input type="" name="" id="" class="hidden peer" />
+            <div
+              class="absolute rounded shadow bg-white overflow-hidden hidden peer-checked:flex flex-col w-full mt-1 border border-gray-200"
+            >
+              <div class="cursor-pointer group">
+                <a
+                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
+                  >Máy tính</a
+                >
+              </div>
+              <div class="cursor-pointer group border-t">
+                <a
+                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 border-blue-600 group-hover:bg-gray-100"
+                  >Màn hình</a
+                >
+              </div>
+              <div class="cursor-pointer group border-t">
+                <a
+                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
+                  >PC</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
+        <div class="inline-block category">
+          <div class="relative">
+            <div
+              class="h-10 bg-white flex border border-gray-200 rounded items-center ml-6"
             >
               <input
                 value="Danh mục"
@@ -81,47 +159,34 @@
               <div class="cursor-pointer group">
                 <a
                   class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >Python</a
+                  >Máy tính</a
                 >
               </div>
               <div class="cursor-pointer group border-t">
                 <a
                   class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 border-blue-600 group-hover:bg-gray-100"
-                  >Javascript</a
+                  >Màn hình</a
                 >
               </div>
               <div class="cursor-pointer group border-t">
                 <a
                   class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >Node</a
-                >
-              </div>
-              <div class="cursor-pointer group border-t">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >PHP</a
+                  >PC</a
                 >
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="inline-block w-full px-6 sm:w-1/2 xl:w-1/4">
-        <a
-          href=""
-          class="bg-blue-500 font-bold text-white px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6"
-        >
-          Người sử dụng
-        </a>
-      </div>
-      <div class="inline-block w-full px-8 sm:w-1/2 xl:w-1/4">
-        <a
-          href="/add-equipment"
-          class="bg-blue-500 font-bold text-white px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6"
-        >
-          Tạo mới thiết bị
-        </a>
-      </div>
+      <router-link to="/add-equipment">
+        <div class="inline-block w-full px-8 sm:w-1/2 xl:w-1/4">
+          <a
+            class="bg-blue-500 font-bold text-white px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6"
+          >
+            Tạo mới thiết bị
+          </a>
+        </div>
+      </router-link>
     </div>
     <div class="flex flex-wrap -mx-6">
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
@@ -219,14 +284,18 @@
             </thead>
 
             <tbody class="bg-white">
-              <tr v-for="(i, index) in equipments" :key="index">
+              <tr
+                class="list_equipments"
+                v-for="(equipment, index) in equipments"
+                :key="index"
+              >
                 <td
                   class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
                 >
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.id }}
+                        {{ equipment.device_id }}
                       </div>
                     </div>
                   </div>
@@ -237,7 +306,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.name }}
+                        {{ equipment.name }}
                       </div>
                     </div>
                   </div>
@@ -248,7 +317,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.takeOverStatus }}
+                        {{ equipment.takeover_status }}
                       </div>
                     </div>
                   </div>
@@ -259,7 +328,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.usedBy }}
+                        {{ equipment.takeover_person_name }}
                       </div>
                     </div>
                   </div>
@@ -270,7 +339,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.createBy }}
+                        {{ equipment.created_by }}
                       </div>
                     </div>
                   </div>
@@ -281,7 +350,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.importTime }}
+                        {{ equipment.import_date }}
                       </div>
                     </div>
                   </div>
@@ -292,7 +361,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.updateTime }}
+                        {{ equipment.updated_time }}
                       </div>
                     </div>
                   </div>
@@ -303,7 +372,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.updateBy }}
+                        {{ equipment.updated_by }}
                       </div>
                     </div>
                   </div>
@@ -314,86 +383,82 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ i.deviceStatus }}
+                        {{ equipment.device_status }}
                       </div>
                     </div>
                   </div>
                 </td>
-                <div class="flex justify-around">
-                  <span class="text-yellow-500 flex justify-center">
-                    <a href="/edit-equipment" class="mx-2 px-2 rounded-md"
-                      ><svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-green-700"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </a>
-                    <form method="POST">
-                      <button class="mx-2 px-2 rounded-md">
-                        <svg
+                <td>
+                  <div class="flex justify-around">
+                    <span class="text-yellow-500 flex justify-center">
+                      <label class="w-20">Bàn giao</label>
+                      <a href="/edit-equipment" class="mx-2 px-2 rounded-md"
+                        ><svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5 text-red-700"
+                          class="h-5 w-5 text-green-700"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
                           <path
+                            d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+                          />
+                          <path
                             fill-rule="evenodd"
-                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                            d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
                             clip-rule="evenodd"
                           />
                         </svg>
-                      </button>
-                    </form>
-                  </span>
-                </div>
+                      </a>
+                      <form method="POST">
+                        <button class="mx-2 px-2 rounded-md">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 text-red-700"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </form>
+                    </span>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
+          <Pagination></Pagination>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from "vue";
-interface Equipment {
-  id: string;
-  name: string;
-  takeOverStatus: string;
-  usedBy: string;
-  createBy: string;
-  importTime: string;
-  updateTime: string;
-  updateBy: string;
-  deviceStatus: string;
-  action: string;
+<script lang="ts">
+import Equipment from "@/types/Equipment";
+import EquipmentService from "../services/equipments/equipments.api";
+import { Vue, Options } from "vue-property-decorator";
+import Pagination from "../views/Pagination.vue";
+@Options({
+  components: {
+    Pagination,
+  },
+})
+export default class Dashboard extends Vue {
+  public equipments: Equipment[] = [];
+  mounted() {
+    this.retrieveEquipments();
+  }
+  async retrieveEquipments() {
+    EquipmentService.getAllEquipment()
+      .then((response) => {
+        this.equipments = response.data.equipments;
+      })
+      .then(() => console.log(this.equipments));
+  }
 }
-
-const testEquipment: Equipment = {
-  id: "MT001",
-  name: "Macbook Air",
-  takeOverStatus: "Bàn giao ",
-  usedBy: "ttthanh@rever.vn",
-  createBy: "ntlinh@rever.vn",
-  importTime: "12/2/2022",
-  updateTime: "28/2/2022",
-  updateBy: "ntvy@rever.vn",
-  deviceStatus: "Sử dụng được",
-  action: "Thu hồi, Sửa chữa, Xóa ",
-};
-
-const equipments = ref<Equipment[]>(
-  [...Array(10).keys()].map(() => testEquipment)
-);
 </script>

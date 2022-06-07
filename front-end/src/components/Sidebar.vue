@@ -87,7 +87,6 @@
               fill="currentColor"
             />
           </svg>
-
           <span class="mx-4">Bàn giao thiết bị</span>
         </router-link>
 

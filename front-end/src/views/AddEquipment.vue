@@ -3,7 +3,7 @@
     <div>
       <div class="flex items-center space-x-5">
         <div class="block pl-2 font-semibold text-xl self-start text-gray-700">
-          <h1 class="text-2xl leading-relaxed">Cập nhật thiết bị</h1>
+          <h1 class="text-2xl leading-relaxed">Thêm mới thiết bị</h1>
         </div>
       </div>
       <div class="divide-y divide-gray-200">
@@ -17,6 +17,7 @@
                 type="text"
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
+                v-model="equipment.device_id"
               />
             </div>
             <div class="flex flex-col ml-10">
@@ -25,6 +26,7 @@
                 type="text"
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
+                v-model="equipment.name"
               />
             </div>
           </div>
@@ -50,9 +52,8 @@
                 autocomplete="country-name"
                 class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
+                <option>Mới 100%</option>
+                <option>Bị hỏng</option>
               </select>
             </div>
             <div class="flex flex-col ml-10">
@@ -64,7 +65,7 @@
                 class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option>Sử dụng được</option>
-                <option>Hư hỏng</option>
+                <option>Bị hư</option>
               </select>
             </div>
           </div>
@@ -75,6 +76,7 @@
                 type="text"
                 class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
+                v-model="equipment.price"
               />
             </div>
             <div class="flex flex-col ml-10">
@@ -105,6 +107,7 @@
                 type="text"
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
+                v-model="equipment.depreciate_value"
               />
             </div>
           </div>
@@ -121,6 +124,12 @@
         </div>
 
         <div class="pt-4 flex items-center space-x-4">
+          <button
+            @click="saveEquipment"
+            class="bg-blue-500 font-bold flex justify-center w-48 items-center text-white px-4 py-3 rounded-md focus:outline-none"
+          >
+            Thêm thiết bị
+          </button>
           <button
             class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none"
           >
@@ -140,16 +149,61 @@
             </svg>
             Hủy
           </button>
-          <button
-            class="bg-blue-500 font-bold flex justify-center w-48 items-center text-white px-4 py-3 rounded-md focus:outline-none"
-          >
-            Cập nhật
-          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import DatePicker from "../views/DatePicker.vue";
+<script lang="ts">
+import DatePicker from "./DatePicker.vue";
+import Equipment from "../types/Equipment";
+import { Vue, Options } from "vue-property-decorator";
+import EquipmentService from "../services/equipments/equipments.api";
+@Options({
+  components: {
+    DatePicker,
+  },
+})
+export default class AddEquipment extends Vue {
+  private equipment: Equipment = {
+    category_id: "1",
+    created_by: "tatthanh@rever.vn",
+    create_time: "51532155215421 ",
+    device_id: "",
+    id: "",
+    import_date: "1520215210502",
+    name: "",
+    price: "",
+    start_status: "1",
+    takeover_person_id: "",
+    takeover_person_name: "",
+    takeover_status: "1",
+    updated_by: "tuongvy@rever.vn",
+    updated_time: "",
+    device_status: "1",
+    depreciate_value: "",
+    period_type: "1",
+    depreciation_period: "1",
+  };
+
+  async saveEquipment() {
+    let data = {
+      device_id: this.equipment.device_id,
+      name: this.equipment.name,
+      start_status: this.equipment.start_status,
+      price: this.equipment.price,
+      depreciation_period: this.equipment.depreciation_period,
+      period_type: this.equipment.period_type,
+      depreciated_value: this.equipment.depreciate_value,
+      import_date: this.equipment.import_date,
+      takeover_status: this.equipment.takeover_status,
+      category_id: this.equipment.category_id,
+      created_by: this.equipment.created_by,
+      created_time: this.equipment.create_time,
+      device_status: this.equipment.device_status,
+    };
+    console.log(data);
+    EquipmentService.addEquipment();
+  }
+}
 </script>
