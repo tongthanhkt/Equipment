@@ -5,21 +5,24 @@ import com.google.gson.{Gson, JsonArray}
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.util.jackson.JSON
 import jdk.nashorn.internal.objects.NativeJSON
-import models.{Equipment, UploadFile}
+import models.{Equipment, SearchRequest, UploadFile}
 import net.liftweb.json.JsonAST.RenderSettings.compact
 import net.liftweb.json.{DefaultFormats, Serialization, parse}
 import org.apache.commons.io.FilenameUtils
-import utils.DataConnection
+import utils.DatabaseConnection
 
 import java.nio.file.{Files, Paths, StandardOpenOption}
 import java.sql.{SQLException, SQLType, Types}
 import java.util
+import javax.inject.Inject
 import scala.util.control.Breaks.break
 import scala.util.parsing.json.{JSONArray, JSONObject}
 
 
-class CRUDEquipmentService {
-  def search(keyword:String,category:String,take_over_person:String,takeover_status:String,device_status:String,limit:Int,offset: Int): util.ArrayList[Equipment] ={
+class CRUDEquipmentService @Inject() (
+                                       databaseConnection: DatabaseConnection
+                                     ) {
+  def search(searchRequest: SearchRequest,offset : Int): util.ArrayList[Equipment] ={
 
     var equipments = new util.ArrayList[Equipment]
     try{
@@ -38,20 +41,20 @@ class CRUDEquipmentService {
       and (e.device_status = ? or ? is null)
       and (e.takeover_status = ? or ? is null)
       LIMIT ? OFFSET ?;"""
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
-      pst.setString(2, keyword)
-      pst.setString(3, keyword)
-      pst.setString(4, category)
-      pst.setString(5,category)
-      pst.setString(6, take_over_person)
-      pst.setString(7, take_over_person)
-      pst.setString(8, device_status)
-      pst.setString(9,device_status)
-      pst.setString(10, takeover_status)
-      pst.setString(11, takeover_status)
-      pst.setInt(12,limit)
+      pst.setString(2, searchRequest.keyword)
+      pst.setString(3, searchRequest.keyword)
+      pst.setString(4, searchRequest.categoryId)
+      pst.setString(5,searchRequest.categoryId)
+      pst.setString(6, searchRequest.takeOverPerson)
+      pst.setString(7, searchRequest.takeOverPerson)
+      pst.setString(8, searchRequest.deviceStatus)
+      pst.setString(9,searchRequest.deviceStatus)
+      pst.setString(10, searchRequest.takeOverStatus)
+      pst.setString(11, searchRequest.takeOverStatus)
+      pst.setInt(12,searchRequest.limit)
       pst.setInt(13,offset)
       val rs = pst.executeQuery
       while ( rs.next) {
@@ -91,7 +94,6 @@ class CRUDEquipmentService {
 
   def countBySearch(keyword:String,category:String,take_over_person:String,takeover_status:String,device_status:String): Int ={
 
-
     try{
       val sql = """
       SELECT count(*) as total
@@ -108,7 +110,7 @@ class CRUDEquipmentService {
       and (e.device_status = ? or ? is null)
       and (e.takeover_status = ? or ? is null)
       """
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setString(2, keyword)
@@ -143,16 +145,12 @@ class CRUDEquipmentService {
     try{
       val sql = "UPDATE equipment SET device_status = -1 WHERE id = ?;"
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1, equipment_id)
-
-
       val rs = pst.executeUpdate()
-
       con.close();
       return rs
-
     }catch {
       case ex: SQLException =>{
         println(ex)
@@ -163,11 +161,12 @@ class CRUDEquipmentService {
   }
 
   def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipment_id :Int ): Int = {
+    println("Update metadata")
 
     try{
       val sql = """UPDATE equipment SET metadata_info = ? WHERE id = ?;"""
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       val files =JSON.write(uploadfiles)
       pst.setString(1,
@@ -200,7 +199,7 @@ class CRUDEquipmentService {
                                             left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ? and e.id = ?;"""
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setInt(2, equipment_id)
@@ -225,9 +224,6 @@ class CRUDEquipmentService {
           updatedTime = rs.getLong("updated_time"),
           takeOverPersonId = rs.getString("username"),
           takeOverPersonName = rs.getString("fullname"));
-
-
-
       }
 
 
@@ -245,27 +241,30 @@ class CRUDEquipmentService {
   }
 
   def searchMetaDataById (equipment_id:Int): Map[String, UploadFile] = {
+
     var map : Map[String,UploadFile] = Map()
     try{
       val sql = """
       SELECT e.metadata_info
       FROM equipment_management.equipment e
-      WHERE e.device_status != ? and e.id = ?;"""
-      var con = (new DataConnection).getConnection()
+      WHERE e.device_status != ? and e.id = ? and e.metadata_info is not null;"""
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setInt(2, equipment_id)
       val rs = pst.executeQuery()
-      var result :Any =null
+      var result : String = ""
       while ( rs.next) {
-        result = rs.getObject("metadata_info")
+
+          result = rs.getObject("metadata_info").toString
       }
       con.close();
-      val images = parse(result.toString)
+      val images = parse(result)
       implicit val formats = DefaultFormats
       for (image <- (images \\ "files" ).children){
         map = image.extract[Map[String,UploadFile]]
       }
+
     return map
     }catch {
       case ex: SQLException =>{
@@ -284,7 +283,7 @@ class CRUDEquipmentService {
                        import_date = ?,takeover_status = ?,device_status = ? ,updated_by = ?,updated_time = ?
           WHERE id = ?;"""
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setString(1,e.deviceId)
       pst.setString(2, e.name)
@@ -323,7 +322,7 @@ class CRUDEquipmentService {
       FROM equipment_management.equipment e where  e.device_status != ?
       order by e.id desc limit 1;"""
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
 
@@ -353,7 +352,7 @@ class CRUDEquipmentService {
              import_date,takeover_status,device_status,created_by,created_time)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
-      var con = (new DataConnection).getConnection()
+      var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setString(1,e.deviceId)
       pst.setString(2, e.name)
@@ -406,8 +405,8 @@ object test {
   def main (args :Array[String]): Unit ={
 //    val test = (new CRUDEquipmentService).searchById(9)
 //    val test2 = (new CRUDEquipmentService).addImagesById(test,9)
-    val result = (new CRUDEquipmentService).searchMetaDataById(26)
-   println(result)
+    //val result = dat.searchMetaDataById(26)
+   //println(result)
 //    for (i <- result.children){
 //      println(""+i)
 //      val test3 = JSON.parse(i.toString)

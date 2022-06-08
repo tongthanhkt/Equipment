@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariDataSource
 
 import java.sql.{Connection, SQLException}
 
-class DataConnection {
+class DatabaseConnection {
 
   val cfg = new HikariConfig("src/main/resources/db.properties")
   val ds = new HikariDataSource(cfg)

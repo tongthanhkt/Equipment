@@ -20,9 +20,6 @@ class FinatraServer extends HttpServer{
 
   override def defaultHttpPort: String = ":8887"
 
-
-  override protected def jacksonModule: Module = CustomJacksonModule
-
   override def configureHttp(router: HttpRouter): Unit = {
     router
       .filter[CORSFilter](beforeRouting = true)
