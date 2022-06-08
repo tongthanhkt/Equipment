@@ -19,8 +19,23 @@ class EquipmentDataService {
     console.log(data);
     return http.post("/add", data);
   }
-  getEquipment() {
-    return http.get("search");
+  addData(data: any) {
+    return http.post("/add", data);
+  }
+  getAllEquipments() {
+    return http.get("search?size=10");
+  }
+  updateEquipment(data: any) {
+    return http.put("/update", data);
+  }
+  getEquipmentDetail(id: any) {
+    return http.get(`/${id}`);
+  }
+  deleteEquipment(id: String) {
+    return http.delete(`/delete?id=${id}`);
+  }
+  searchEquipment(keyword: String) {
+    return http.get(`/search?keyword=${keyword}&size=10`);
   }
 }
 export default new EquipmentDataService();

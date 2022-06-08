@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
+import EquipmentsList from "../views/EquipmentsList.vue";
 import AddEquipment from "../views/AddEquipment.vue";
 import Tables from "../views/Tables.vue";
 import UIElements from "../views/UIElements.vue";
@@ -9,23 +9,19 @@ import Chart from "../views/ChartView.vue";
 import Card from "../views/CardView.vue";
 import Blank from "../views/BlankView.vue";
 import NotFound from "../views/NotFound.vue";
-import EditEquipmentForm from "../views/EditEquipmentForm.vue";
+import EditEquipment from "../views/EditEquipment.vue";
 import EquipmentDetail from "../views/EquipmentDetail.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Login",
-    component: Dashboard,
+    component: EquipmentsList,
   },
-  {
-    path: "/equipment_detail",
-    name: "detail",
-    component: EquipmentDetail,
-  },
+
   {
     path: "/dashboard",
-    name: "Dashboard",
-    component: Dashboard,
+    name: "EquipmentsList",
+    component: EquipmentsList,
   },
   {
     path: "/add-equipment",
@@ -34,8 +30,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/edit-equipment",
-    name: "AddEquipment",
-    component: EditEquipmentForm,
+    name: "EditEquipment",
+    component: EditEquipment,
   },
   {
     path: "/cards",
@@ -68,6 +64,11 @@ const routes: Array<RouteRecordRaw> = [
     component: Blank,
   },
   { path: "/:pathMatch(.*)*", component: NotFound },
+  {
+    path: "/equipments/update/:id",
+    name: "update",
+    component: EditEquipment,
+  },
 ];
 
 const router = createRouter({

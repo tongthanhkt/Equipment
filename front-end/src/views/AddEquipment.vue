@@ -95,8 +95,8 @@
                 autocomplete="country-name"
                 class="w-24 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option>Tháng</option>
-                <option>Năm</option>
+                <option value="0">Tháng</option>
+                <option value="1">Năm</option>
               </select>
             </div>
             <div class="flex flex-col ml-10">
@@ -120,7 +120,7 @@
                 type="text"
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
-                v-model="equipment.depreciate_value"
+                v-model="equipment.depreciated_value"
               />
             </div>
           </div>
@@ -172,7 +172,6 @@ import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options } from "vue-property-decorator";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
-import EquipmentService from "../services/equipments/equipments.api";
 @Options({
   components: {
     DatePicker,
@@ -180,24 +179,25 @@ import EquipmentService from "../services/equipments/equipments.api";
 })
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
-    category_id: "",
-    created_by: "tatthanh@rever.vn",
-    create_time: "51532155215421 ",
     device_id: "",
-    id: "",
-    import_date: "1520215210502",
     name: "",
-    price: "",
     start_status: "",
-    takeover_person_id: "",
-    takeover_person_name: "",
-    takeover_status: "0",
-    updated_by: "tuongvy@rever.vn",
-    updated_time: "",
-    device_status: "",
-    depreciate_value: "",
-    period_type: "",
+    price: "",
+    depreciated_value: "",
     depreciation_period: "",
+    period_type: "",
+    import_date: "07062022",
+    take_over_status: "1",
+    category_id: "1",
+    device_status: "1",
+    created_by: "tatthanh@rever.vn",
+    create_time: "07062022",
+    updated_by: "",
+    updated_time: "",
+    take_over_person_id: "",
+    take_over_person_name: "",
+
+    id: "",
   };
 
   saveEquipment() {
@@ -208,17 +208,18 @@ export default class AddEquipment extends Vue {
       price: this.equipment.price,
       depreciation_period: this.equipment.depreciation_period,
       period_type: this.equipment.period_type,
-      depreciated_value: this.equipment.depreciate_value,
+      depreciated_value: this.equipment.depreciated_value,
       import_date: this.equipment.import_date,
-      takeover_status: this.equipment.takeover_status,
+      take_over_status: this.equipment.take_over_status,
       category_id: this.equipment.category_id,
       created_by: this.equipment.created_by,
       created_time: this.equipment.create_time,
       device_status: this.equipment.device_status,
     };
-    //EquipmentService.addEquipment(data);
-
-    EquipmentDataService.add();
+    console.log(data);
+    EquipmentDataService.addData(data)
+      .then((res) => alert("Thêm thiết bị thành công"))
+      .catch((err) => console.log(err));
   }
 }
 </script>

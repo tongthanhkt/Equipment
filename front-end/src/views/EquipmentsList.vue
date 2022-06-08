@@ -22,10 +22,18 @@
           </span>
 
           <input
-            class="w-32 pl-10 pr-4 py-2 text-indigo-600 border-gray-200 rounded-md sm:w-64 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+            class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-50 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
             type="text"
             placeholder="Thiết bị"
+            v-model="this.inputSeach"
+            v-bind="this.inputSearch"
           />
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            @click="searchEquipments()"
+          >
+            Tìm kiếm
+          </button>
         </div>
       </div>
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
@@ -317,7 +325,11 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ equipment.takeover_status }}
+                        {{
+                          equipment.take_over_status == "1"
+                            ? "Bàn giao"
+                            : "Tồn kho"
+                        }}
                       </div>
                     </div>
                   </div>
@@ -328,7 +340,7 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ equipment.takeover_person_name }}
+                        {{ equipment.take_over_person_name }}
                       </div>
                     </div>
                   </div>
@@ -389,11 +401,15 @@
                   </div>
                 </td>
                 <td>
-                  <div class="flex justify-around">
-                    <span class="text-yellow-500 flex justify-center">
-                      <label class="w-20">Bàn giao</label>
-                      <a href="/edit-equipment" class="mx-2 px-2 rounded-md"
-                        ><svg
+                  <div class="flex justify-around w-48">
+                    <span class="flex justify-center">
+                      <button class="w-20 bg-sky-500">Bàn giao</button>
+
+                      <a
+                        class="mx-2 px-2 rounded-md"
+                        @click.prevent="editEquipment(equipment.id)"
+                      >
+                        <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-5 w-5 text-green-700"
                           viewBox="0 0 20 20"
@@ -409,22 +425,24 @@
                           />
                         </svg>
                       </a>
-                      <form method="POST">
-                        <button class="mx-2 px-2 rounded-md">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-red-700"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      </form>
+
+                      <button
+                        class="mx-2 px-2 rounded-md"
+                        @click="deleteEquipment(equipment.id)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-5 w-5 text-red-700"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
                     </span>
                   </div>
                 </td>
@@ -440,25 +458,43 @@
 
 <script lang="ts">
 import Equipment from "@/types/Equipment";
-import EquipmentService from "../services/equipments/equipments.api";
+import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import { Vue, Options } from "vue-property-decorator";
-import Pagination from "../views/Pagination.vue";
+import Pagination from "./Pagination.vue";
 @Options({
   components: {
     Pagination,
   },
 })
 export default class Dashboard extends Vue {
+  public inputSeach: String = "";
   public equipments: Equipment[] = [];
   mounted() {
     this.retrieveEquipments();
   }
   async retrieveEquipments() {
-    EquipmentService.getAllEquipment()
-      .then((response) => {
-        this.equipments = response.data.equipments;
+    EquipmentDataService.getAllEquipments()
+      .then((res: any) => {
+        this.equipments = res.data.equipments;
       })
       .then(() => console.log(this.equipments));
+  }
+  editEquipment(id: any) {
+    this.$router.push({ name: "update", params: { id: id } });
+  }
+  deleteEquipment(id: String) {
+    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+      EquipmentDataService.deleteEquipment(id)
+        .then((res) => console.log("Delete Successfully !!"))
+        .catch((err) => console.log(err));
+    }
+  }
+  searchEquipments() {
+    const keyword = this.inputSeach;
+
+    EquipmentDataService.searchEquipment(keyword).then((res) => {
+      this.equipments = res.data.equipments;
+    });
   }
 }
 </script>

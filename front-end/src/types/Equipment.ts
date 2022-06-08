@@ -8,13 +8,13 @@ export default interface Equipment {
   name: String;
   price: String;
   start_status: String;
-  takeover_person_id: String;
-  takeover_person_name: String;
-  takeover_status: String;
+  take_over_person_id: String;
+  take_over_person_name: String;
+  take_over_status: String;
   updated_by: String;
   updated_time: String;
   device_status: String;
-  depreciate_value: String;
+  depreciated_value: String;
   depreciation_period: String;
   period_type: String;
 }
