@@ -7,7 +7,7 @@ import Login from "../views/Login.vue";
 import Modal from "../views/Modal.vue";
 import Chart from "../views/ChartView.vue";
 import Card from "../views/CardView.vue";
-import Blank from "../views/BlankView.vue";
+import UploadImage from "../views/UploadImage.vue";
 import NotFound from "../views/NotFound.vue";
 import EditEquipment from "../views/EditEquipment.vue";
 import EquipmentDetail from "../views/EquipmentDetail.vue";
@@ -61,7 +61,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/blank",
     name: "Blank",
-    component: Blank,
+    component: UploadImage,
   },
   { path: "/:pathMatch(.*)*", component: NotFound },
   {

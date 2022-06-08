@@ -59,10 +59,7 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                ></svg>
               </button>
               <label
                 for=""
@@ -132,10 +129,7 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                ></svg>
               </button>
               <label
                 for="show_more"
@@ -239,7 +233,7 @@
             <thead>
               <tr>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="px-6 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Mã thiết bị
                 </th>
@@ -264,7 +258,7 @@
                   Người tạo
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Thời gian nhận
                 </th>
@@ -284,7 +278,7 @@
                   Trạng thái thiết bị
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="px-11 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Thao tác
                 </th>
@@ -486,6 +480,7 @@ export default class Dashboard extends Vue {
     if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
       EquipmentDataService.deleteEquipment(id)
         .then((res) => console.log("Delete Successfully !!"))
+        .then(() => this.retrieveEquipments())
         .catch((err) => console.log(err));
     }
   }
