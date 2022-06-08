@@ -4,7 +4,7 @@
 
 /frond-end-app/tests/e2e/videos/
 /frond-end-app/tests/e2e/screenshots/
-/back-end-app/src/main/resources/db.properties
+/back-end-app/src/main/resources/
 
 
 # local env files
