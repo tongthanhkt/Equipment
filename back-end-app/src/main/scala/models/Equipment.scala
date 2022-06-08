@@ -1,15 +1,8 @@
 package models
 
-
-
-import com.twitter.finagle.http.exp.Multipart
 import com.twitter.finatra.http.annotations.{QueryParam, RouteParam}
-import com.twitter.finatra.http.fileupload.MultipartItem
-import io.fintrospect.parameters.{Body, Form, FormField, MultiPartFile}
-
 import java.io.File
 import java.util
-
 
 case class Page(value:Int,isCurrent:Boolean)
 
@@ -80,13 +73,7 @@ case class SearchRequest (@QueryParam keyword: String = null,
                            @QueryParam page: Int = 1,
                            @QueryParam limit: Int = 10)
 
-//class UploadFilesList (){
-//  var files = new util.ArrayList[UploadFile]
-//
-//  def addFile(file: UploadFile): Unit ={
-//    files.add(file)
-//  }
-//}
+
 
 
 

@@ -1,31 +1,23 @@
 package services
 
-import com.fasterxml.jackson.databind.util.JSONPObject
-import com.google.gson.{Gson, JsonArray}
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.util.jackson.JSON
-import jdk.nashorn.internal.objects.NativeJSON
 import models.{Equipment, SearchRequest, UploadFile}
-import net.liftweb.json.JsonAST.RenderSettings.compact
-import net.liftweb.json.{DefaultFormats, Serialization, parse}
-import org.apache.commons.io.FilenameUtils
+import net.liftweb.json.{DefaultFormats, parse}
 import utils.DatabaseConnection
-
-import java.nio.file.{Files, Paths, StandardOpenOption}
-import java.sql.{SQLException, SQLType, Types}
+import java.sql.SQLException
 import java.util
 import javax.inject.Inject
-import scala.util.control.Breaks.break
-import scala.util.parsing.json.{JSONArray, JSONObject}
+
 
 
 class CRUDEquipmentService @Inject() (
                                        databaseConnection: DatabaseConnection
                                      ) {
+  @throws[SQLException]
   def search(searchRequest: SearchRequest,offset : Int): util.ArrayList[Equipment] ={
 
-    var equipments = new util.ArrayList[Equipment]
-    try{
+    val equipments = new util.ArrayList[Equipment]
       val sql = """
       SELECT *
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
@@ -41,7 +33,7 @@ class CRUDEquipmentService @Inject() (
       and (e.device_status = ? or ? is null)
       and (e.takeover_status = ? or ? is null)
       LIMIT ? OFFSET ?;"""
-      var con = databaseConnection.getConnection()
+      val con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setString(2, searchRequest.keyword)
@@ -83,19 +75,11 @@ class CRUDEquipmentService @Inject() (
       }
       con.close();
       return equipments
-
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return new util.ArrayList[Equipment]
-      }
-    }
   }
 
-  def countBySearch(keyword:String,category:String,take_over_person:String,takeover_status:String,device_status:String): Int ={
-
-    try{
-      val sql = """
+  @throws[SQLException]
+  def countBySearch(keyword:String,category:String,takeOverPerson:String,takeOverStatus:String,deviceStatus:String): Int ={
+    val sql = """
       SELECT count(*) as total
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
                                                   FROM takeover_equipment_info
@@ -117,12 +101,12 @@ class CRUDEquipmentService @Inject() (
       pst.setString(3, keyword)
       pst.setString(4, category)
       pst.setString(5,category)
-      pst.setString(6, take_over_person)
-      pst.setString(7, take_over_person)
-      pst.setString(8, device_status)
-      pst.setString(9,device_status)
-      pst.setString(10, takeover_status)
-      pst.setString(11, takeover_status)
+      pst.setString(6, takeOverPerson)
+      pst.setString(7, takeOverPerson)
+      pst.setString(8, deviceStatus)
+      pst.setString(9,deviceStatus)
+      pst.setString(10, takeOverStatus)
+      pst.setString(11, takeOverStatus)
 
       val rs = pst.executeQuery
       var total =0
@@ -131,39 +115,23 @@ class CRUDEquipmentService @Inject() (
       }
       con.close();
       return total
-
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
-
-      }
-    }
   }
 
-  def deleteById(equipment_id:Int): Int = {
-    try{
+  @throws[SQLException]
+  def deleteById(equipmentId:Int): Int = {
+
       val sql = "UPDATE equipment SET device_status = -1 WHERE id = ?;"
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
-      pst.setInt(1, equipment_id)
+      pst.setInt(1, equipmentId)
       val rs = pst.executeUpdate()
       con.close();
       return rs
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
-
-      }
-    }
   }
 
-  def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipment_id :Int ): Int = {
-    println("Update metadata")
-
-    try{
+  @throws[SQLException]
+  def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipmentId :Int ): Int = {
       val sql = """UPDATE equipment SET metadata_info = ? WHERE id = ?;"""
 
       var con = databaseConnection.getConnection()
@@ -174,21 +142,16 @@ class CRUDEquipmentService @Inject() (
           |{"files": $files}
           |""".stripMargin)
 
-      pst.setInt(2, equipment_id)
+      pst.setInt(2, equipmentId)
       val rs = pst.executeUpdate()
       con.close();
       return rs
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
 
-      }
-    }
   }
 
-  def searchById(equipment_id:Int): Equipment = {
-    try{
+  @throws[SQLException]
+  def searchById(equipmentId:Int): Equipment = {
+
       val sql = """
       SELECT *
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
@@ -202,7 +165,7 @@ class CRUDEquipmentService @Inject() (
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
-      pst.setInt(2, equipment_id)
+      pst.setInt(2, equipmentId)
       val rs = pst.executeQuery()
       var result :Equipment =null
       while ( rs.next) {
@@ -225,25 +188,15 @@ class CRUDEquipmentService @Inject() (
           takeOverPersonId = rs.getString("username"),
           takeOverPersonName = rs.getString("fullname"));
       }
-
-
       con.close();
       return result
-
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return null
-
-      }
-    }
-
   }
 
-  def searchMetaDataById (equipment_id:Int): Map[String, UploadFile] = {
+
+  @throws[Exception]
+  def searchMetaDataById (equipmentId:Int): Map[String, UploadFile] = {
 
     var map : Map[String,UploadFile] = Map()
-    try{
       val sql = """
       SELECT e.metadata_info
       FROM equipment_management.equipment e
@@ -251,7 +204,7 @@ class CRUDEquipmentService @Inject() (
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
-      pst.setInt(2, equipment_id)
+      pst.setInt(2, equipmentId)
       val rs = pst.executeQuery()
       var result : String = ""
       while ( rs.next) {
@@ -266,16 +219,80 @@ class CRUDEquipmentService @Inject() (
       }
 
     return map
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return null
-      }
-    }
+
   }
 
+  @throws[SQLException]
+  def getIdEquipmentDESC():Int = {
+
+      val sql = """
+      SELECT *
+      FROM equipment_management.equipment e where  e.device_status != ?
+      order by e.id desc limit 1;"""
+
+      var con = databaseConnection.getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setInt(1,-1)
+
+      val rs = pst.executeQuery()
+      var id:Int = -1
+      while ( rs.next) {
+        id = rs.getInt("id")
+      }
+
+
+      con.close();
+      return id
+
+
+  }
+
+  @throws[SQLException]
+  def add(e: Equipment): Int={
+    if (e.createdBy.isEmpty )
+      return -1
+    if (e.startStatus > 7 || e.startStatus < 1)
+      return -2
+    if (e.deviceStatus < 0 || e.deviceStatus > 2)
+      return -3
+
+      val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
+             depreciated_value,depreciation_period,period_type,
+             import_date,takeover_status,device_status,created_by,created_time)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+
+      var con = databaseConnection.getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setString(1,e.deviceId)
+      pst.setString(2, e.name)
+      pst.setInt(3,e.startStatus )
+      pst.setInt(4, e.categoryId)
+      pst.setDouble(5,e.price)
+      pst.setDouble(6,e.depreciatedValue )
+      pst.setDouble(7, e.depreciationPeriod)
+      pst.setInt(8, e.periodType)
+      pst.setLong(9,e.importDate)
+      pst.setInt(10, 0)
+      pst.setInt(11, e.deviceStatus)
+      pst.setString(12,e.createdBy)
+      pst.setLong(13,System.currentTimeMillis())
+
+      val rs = pst.executeUpdate()
+      con.close();
+      return rs
+
+
+  }
+
+  @throws[SQLException]
   def updateById(e: Equipment): Int={
-    try{
+    if (e.updatedBy.isEmpty )
+      return -2
+    if (e.startStatus > 7 || e.startStatus < 1)
+      return -3
+    if (e.deviceStatus < -1 || e.deviceStatus > 2)
+      return -4
+
       val sql =
         """UPDATE equipment
           SET  device_id = ? , name = ?, start_status = ? ,category_id = ?,price = ?,
@@ -297,7 +314,7 @@ class CRUDEquipmentService @Inject() (
       pst.setInt(10, 0)
       pst.setInt(11, e.deviceStatus)
       pst.setString(12,e.updatedBy)
-      pst.setLong(13,e.updatedTime)
+      pst.setLong(13,System.currentTimeMillis())
       pst.setInt(14,e.id)
 
 
@@ -306,82 +323,7 @@ class CRUDEquipmentService @Inject() (
       con.close();
       return rs
 
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
 
-      }
-    }
-  }
-
-  def getIdEquipmentDESC():Int = {
-    try{
-      val sql = """
-      SELECT *
-      FROM equipment_management.equipment e where  e.device_status != ?
-      order by e.id desc limit 1;"""
-
-      var con = databaseConnection.getConnection()
-      val pst = con.prepareStatement(sql)
-      pst.setInt(1,-1)
-
-      val rs = pst.executeQuery()
-      var id:Int = -1
-      while ( rs.next) {
-        id = rs.getInt("id")
-      }
-
-
-      con.close();
-      return id
-
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
-
-      }
-    }
-  }
-
-  def add(e: Equipment): Int={
-    try{
-      val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
-             depreciated_value,depreciation_period,period_type,
-             import_date,takeover_status,device_status,created_by,created_time)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);"""
-
-      var con = databaseConnection.getConnection()
-      val pst = con.prepareStatement(sql)
-      pst.setString(1,e.deviceId)
-      pst.setString(2, e.name)
-      pst.setInt(3,e.startStatus )
-      pst.setInt(4, e.categoryId)
-      pst.setDouble(5,e.price)
-      pst.setDouble(6,e.depreciatedValue )
-      pst.setDouble(7, e.depreciationPeriod)
-      pst.setInt(8, e.periodType)
-      pst.setLong(9,e.importDate)
-      pst.setInt(10, 0)
-      pst.setInt(11, e.deviceStatus)
-      pst.setString(12,e.createdBy)
-      pst.setLong(13,e.createdTime)
-
-
-
-      val rs = pst.executeUpdate()
-
-      con.close();
-      return rs
-
-    }catch {
-      case ex: SQLException =>{
-        println(ex)
-        return -1
-
-      }
-    }
   }
 
   def checkFilesUpload (files: Map[String, MultipartItem]): Int ={

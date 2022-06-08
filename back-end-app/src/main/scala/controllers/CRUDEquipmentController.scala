@@ -1,22 +1,13 @@
 package controllers
 
-import com.google.common.primitives.Bytes
+
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
-import utils.DatabaseConnection
-import com.google.gson.Gson
-import com.twitter.concurrent.Offer.never.?
-import com.twitter.finagle.http.exp.Multipart
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.finatra.http.request.RequestUtils
-import com.twitter.io.{Buf, Reader}
-import com.twitter.util.jackson.JSON
 import models.{CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.CRUDEquipmentService
 
-import java.io.{ByteArrayInputStream, File, IOException, ObjectInputStream, PrintWriter}
-import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths, StandardOpenOption}
 import java.sql.SQLException
 import java.util
@@ -24,11 +15,7 @@ import javax.inject.Inject
 import net.liftweb.json._
 import org.apache.commons.io.FilenameUtils
 
-import scala.collection.convert.ImplicitConversions.`list asScalaBuffer`
-import scala.tools.nsc.classpath.FileUtils
-import scala.util.control.Breaks.{break, breakable}
-
-
+import java.io.File
 
 class CRUDEquipmentController @Inject() (
                                        equipmentService: CRUDEquipmentService
@@ -64,7 +51,7 @@ class CRUDEquipmentController @Inject() (
       }
     }}
 
-    get("/count_total_by_filters"){request: SearchRequest => {
+    get("/count_total"){request: SearchRequest => {
       val keyword = request.keyword
       val category = request.categoryId
       val takeOverPerson = request.takeOverPerson
@@ -104,7 +91,7 @@ class CRUDEquipmentController @Inject() (
       } catch {
         case ex: SQLException =>{
           println("Error exception")
-          response.internalServerError
+          response.internalServerError.jsonError(ex.getMessage)
 
         }
       }
@@ -122,8 +109,7 @@ class CRUDEquipmentController @Inject() (
       } catch {
         case ex: SQLException =>{
           println("Error exception")
-          response.internalServerError.
-            body(ex)
+          response.internalServerError.jsonError(ex.getMessage)
 
         }
       }
@@ -150,7 +136,7 @@ class CRUDEquipmentController @Inject() (
       } catch {
         case ex: Exception =>{
           println(ex)
-          response.internalServerError.jsonError(ex.toString)
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }}
@@ -187,6 +173,7 @@ class CRUDEquipmentController @Inject() (
           val updateRow = equipmentService.updateMetaDataById(currentFiles,equipmentId);
           if (updateRow == 1 ){
             response.created.body(uploadFiles)
+
           }
           else response.internalServerError.body("Can not add images")
         }
@@ -194,7 +181,7 @@ class CRUDEquipmentController @Inject() (
       } catch {
         case ex: Exception =>{
           println(ex)
-          response.internalServerError.jsonError(ex.toString)
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
 
@@ -233,7 +220,7 @@ class CRUDEquipmentController @Inject() (
       } catch {
         case ex: Exception =>{
           println(ex)
-          response.internalServerError.jsonError(ex.toString)
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
 
@@ -246,30 +233,44 @@ class CRUDEquipmentController @Inject() (
         if (result ==1) {
           val equipmentId= equipmentService.getIdEquipmentDESC();
           response.created.json(
-            s"""
-              |id: $equipmentId
+            s"""|id: $equipmentId
               |""".stripMargin)
-        } else
-          response.internalServerError
+        }  else if (result == -1)
+          response.internalServerError.jsonError("There is not information of created person")
+        else if (result == -2)
+          response.internalServerError.jsonError("Start status of device is incorrect")
+        else if (result == -3)
+          response.internalServerError.jsonError("Device status of equipment is incorrect")
+        else  response.internalServerError
       } catch {
-        case ex: SQLException =>{
+        case ex: Exception =>{
           println("Error exception")
-          response.internalServerError
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }}
 
     put("/update"){request:Equipment=>{
       try {
+        val e = equipmentService.searchById(request.id)
+        if (e != null) {
+          response.internalServerError.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+        }
+
         val result = equipmentService.updateById(request)
         if (result ==1)
           response.created.body(s"Update equipment successfully. ")
-        else
-          response.internalServerError
+        else if (result == -1)
+          response.internalServerError.jsonError("There is not information of update person")
+        else if (result == -2)
+          response.internalServerError.jsonError("Start status of device is incorrect")
+        else if (result == -3)
+          response.internalServerError.jsonError("Device status of equipment is incorrect")
+        else  response.internalServerError
       } catch {
-        case ex: SQLException =>{
+        case ex: Exception =>{
           println("Error exception")
-          response.internalServerError
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }}
@@ -315,5 +316,7 @@ class CRUDEquipmentController @Inject() (
 //      }
 //    }
 //  }}
+
+
 
 }
