@@ -27,27 +27,28 @@ class CRUDEquipmentService @Inject() (
                                                 as used on used.equipment_id=e.id
                                             left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ?
-      and (match(e.name,e.device_id) against (?) or ? is null)
-      and (e.category_id = ? or ? is null)
-      and (match(u.username,u.fullname) against (?) or ? is null)
-      and (e.device_status = ? or ? is null)
-      and (e.takeover_status = ? or ? is null)
+      and (? is null or match(e.name) against (?) or e.device_id = ? )
+      and (? is null or e.category_id = ? )
+      and (? is null or match(u.username,u.fullname) against (?) )
+      and (? is null or e.device_status = ? )
+      and (? is null or e.takeover_status = ? )
       LIMIT ? OFFSET ?;"""
       val con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setString(2, searchRequest.keyword)
       pst.setString(3, searchRequest.keyword)
-      pst.setString(4, searchRequest.categoryId)
-      pst.setString(5,searchRequest.categoryId)
-      pst.setString(6, searchRequest.takeOverPerson)
+      pst.setString(4, searchRequest.keyword)
+      pst.setString(5, searchRequest.categoryId)
+      pst.setString(6,searchRequest.categoryId)
       pst.setString(7, searchRequest.takeOverPerson)
-      pst.setString(8, searchRequest.deviceStatus)
-      pst.setString(9,searchRequest.deviceStatus)
-      pst.setString(10, searchRequest.takeOverStatus)
+      pst.setString(8, searchRequest.takeOverPerson)
+      pst.setString(9, searchRequest.deviceStatus)
+      pst.setString(10,searchRequest.deviceStatus)
       pst.setString(11, searchRequest.takeOverStatus)
-      pst.setInt(12,searchRequest.limit)
-      pst.setInt(13,offset)
+      pst.setString(12, searchRequest.takeOverStatus)
+      pst.setInt(13,searchRequest.limit)
+      pst.setInt(14,offset)
       val rs = pst.executeQuery
       while ( rs.next) {
         val e = Equipment(id=rs.getInt("id"),
@@ -87,26 +88,27 @@ class CRUDEquipmentService @Inject() (
                                                                     FROM takeback_equipment_info))
                                                 as used on used.equipment_id=e.id
                                             left join  user u on used.take_over_person_id = u.username
-      WHERE device_status != ?
-      and (match(e.name,e.device_id) against (?) or ? is null)
-      and (e.category_id = ? or ? is null)
-      and (match(u.username,u.fullname) against (?) or ? is null)
-      and (e.device_status = ? or ? is null)
-      and (e.takeover_status = ? or ? is null)
+      WHERE e.device_status != ?
+      and (? is null or match(e.name) against (?) or e.device_id = ? )
+      and (? is null or e.category_id = ? )
+      and (? is null or match(u.username,u.fullname) against (?) )
+      and (? is null or e.device_status = ? )
+      and (? is null or e.takeover_status = ? )
       """
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1,-1)
       pst.setString(2, keyword)
       pst.setString(3, keyword)
-      pst.setString(4, category)
-      pst.setString(5,category)
-      pst.setString(6, takeOverPerson)
+      pst.setString(4, keyword)
+      pst.setString(5, category)
+      pst.setString(6,category)
       pst.setString(7, takeOverPerson)
-      pst.setString(8, deviceStatus)
-      pst.setString(9,deviceStatus)
-      pst.setString(10, takeOverStatus)
+      pst.setString(8, takeOverPerson)
+      pst.setString(9, deviceStatus)
+      pst.setString(10,deviceStatus)
       pst.setString(11, takeOverStatus)
+      pst.setString(12, takeOverStatus)
 
       val rs = pst.executeQuery
       var total =0

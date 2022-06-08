@@ -24,7 +24,7 @@ class CRUDEquipmentController @Inject() (
   prefix("/equipment"){
 
     get("/search"){request: SearchRequest => {
-
+      println(request)
       try {
         val totalEquipments  = equipmentService.countBySearch(request.keyword,request.categoryId,request.takeOverPerson,request.takeOverStatus,request.deviceStatus)
         var nPages:Int = totalEquipments/request.limit;
@@ -43,10 +43,9 @@ class CRUDEquipmentController @Inject() (
          pageNumbers = pageNumbers,firstPage = +request.page==1,
           lastPage = +currentPage == nPages,previousPage = +currentPage-1,nextPage = +currentPage+1))
       } catch {
-        case ex: SQLException =>{
-          println("Error exception")
-          response.internalServerError.
-            body("Error SQLException")
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }}
@@ -69,10 +68,9 @@ class CRUDEquipmentController @Inject() (
           totalDamagedEquipments = totalDamagedEquipments ,
           totalLostEquipments = totalLostEquipments))
       } catch {
-        case ex: SQLException =>{
-          println("Error exception")
-          response.internalServerError.
-            body("Error SQLException")
+        case ex:Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }}
@@ -89,8 +87,8 @@ class CRUDEquipmentController @Inject() (
 
 
       } catch {
-        case ex: SQLException =>{
-          println("Error exception")
+        case ex: Exception =>{
+          println(ex)
           response.internalServerError.jsonError(ex.getMessage)
 
         }
@@ -107,8 +105,8 @@ class CRUDEquipmentController @Inject() (
           response.noContent
         else response.ok.body(result)
       } catch {
-        case ex: SQLException =>{
-          println("Error exception")
+        case ex: Exception =>{
+          println(ex)
           response.internalServerError.jsonError(ex.getMessage)
 
         }
@@ -244,7 +242,7 @@ class CRUDEquipmentController @Inject() (
         else  response.internalServerError
       } catch {
         case ex: Exception =>{
-          println("Error exception")
+          println(ex)
           response.internalServerError.jsonError(ex.getMessage)
         }
       }
@@ -269,7 +267,7 @@ class CRUDEquipmentController @Inject() (
         else  response.internalServerError
       } catch {
         case ex: Exception =>{
-          println("Error exception")
+          println(ex)
           response.internalServerError.jsonError(ex.getMessage)
         }
       }
