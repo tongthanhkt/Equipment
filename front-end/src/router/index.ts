@@ -14,12 +14,12 @@ import EquipmentDetail from "../views/EquipmentDetail.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Login",
+    name: "Home",
     component: EquipmentsList,
   },
 
   {
-    path: "/dashboard",
+    path: "/equipments",
     name: "EquipmentsList",
     component: EquipmentsList,
   },
@@ -33,37 +33,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "EditEquipment",
     component: EditEquipment,
   },
-  {
-    path: "/cards",
-    name: "Cards",
-    component: Card,
-  },
-  {
-    path: "/tables",
-    name: "Tables",
-    component: Tables,
-  },
-  {
-    path: "/ui-elements",
-    name: "UIElements",
-    component: UIElements,
-  },
-  {
-    path: "/modal",
-    name: "Modal",
-    component: Modal,
-  },
-  {
-    path: "/charts",
-    name: "Chart",
-    component: Chart,
-  },
-  {
-    path: "/blank",
-    name: "Blank",
-    component: UploadImage,
-  },
-  { path: "/:pathMatch(.*)*", component: NotFound },
+
+  // {
+  //   path: "/upload_image",
+  //   name: "UploadImage",
+  //   component: UploadImage,
+  // },
   {
     path: "/equipments/update/:id",
     name: "update",

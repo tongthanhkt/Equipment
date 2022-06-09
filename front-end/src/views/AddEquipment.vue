@@ -127,11 +127,7 @@
           <div class="flex flex-row">
             <div class="flex flex-col">
               <label class="leading-loose">Tệp đính kèm </label>
-              <input
-                type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                placeholder=""
-              />
+              <UploadImage />
             </div>
           </div>
         </div>
@@ -172,9 +168,11 @@ import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options } from "vue-property-decorator";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import UploadImage from "./UploadImage.vue";
 @Options({
   components: {
     DatePicker,
+    UploadImage,
   },
 })
 export default class AddEquipment extends Vue {

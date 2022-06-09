@@ -40,7 +40,7 @@
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Dashboard' ? activeClass : inactiveClass]"
-          to="/dashboard"
+          to="/equipments"
         >
           <svg
             class="w-5 h-5"

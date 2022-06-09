@@ -61,7 +61,7 @@ export default {
   name: "upload-image",
   data() {
     return {
-      currentImage: undefined,
+      currentImage: File,
       previewImage: undefined,
       progress: 0,
       message: "",
@@ -74,7 +74,10 @@ export default {
       this.previewImage = URL.createObjectURL(this.currentImage);
     },
     upload() {
-      UploadService.upload(this.currentImage)
+      this.progress = 0;
+      UploadService.upload(this.currentImage, (event) => {
+        this.progress = Math.round((100 * event.loaded) / event.total);
+      })
         .then((images) => (this.imageInfos = images.data))
         .catch((err) => {
           this.progress = 0;

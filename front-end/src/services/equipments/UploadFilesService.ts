@@ -1,18 +1,12 @@
 import http from "@/http-common";
 class UploadFilesService {
-  upload(file: any) {
+  upload(file: File, onUploadProgress: any) {
     console.log(file);
-    let formData = new FormData();
-    formData.append("upload.jpg", file);
-    console.log(formData.values);
-    return http.post("/photo/5/upload", formData, {
-      headers: {
-        "Conntent-Type": "multipart/form-data",
-      },
-    });
+    const formData = new FormData();
+    formData.append(file.name, file);
+    console.log(formData);
+    return http.post("/photo/5/upload", formData);
   }
-  getFiles() {
-    return http.get("/files");
-  }
+  getFileImage() {}
 }
 export default new UploadFilesService();
