@@ -1,10 +1,6 @@
 .DS_Store
-/front-end/node_modules
-/front-end/dist
-
-/front-end/tests/e2e/videos/
-/front-end/tests/e2e/screenshots/
-/back-end-app/src/main/resources/
+node_modules
+/dist
 
 
 # local env files
