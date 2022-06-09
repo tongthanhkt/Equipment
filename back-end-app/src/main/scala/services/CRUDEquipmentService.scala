@@ -134,7 +134,7 @@ class CRUDEquipmentService @Inject() (
 
   @throws[SQLException]
   def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipmentId :Int ): Int = {
-      val sql = """UPDATE equipment SET metadata_info = ? WHERE id = ?;"""
+      val sql = """UPDATE equipment SET metadata_info = ? WHERE e.device_status != ? and  id = ?;"""
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
@@ -143,8 +143,8 @@ class CRUDEquipmentService @Inject() (
         s"""
           |{"files": $files}
           |""".stripMargin)
-
-      pst.setInt(2, equipmentId)
+    pst.setInt(2, -1)
+      pst.setInt(3, equipmentId)
       val rs = pst.executeUpdate()
       con.close();
       return rs
@@ -300,7 +300,7 @@ class CRUDEquipmentService @Inject() (
           SET  device_id = ? , name = ?, start_status = ? ,category_id = ?,price = ?,
                        depreciated_value = ? ,depreciation_period = ? ,period_type = ?,
                        import_date = ?,takeover_status = ?,device_status = ? ,updated_by = ?,updated_time = ?
-          WHERE id = ?;"""
+          WHERE device_status != ? and id = ?;"""
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
@@ -317,7 +317,8 @@ class CRUDEquipmentService @Inject() (
       pst.setInt(11, e.deviceStatus)
       pst.setString(12,e.updatedBy)
       pst.setLong(13,System.currentTimeMillis())
-      pst.setInt(14,e.id)
+      pst.setInt(14,-1)
+      pst.setInt(15,e.id)
 
 
       val rs = pst.executeUpdate()
