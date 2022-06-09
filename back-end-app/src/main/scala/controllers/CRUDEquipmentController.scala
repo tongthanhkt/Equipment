@@ -5,6 +5,7 @@ import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.finatra.http.request.RequestUtils
+import com.twitter.util.jackson.JSON
 import models.{CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.CRUDEquipmentService
 
@@ -124,7 +125,31 @@ class CRUDEquipmentController @Inject() (
         val searchFile = currentFiles.get(imageName)
 
         if (!searchFile.isEmpty ){
-          response.ok.file(new File(searchFile.get.file_url))
+          response.ok.file(new File(searchFile.get.file_url)).header("File-Extension",searchFile.get.file_extension)
+        }
+        else response.internalServerError.json(
+          """
+            |msg: "Can not retrieve images"
+            |""".stripMargin)
+
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+    }}
+
+    get("/photo/:equipment_id"){request: Request =>{
+      val equipmentId = request.getIntParam("equipment_id")
+      val imageName = request.getParam("filename")
+
+      try {
+        val currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
+
+
+        if (!currentFiles.isEmpty ){
+          response.ok.body(currentFiles)
         }
         else response.internalServerError.json(
           """
@@ -140,6 +165,7 @@ class CRUDEquipmentController @Inject() (
     }}
 
     post("/photo/:equipment_id/upload"){request: Request =>{
+      println(Request)
       val equipmentId = request.getIntParam("equipment_id")
       val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
       implicit val formats = DefaultFormats
@@ -164,7 +190,7 @@ class CRUDEquipmentController @Inject() (
             val size = data.length
             println(image.get.contentType.get.split("/")(0))
             Files.write(path,data, StandardOpenOption.CREATE)
-            uploadFiles = uploadFiles + (fileName -> UploadFile(file_url = path.toString,file_name = fileName,size = size ,file_extension=extension))
+            uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = path.toString,file_name = baseName,size = size ,file_extension=extension))
           }
           var currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
           currentFiles = currentFiles ++ uploadFiles;
