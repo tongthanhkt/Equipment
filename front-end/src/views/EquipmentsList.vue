@@ -22,7 +22,7 @@
           </span>
 
           <input
-            class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-50 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+            class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
             type="text"
             placeholder="Thiết bị"
             v-model="this.inputSeach"

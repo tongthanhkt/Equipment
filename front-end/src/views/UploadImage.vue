@@ -68,22 +68,13 @@ export default {
       imageInfos: [],
     };
   },
-  mounted() {
-    UploadService.getFiles().then((response) => {
-      this.imageInfos = response.data;
-    });
-  },
   methods: {
     selectImage() {
-      (this.currentImage = this.$refs.file.files.item(0)),
-        (this.previewImage = URL.createObjectURL(this.currentImage));
-      (this.progress = 0), (this.message = "");
+      this.currentImage = this.$refs.file.files.item(0);
+      this.previewImage = URL.createObjectURL(this.currentImage);
     },
     upload() {
-      this.progress = 0;
-      UploadService.upload(this.currentImage, (event) => {
-        this.progress = Math.round((100 * event.load) / event.total);
-      })
+      UploadService.upload(this.currentImage)
         .then((images) => (this.imageInfos = images.data))
         .catch((err) => {
           this.progress = 0;
