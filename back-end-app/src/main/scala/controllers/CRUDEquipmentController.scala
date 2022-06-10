@@ -1,22 +1,10 @@
 package controllers
 
-
-import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
-import com.twitter.finatra.http.fileupload.MultipartItem
-import com.twitter.finatra.http.request.RequestUtils
-import com.twitter.util.jackson.JSON
 import models.{CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.CRUDEquipmentService
-
-import java.nio.file.{Files, Paths, StandardOpenOption}
-import java.sql.SQLException
 import java.util
 import javax.inject.Inject
-import net.liftweb.json._
-import org.apache.commons.io.FilenameUtils
-
-import java.io.File
 
 class CRUDEquipmentController @Inject() (
                                        equipmentService: CRUDEquipmentService
@@ -116,141 +104,6 @@ class CRUDEquipmentController @Inject() (
     }
     }
 
-    get("/photo/:equipment_id/:filename"){request: Request =>{
-      val equipmentId = request.getIntParam("equipment_id")
-      val imageName = request.getParam("filename")
-
-      try {
-        val currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
-        val searchFile = currentFiles.get(imageName)
-
-        if (!searchFile.isEmpty ){
-          response.ok.file(new File(searchFile.get.file_url)).header("File-Extension",searchFile.get.file_extension)
-        }
-        else response.internalServerError.json(
-          """
-            |msg: "Can not retrieve images"
-            |""".stripMargin)
-
-      } catch {
-        case ex: Exception =>{
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-    }}
-
-    get("/photo/:equipment_id"){request: Request =>{
-      val equipmentId = request.getIntParam("equipment_id")
-      val imageName = request.getParam("filename")
-
-      try {
-        val currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
-
-
-        if (!currentFiles.isEmpty ){
-          response.ok.body(currentFiles)
-        }
-        else response.internalServerError.json(
-          """
-            |msg: "Can not retrieve images"
-            |""".stripMargin)
-
-      } catch {
-        case ex: Exception =>{
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-    }}
-
-    post("/photo/:equipment_id/upload"){request: Request =>{
-      println(Request)
-      val equipmentId = request.getIntParam("equipment_id")
-      val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
-      implicit val formats = DefaultFormats
-      try {
-        val dirName :String = System.getProperty("user.dir")+"/images/";
-        var checkFilesUpload = equipmentService.checkFilesUpload(map);
-        if (checkFilesUpload == -1){
-          response.internalServerError.body("Only selected images")
-        }
-        else if (checkFilesUpload == 0){
-          response.internalServerError.body("Only selected image <= 5MB")
-        }
-        else if (checkFilesUpload == 1){
-          var uploadFiles : Map[String, UploadFile] = Map();
-          for (key <- map.keys){
-            val image = map.get(key)
-            val fileName :String = "image"+equipmentId+"_"+System.currentTimeMillis();
-            val extension = FilenameUtils.getExtension(key)
-            val baseName = fileName.concat(".").concat(extension)
-            val path = Paths.get(dirName,baseName)
-            val data = image.get.data
-            val size = data.length
-            println(image.get.contentType.get.split("/")(0))
-            Files.write(path,data, StandardOpenOption.CREATE)
-            uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = path.toString,file_name = baseName,size = size ,file_extension=extension))
-          }
-          var currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
-          currentFiles = currentFiles ++ uploadFiles;
-          val updateRow = equipmentService.updateMetaDataById(currentFiles,equipmentId);
-          if (updateRow == 1 ){
-            response.created.body(uploadFiles)
-
-          }
-          else response.internalServerError.body("Can not add images")
-        }
-
-      } catch {
-        case ex: Exception =>{
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-
-    }
-    }
-
-    delete("/photo/:equipment_id/:filename/delete") {request: Request =>{
-      val equipmentId = request.getIntParam("equipment_id")
-      val imageName = request.getParam("filename")
-
-      try {
-        var currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(equipmentId)
-        if (!currentFiles.isEmpty ){
-          val searchFile = currentFiles.get(imageName)
-          if(!searchFile.isEmpty && searchFile.get.deleteFile()){
-            currentFiles = currentFiles.-(imageName)
-
-            val updateRow = equipmentService.updateMetaDataById(currentFiles,equipmentId);
-
-            if (updateRow == 1 ){
-              response.ok.body("Delete image successfully")
-            }
-            else response.internalServerError.body("Can not delete images")
-          }
-          else response.internalServerError.json(
-            """
-              |msg: "Can not delete images"
-              |""".stripMargin)
-
-        }
-        else response.internalServerError.json(
-          """
-            |msg: "Can not delete images"
-            |""".stripMargin)
-
-      } catch {
-        case ex: Exception =>{
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-
-    }
-    }
-
     post("/add"){request:Equipment =>{
       try {
         val result = equipmentService.add(request)
@@ -340,7 +193,5 @@ class CRUDEquipmentController @Inject() (
 //      }
 //    }
 //  }}
-
-
 
 }

@@ -19,6 +19,7 @@ case class Equipment(
                              takeOverStatus: Int = 0 ,
                              categoryId: Int,
                              deviceStatus : Int = 0,
+                             metadataInfo: Map[String, UploadFile] = Map(),
                              createdBy: String = null,
                              createdTime: Long = 0,
                              updatedBy: String = null,
@@ -52,14 +53,7 @@ case class UploadFile(file_url : String,
                       size : Long,
                       file_extension: String
                 ){
-  def deleteFile():Boolean = {
-    val fileTemp = new File(file_url)
-    if (fileTemp.exists) {
-      fileTemp.delete()
-      return true
-    }
-    return false
-  }
+
 }
 
 case class DeleteImageByIdRequest(@RouteParam equipmentId :Int,

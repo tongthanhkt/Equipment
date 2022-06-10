@@ -1,7 +1,7 @@
 package modules
 
 import com.twitter.inject.TwitterModule
-import services.CRUDEquipmentService
+import services.{CRUDEquipmentService, FileService}
 import utils.DatabaseConnection
 
 import javax.inject.Singleton
@@ -12,6 +12,12 @@ object DependencyModule extends TwitterModule{
 
     new CRUDEquipmentService(databaseConnection)
   }
+
+  @Singleton
+  def provideFileService ():FileService  = {
+    new FileService()
+  }
+
   @Singleton def provideDatabaseConnection: DatabaseConnection = {
 
     new DatabaseConnection

@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}
 import com.twitter.finatra.http.routing.HttpRouter
-import controllers.CRUDEquipmentController
+import controllers.{CRUDEquipmentController, FileController}
 import filters.{CORSFilter, CommonExceptionMapping}
 import modules.{CustomJacksonModule, DependencyModule}
 
@@ -23,8 +23,8 @@ class FinatraServer extends HttpServer{
   override def configureHttp(router: HttpRouter): Unit = {
     router
       .filter[CORSFilter](beforeRouting = true)
-
-      .add[ CRUDEquipmentController]
+      .add[CRUDEquipmentController]
+      .add[FileController]
       .exceptionMapper[CommonExceptionMapping]
 
   }

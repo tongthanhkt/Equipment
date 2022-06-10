@@ -131,26 +131,7 @@ class CRUDEquipmentService @Inject() (
       con.close();
       return rs
   }
-
-  @throws[SQLException]
-  def updateMetaDataById(uploadfiles : Map[String, UploadFile],equipmentId :Int ): Int = {
-      val sql = """UPDATE equipment SET metadata_info = ? WHERE e.device_status != ? and  id = ?;"""
-
-      var con = databaseConnection.getConnection()
-      val pst = con.prepareStatement(sql)
-      val files =JSON.write(uploadfiles)
-      pst.setString(1,
-        s"""
-          |{"files": $files}
-          |""".stripMargin)
-    pst.setInt(2, -1)
-      pst.setInt(3, equipmentId)
-      val rs = pst.executeUpdate()
-      con.close();
-      return rs
-
-  }
-
+  
   @throws[SQLException]
   def searchById(equipmentId:Int): Equipment = {
 
@@ -183,6 +164,7 @@ class CRUDEquipmentService @Inject() (
           takeOverStatus=rs.getInt("takeover_status"),
           categoryId = rs.getInt("category_id"),
           deviceStatus = rs.getInt("device_status"),
+          metadataInfo = toMap(rs.getString("metadata_info")),
           createdBy = rs.getString("created_by"),
           createdTime = rs.getLong("created_time"),
           updatedBy = rs.getString("updated_by"),
@@ -192,36 +174,6 @@ class CRUDEquipmentService @Inject() (
       }
       con.close();
       return result
-  }
-
-
-  @throws[Exception]
-  def searchMetaDataById (equipmentId:Int): Map[String, UploadFile] = {
-
-    var map : Map[String,UploadFile] = Map()
-      val sql = """
-      SELECT e.metadata_info
-      FROM equipment_management.equipment e
-      WHERE e.device_status != ? and e.id = ? and e.metadata_info is not null;"""
-      var con = databaseConnection.getConnection()
-      val pst = con.prepareStatement(sql)
-      pst.setInt(1,-1)
-      pst.setInt(2, equipmentId)
-      val rs = pst.executeQuery()
-      var result : String = ""
-      while ( rs.next) {
-
-          result = rs.getObject("metadata_info").toString
-      }
-      con.close();
-      val images = parse(result)
-      implicit val formats = DefaultFormats
-      for (image <- (images \\ "files" ).children){
-        map = image.extract[Map[String,UploadFile]]
-      }
-
-    return map
-
   }
 
   @throws[SQLException]
@@ -260,8 +212,8 @@ class CRUDEquipmentService @Inject() (
 
       val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
              depreciated_value,depreciation_period,period_type,
-             import_date,takeover_status,device_status,created_by,created_time)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+             import_date,takeover_status,device_status,created_by,created_time,metadata_info)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
@@ -278,6 +230,10 @@ class CRUDEquipmentService @Inject() (
       pst.setInt(11, e.deviceStatus)
       pst.setString(12,e.createdBy)
       pst.setLong(13,System.currentTimeMillis())
+      pst.setString(14,
+        s"""
+           |{"files": ${JSON.write(e.metadataInfo)}}
+           |""".stripMargin)
 
       val rs = pst.executeUpdate()
       con.close();
@@ -298,7 +254,7 @@ class CRUDEquipmentService @Inject() (
       val sql =
         """UPDATE equipment
           SET  device_id = ? , name = ?, start_status = ? ,category_id = ?,price = ?,
-                       depreciated_value = ? ,depreciation_period = ? ,period_type = ?,
+                       depreciated_value = ? ,depreciation_period = ? ,period_type = ?,metadata_info = ?,
                        import_date = ?,takeover_status = ?,device_status = ? ,updated_by = ?,updated_time = ?
           WHERE device_status != ? and id = ?;"""
 
@@ -312,13 +268,17 @@ class CRUDEquipmentService @Inject() (
       pst.setDouble(6,e.depreciatedValue )
       pst.setDouble(7, e.depreciationPeriod)
       pst.setInt(8, e.periodType)
-      pst.setLong(9,e.importDate)
-      pst.setInt(10, 0)
-      pst.setInt(11, e.deviceStatus)
-      pst.setString(12,e.updatedBy)
-      pst.setLong(13,System.currentTimeMillis())
-      pst.setInt(14,-1)
-      pst.setInt(15,e.id)
+      pst.setString(9,
+        s"""
+           |{"files": ${JSON.write(e.metadataInfo)}}
+           |""".stripMargin)
+      pst.setLong(10,e.importDate)
+      pst.setInt(11, 0)
+      pst.setInt(12, e.deviceStatus)
+      pst.setString(13,e.updatedBy)
+      pst.setLong(14,System.currentTimeMillis())
+      pst.setInt(15,-1)
+      pst.setInt(16,e.id)
 
 
       val rs = pst.executeUpdate()
@@ -329,19 +289,15 @@ class CRUDEquipmentService @Inject() (
 
   }
 
-  def checkFilesUpload (files: Map[String, MultipartItem]): Int ={
-    for (key <- files.keys){
-      if (key!= "information" ){
-        val image = files.get(key)
-        if ( image.get.data.length > 5000000 ){
-         return 0
-        }
-        else if (image.get.contentType.get.split("/")(0) != "image"){
-         return -1
-        }
-      }
+  private def toMap (metadata : String): Map[String, UploadFile] ={
+    var map : Map[String,UploadFile] = Map()
+
+    val images = parse(metadata)
+    implicit val formats = DefaultFormats
+    for (image <- (images \\ "files" ).children){
+      map = image.extract[Map[String,UploadFile]]
     }
-    return 1
+    return map
   }
 }
 
