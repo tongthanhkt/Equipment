@@ -131,7 +131,7 @@ class CRUDEquipmentService @Inject() (
       con.close();
       return rs
   }
-  
+
   @throws[SQLException]
   def searchById(equipmentId:Int): Equipment = {
 

@@ -51,7 +51,7 @@ class FileService {
       val path = Paths.get(dirName,baseName)
       val data = file.data
       val size = data.length
-      println(file.contentType.get.split("/")(0))
+
       Files.write(path,data, StandardOpenOption.CREATE)
       uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = path.toString,file_name = baseName,size = size ,file_extension=extension))
     }

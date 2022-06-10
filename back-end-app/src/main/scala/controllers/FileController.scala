@@ -13,7 +13,7 @@ class FileController @Inject() (fileService: FileService) extends Controller {
 
   prefix("/file"){
 
-    get("/:file_url"){request: Request =>{
+    get("/get_file"){request: Request =>{
 
       val fileUrl = request.getParam("file_url")
 
@@ -29,7 +29,7 @@ class FileController @Inject() (fileService: FileService) extends Controller {
 
     post("/upload_images"){request: Request =>{
 
-      val equipmentId = request.getIntParam("equipment_id")
+
       val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
 
       try {
@@ -60,17 +60,14 @@ class FileController @Inject() (fileService: FileService) extends Controller {
     }
     }
 
-    delete("/:file_url/delete") {request: Request =>{
+    delete("/delete") {request: Request =>{
       val fileUrl = request.getParam("file_url")
 
       try {
         if (fileService.deleteFile(fileUrl) ){
           response.ok.body("Delete file successfully")
         }
-        else response.internalServerError.jsonError(
-          """
-            |msg: "Can not delete file"
-            |""".stripMargin)
+        else response.internalServerError.jsonError("File does not exist")
       } catch {
         case ex: Exception =>{
           println(ex)
