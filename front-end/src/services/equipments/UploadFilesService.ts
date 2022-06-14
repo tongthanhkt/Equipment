@@ -1,12 +1,12 @@
 import http from "@/http-common";
 class UploadFilesService {
-  upload(file: File, onUploadProgress: any) {
-    console.log(file);
+  upload(file: File) {
     const formData = new FormData();
-    formData.append(file.name, file);
-    console.log(formData);
-    return http.post("/photo/5/upload", formData);
+    formData.append(file.name, file, file.name);
+    return http.post("/file/upload_images", formData);
   }
-  getFileImage() {}
+  deleteFile(file_url: string) {
+    return http.delete(`/file/delete?file_url=${file_url}`);
+  }
 }
 export default new UploadFilesService();

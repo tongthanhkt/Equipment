@@ -1,3 +1,11 @@
+<style scoped>
+.img-wrap {
+  position: relative;
+}
+.img-wrap .close {
+  position: absolute;
+}
+</style>
 <template>
   <div class="relative bg-white shadow rounded-3xl sm:p-10 w-3/6 ml-80">
     <div>
@@ -24,7 +32,7 @@
               <label class="leading-loose">Tên thiết bị</label>
               <input
                 type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.name"
               />
@@ -118,7 +126,7 @@
               <label class="leading-loose">Giá trị khấu hao</label>
               <input
                 type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-32 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.depreciated_value"
               />
@@ -127,7 +135,51 @@
           <div class="flex flex-row">
             <div class="flex flex-col">
               <label class="leading-loose">Tệp đính kèm </label>
-              <UploadImage />
+              <div>
+                <div class="row">
+                  <div class="col-8">
+                    <label class="btn btn-default p-0">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref="file"
+                        @change="selectImage"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div v-if="currentImage" class="progress">
+                  <div
+                    class="progress-bar progress-bar-info"
+                    role="progressbar"
+                    :aria-valuenow="progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    :style="{ width: progress + '%' }"
+                  >
+                    {{ progress }}%
+                  </div>
+                </div>
+
+                <div v-if="message" class="alert alert-secondary" role="alert">
+                  {{ message }}
+                </div>
+                <div class="card mt-3">
+                  <div class="card-header">List of Images</div>
+                  <ul class="list-group list-group-flush">
+                    <div v-for="(image, index) in allImageCurrentURL">
+                      <div>
+                        <div class="img-wrap">
+                          <span class="close" @click="deleteImage(index)"
+                            >&times;</span
+                          >
+                          <img class="w-64 preview my-3" :src="image" alt="" />
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -164,10 +216,11 @@
   </div>
 </template>
 <script lang="ts">
+import UploadService from "../services/equipments/UploadFilesService";
+import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
-import { Vue, Options } from "vue-property-decorator";
-import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import { Vue, Options, Ref } from "vue-property-decorator";
 import UploadImage from "./UploadImage.vue";
 @Options({
   components: {
@@ -194,11 +247,42 @@ export default class AddEquipment extends Vue {
     updated_time: "",
     take_over_person_id: "",
     take_over_person_name: "",
-
     id: "",
+    metadata_info: "",
+    category_name: "",
   };
 
-  saveEquipment() {
+  @Ref("file") inpuFile!: HTMLInputElement;
+  private allImageCurrentURL: String[] = [];
+  private currentImage: File | null | undefined = null;
+  private allImageFile: File[] = [];
+  selectImage(e: InputEvent) {
+    const value = e!.target as HTMLInputElement;
+    this.currentImage = value?.files?.item(0);
+    if (this.currentImage != null) {
+      const temp = URL.createObjectURL(this.currentImage);
+      this.allImageFile.push(this.currentImage);
+      this.allImageCurrentURL.push(temp);
+    }
+  }
+  deleteImage(index: number) {
+    this.allImageCurrentURL.splice(index, 1);
+    this.allImageFile.splice(index, 1);
+  }
+  upload() {
+    console.log(this.allImageFile);
+    console.log(this.allImageCurrentURL);
+  }
+  async getImageFile() {
+    let obj = {};
+    for (let i = 0; i < this.allImageFile.length; i++) {
+      await UploadService.upload(this.allImageFile[i]).then((response) => {
+        obj = Object.assign(response.data, obj);
+      });
+    }
+    return obj;
+  }
+  async saveEquipment() {
     const data = {
       device_id: this.equipment.device_id,
       name: this.equipment.name,
@@ -213,11 +297,19 @@ export default class AddEquipment extends Vue {
       created_by: this.equipment.created_by,
       created_time: this.equipment.create_time,
       device_status: this.equipment.device_status,
+      metadata_info: await this.getImageFile(),
     };
-    console.log(data);
     EquipmentDataService.addData(data)
-      .then((res) => alert("Thêm thiết bị thành công"))
-      .catch((err) => console.log(err));
+      .then(() => alert("Thêm thiết bị thành công !!"))
+      .catch((err) => alert("Không thể thêm thiết bị"));
+    // const a = this.allImageFile.forEach((imageFile) => {});
+    // await Promise.all([a]).then((values) => console.log(values));
+
+    // console.log(data);
+    // this.upload();
+    // EquipmentDataService.addData(data)
+    //   .then((res) => alert("Thêm thiết bị thành công"))
+    //   .catch((err) => console.log(err));
   }
 }
 </script>

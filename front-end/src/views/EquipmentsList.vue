@@ -1,11 +1,23 @@
 <style scoped>
+.pagination {
+  list-style-type: none;
+}
+
+.pagination-item {
+  display: inline-block;
+}
+
+.active {
+  background-color: #4aae9b;
+  color: #ffffff;
+}
 .list_equipments:hover {
   background-color: beige;
   cursor: pointer;
 }
 </style>
 <template>
-  <div>
+  <div class="px-3">
     <div class="h-24">
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
@@ -108,74 +120,19 @@
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="inline-block category">
           <div class="relative">
-            <div
-              class="h-10 bg-white flex border border-gray-200 rounded items-center ml-6"
-            >
-              <input
-                value="Danh mục"
-                name="select"
-                id="select"
-                class="px-4 appearance-none outline-none text-gray-800 w-full"
-              />
-
-              <button
-                class="cursor-pointer outline-none focus:outline-none transition-all text-gray-300 hover:text-gray-600"
+            <div class="flex flex-col ml-10">
+              <select
+                placeholder="Danh mục"
+                id="country"
+                name="country"
+                autocomplete="country-name"
+                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <svg
-                  class="w-4 h-4 mx-2 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></svg>
-              </button>
-              <label
-                for="show_more"
-                class="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-gray-600"
-              >
-                <svg
-                  class="w-4 h-4 mx-2 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-              </label>
-            </div>
-
-            <input
-              type="checkbox"
-              name="show_more"
-              id="show_more"
-              class="hidden peer"
-            />
-            <div
-              class="absolute rounded shadow bg-white overflow-hidden hidden peer-checked:flex flex-col w-full mt-1 border border-gray-200"
-            >
-              <div class="cursor-pointer group">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >Máy tính</a
-                >
-              </div>
-              <div class="cursor-pointer group border-t">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 border-blue-600 group-hover:bg-gray-100"
-                  >Màn hình</a
-                >
-              </div>
-              <div class="cursor-pointer group border-t">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >PC</a
-                >
-              </div>
+                <option value="-1">Danh mục</option>
+                <option value="1">Máy tính</option>
+                <option value="2">Màn hình</option>
+                <option value="3">Phụ kiện</option>
+              </select>
             </div>
           </div>
         </div>
@@ -194,7 +151,9 @@
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
         <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
           <div class="mx-5">
-            <h4 class="text-2xl font-semibold text-gray-700">8,282</h4>
+            <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfEquipments }}
+            </h4>
             <div class="text-gray-500">Tổng thiết bị</div>
           </div>
         </div>
@@ -202,7 +161,9 @@
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
         <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
           <div class="mx-5">
-            <h4 class="text-2xl font-semibold text-gray-700">8,282</h4>
+            <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfTakeOverEquipment }}
+            </h4>
             <div class="text-gray-500">Tổng bản giao</div>
           </div>
         </div>
@@ -210,7 +171,9 @@
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
         <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
           <div class="mx-5">
-            <h4 class="text-2xl font-semibold text-gray-700">8,282</h4>
+            <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfInventoryEquipment }}
+            </h4>
             <div class="text-gray-500">Tổng tồn kho</div>
           </div>
         </div>
@@ -218,7 +181,9 @@
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
         <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
           <div class="mx-5">
-            <h4 class="text-2xl font-semibold text-gray-700">8,282</h4>
+            <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfDamagedEquipment }}
+            </h4>
             <div class="text-gray-500">Tổng hư hỏng</div>
           </div>
         </div>
@@ -229,41 +194,41 @@
         <div
           class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg"
         >
-          <table class="min -w-full">
+          <table class="-w-full">
             <thead>
               <tr>
                 <th
-                  class="px-6 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="w-18 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Mã thiết bị
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="w-18 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Tên thiết bị
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Trạng thái bàn giao
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="w-36 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Người sử dụng
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Người tạo
                 </th>
                 <th
-                  class="py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Thời gian nhận
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="w-48 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Thời gian cập nhật
                 </th>
@@ -273,15 +238,13 @@
                   Người cập nhật
                 </th>
                 <th
-                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                  class="w-48 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
                   Trạng thái thiết bị
                 </th>
                 <th
-                  class="px-11 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
-                >
-                  Thao tác
-                </th>
+                  class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
+                ></th>
               </tr>
             </thead>
 
@@ -296,7 +259,7 @@
                 >
                   <div class="flex items-center">
                     <div class="ml-4">
-                      <div class="text-sm leading-5 text-gray-500">
+                      <div class="text-left text-sm leading-5 text-gray-500">
                         {{ equipment.device_id }}
                       </div>
                     </div>
@@ -314,13 +277,13 @@
                   </div>
                 </td>
                 <td
-                  class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
+                  class="px-6 py-4 text-center border-b border-gray-200 whitespace-nowrap"
                 >
-                  <div class="flex items-center">
+                  <div class="flex items-center text-center">
                     <div class="ml-4">
-                      <div class="text-sm leading-5 text-gray-500">
+                      <div class="text-sm leading-5 text-center text-gray-500">
                         {{
-                          equipment.take_over_status == "1"
+                          equipment.take_over_status == "0"
                             ? "Bàn giao"
                             : "Tồn kho"
                         }}
@@ -389,7 +352,14 @@
                   <div class="flex items-center">
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-gray-500">
-                        {{ equipment.device_status }}
+                        <div v-if="equipment.device_status == '0'">Bị mất</div>
+                        <div v-else-if="equipment.device_status == '1'">
+                          Sử dụng được
+                        </div>
+                        <div v-else-if="equipment.device_status == '2'">
+                          Bị hỏng
+                        </div>
+                        <div v-else>Not A/B/C</div>
                       </div>
                     </div>
                   </div>
@@ -443,7 +413,48 @@
               </tr>
             </tbody>
           </table>
-          <Pagination></Pagination>
+          <ul class="pagination justify-center mt-8">
+            <li class="pagination-item">
+              <button class="w-36" type="button" @click="onClickFirstPage">
+                First
+              </button>
+            </li>
+            <li class="pagination-item">
+              <button
+                class="w-36"
+                type="button"
+                @click="onClickPreviousPage"
+                :disabled="isInFirstPage"
+              >
+                Previous
+              </button>
+            </li>
+
+            <li class="pagination-item">
+              <button class="w-36" type="button">
+                {{ this.currentPage }}
+              </button>
+            </li>
+            <li class="pagination-item">
+              <button
+                class="w-36"
+                type="button"
+                @click="onClickNextPage"
+                :disabled="isInLastPage"
+              >
+                Next
+              </button>
+            </li>
+            <li class="pagination-item">
+              <button
+                type="button"
+                @click="onClickLastPage"
+                :disabled="isInLastPage"
+              >
+                Last
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -463,15 +474,101 @@ import Pagination from "./Pagination.vue";
 export default class Dashboard extends Vue {
   public inputSeach: String = "";
   public equipments: Equipment[] = [];
-  mounted() {
-    this.retrieveEquipments();
+  public sumOfTakeOverEquipment: number | undefined;
+  public sumOfEquipments: number = 0;
+  public sumOfInventoryEquipment: number = 0;
+  public sumOfDamagedEquipment: number = 0;
+  public currentPage: number = 1;
+  public totalPages: number = 6;
+  onClickFirstPage() {
+    this.$router.push({
+      name: "search",
+      query: { page: 1 },
+    });
+    this.currentPage = 1;
+    this.retrieveEquipments(1);
   }
-  async retrieveEquipments() {
-    EquipmentDataService.getAllEquipments()
+  onClickNextPage() {
+    if (this.currentPage != this.totalPages) {
+      this.currentPage++;
+      this.$router.push({
+        name: "search",
+        query: { page: this.currentPage },
+      });
+      this.retrieveEquipments(this.currentPage);
+    }
+  }
+  onClickPreviousPage() {
+    if (this.currentPage != 1) {
+      this.currentPage--;
+      console.log(this.currentPage);
+      this.$router.push({
+        name: "search",
+        query: { page: this.currentPage },
+      });
+      this.retrieveEquipments(this.currentPage);
+    }
+  }
+  onClickLastPage() {
+    this.$router.push({
+      name: "search",
+      query: { page: this.totalPages },
+    });
+    this.retrieveEquipments(this.totalPages);
+    this.currentPage = this.totalPages;
+  }
+  async mounted() {
+    this.retrieveEquipments(this.currentPage);
+    EquipmentDataService.getCountTotal().then((res) => {
+      this.sumOfEquipments = res.data.total_equipments;
+      this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
+      this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
+      this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
+    });
+  }
+  handleDeviceStatus(device_status: String) {
+    if (device_status == "0") {
+      return "Bị mất";
+    } else if (device_status == "1") {
+      return "Sử dụng được";
+    } else if (device_status == "2") {
+      return "Bị hư hỏng";
+    }
+  }
+  handleCategoryEquipment(category_id: string) {
+    if (category_id == "1") {
+      return "Máy tính";
+    } else if (category_id == "2") {
+      return "Màn hình";
+    } else if (category_id == "3") {
+      return "Phụ kiện";
+    }
+    return "null";
+  }
+  handleImportDate(data: string) {
+    var d = new Date(parseInt(data));
+    return d.toLocaleDateString();
+  }
+  async retrieveEquipments(page: number) {
+    EquipmentDataService.getAllEquipments(page)
       .then((res: any) => {
+        this.totalPages = res.data.n_pages;
+        console.log(res.data.n_pages);
         this.equipments = res.data.equipments;
       })
-      .then(() => console.log(this.equipments));
+      .then(() => {
+        for (let i = 0; i < this.equipments.length; i++) {
+          this.equipments[i].import_date = this.handleImportDate(
+            this.equipments[i].import_date
+          );
+          this.equipments[i].updated_time = this.handleImportDate(
+            this.equipments[i].updated_time
+          );
+          this.equipments[i].category_name = this.handleCategoryEquipment(
+            this.equipments[i].category_id
+          );
+        }
+      });
   }
   editEquipment(id: any) {
     this.$router.push({ name: "update", params: { id: id } });
@@ -480,16 +577,19 @@ export default class Dashboard extends Vue {
     if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
       EquipmentDataService.deleteEquipment(id)
         .then((res) => console.log("Delete Successfully !!"))
-        .then(() => this.retrieveEquipments())
+        .then(() => this.retrieveEquipments(this.currentPage))
         .catch((err) => console.log(err));
     }
   }
-  searchEquipments() {
-    const keyword = this.inputSeach;
 
-    EquipmentDataService.searchEquipment(keyword).then((res) => {
-      this.equipments = res.data.equipments;
-    });
+  searchEquipments() {
+    // const keyword = this.inputSeach;
+    // EquipmentDataService.searchEquipment(keyword)
+    //   .then((res) => {
+    //     this.equipments = res.data.equipments;
+    //     alert("Tìm kiếm thành công");
+    //   })
+    //   .catch((err) => alert("Lỗi tìm kiếm"));
   }
 }
 </script>

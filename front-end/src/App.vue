@@ -3,6 +3,4 @@ import HomeLayout from "./components/HomeLayout.vue";
 </script>
 <template>
   <HomeLayout />
-
-  //test
 </template>

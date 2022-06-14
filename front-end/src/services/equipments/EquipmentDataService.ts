@@ -1,41 +1,29 @@
 import http from "@/http-common";
 class EquipmentDataService {
-  add() {
-    const data = {
-      category_id: "1",
-      created_by: "tatthanh@rever.vn",
-      created_time: "51532155215421 ",
-      depreciated_value: "1",
-      depreciation_period: "1",
-      device_id: "abcd",
-      device_status: "1",
-      import_date: "1520215210502",
-      name: "abc",
-      period_type: "1",
-      price: "1",
-      start_status: "1",
-      takeover_status: "1",
-    };
-    console.log(data);
-    return http.post("/add", data);
+  getImage(file_url: String) {
+    return http.get(`/file/get_file?file_url=${file_url}`);
   }
   addData(data: any) {
-    return http.post("/add", data);
+    return http.post("/equipment/add", data);
   }
-  getAllEquipments() {
-    return http.get("search?size=10");
+  getAllEquipments(currentPage: number) {
+    return http.get(`/equipment/search?limit=3&&page=${currentPage}`);
   }
   updateEquipment(data: any) {
-    return http.put("/update", data);
+    return http.put("/equipment/update", data);
   }
   getEquipmentDetail(id: any) {
-    return http.get(`/${id}`);
+    return http.get(`equipment/${id}`);
   }
   deleteEquipment(id: String) {
-    return http.delete(`/delete?id=${id}`);
+    return http.delete(`equipment/delete?id=${id}`);
   }
   searchEquipment(keyword: String) {
-    return http.get(`/search?keyword=${keyword}&size=10`);
+    return http.get(`equipment/search?keyword=${keyword}&size=10`);
   }
+  getCountTotal() {
+    return http.get(`equipment/count_total`);
+  }
+  getSumOfDamagedEquipment() {}
 }
 export default new EquipmentDataService();
