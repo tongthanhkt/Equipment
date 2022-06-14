@@ -1,13 +1,15 @@
 package controllers
 
 import com.twitter.finatra.http.Controller
-import models.{CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
+import models.{ConvertString, CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.CRUDEquipmentService
+
 import java.util
 import javax.inject.Inject
 
 class CRUDEquipmentController @Inject() (
-                                       equipmentService: CRUDEquipmentService
+                                       equipmentService: CRUDEquipmentService,
+                                       convertString: ConvertString
                                        )  extends Controller {
 
   prefix("/equipment"){
@@ -105,20 +107,36 @@ class CRUDEquipmentController @Inject() (
     }
 
     post("/add"){request:Equipment =>{
+      println(request)
+
       try {
-        val result = equipmentService.add(request)
-        if (result ==1) {
-          val equipmentId= equipmentService.getIdEquipmentDESC();
-          response.created.json(
-            s"""|id: $equipmentId
-              |""".stripMargin)
-        }  else if (result == -1)
-          response.internalServerError.jsonError("There is not information of created person")
-        else if (result == -2)
-          response.internalServerError.jsonError("Start status of device is incorrect")
-        else if (result == -3)
-          response.internalServerError.jsonError("Device status of equipment is incorrect")
-        else  response.internalServerError
+//        val result = equipmentService.add(request)
+//        if (result ==1) {
+//          val equipmentId= equipmentService.getIdEquipmentDESC();
+//          response.created.json(
+//            s"""|id: $equipmentId
+//              |""".stripMargin)
+//        }  else if (result == -1)
+//          response.internalServerError.jsonError("There is not information of created person")
+//        else if (result == -2)
+//          response.internalServerError.jsonError("Start status of device is incorrect")
+//        else if (result == -3)
+//          response.internalServerError.jsonError("Device status of equipment is incorrect")
+//        else  response.internalServerError
+        val check = request.checkFitInsert(convertString)
+
+        if (check.isEmpty){
+          val result = equipmentService.add(request)
+          if (result ==1) {
+            val equipmentId= equipmentService.getIdEquipmentDESC();
+            response.created.json(
+              s"""|id: $equipmentId
+                |""".stripMargin)
+          }  else
+            response.internalServerError.jsonError("Can not add new equipment")
+        }
+        else
+          response.badRequest.jsonError(check.mkString)
       } catch {
         case ex: Exception =>{
           println(ex)
@@ -129,21 +147,21 @@ class CRUDEquipmentController @Inject() (
 
     put("/update"){request:Equipment=>{
       try {
-        val e = equipmentService.searchById(request.id)
-        if (e != null) {
-          response.internalServerError.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+        val check = request.checkFitUpdate(convertString)
+        println(check)
+        if (check.isEmpty){
+          val e = equipmentService.searchById(convertString.toInt(request.id).get)
+          if (e == null) {
+            response.badRequest.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+          }
+          val result = equipmentService.updateById(request)
+          if (result ==1)
+            response.created.body(s"Update equipment successfully. ")
+          else response.internalServerError.jsonError("Can not update equipment")
         }
+        else
+          response.badRequest.jsonError(check.mkString)
 
-        val result = equipmentService.updateById(request)
-        if (result ==1)
-          response.created.body(s"Update equipment successfully. ")
-        else if (result == -1)
-          response.internalServerError.jsonError("There is not information of update person")
-        else if (result == -2)
-          response.internalServerError.jsonError("Start status of device is incorrect")
-        else if (result == -3)
-          response.internalServerError.jsonError("Device status of equipment is incorrect")
-        else  response.internalServerError
       } catch {
         case ex: Exception =>{
           println(ex)

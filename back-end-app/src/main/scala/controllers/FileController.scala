@@ -13,12 +13,16 @@ class FileController @Inject() (fileService: FileService) extends Controller {
 
   prefix("/file"){
 
-    get("/get_file"){request: Request =>{
+    get("/get_file/:file_name"){request: Request =>{
 
-      val fileUrl = request.getParam("file_url")
+      val fileName = request.getParam("file_name")
 
       try {
-        response.ok.file(fileService.getFile(fileUrl)).header("File-Extension",FilenameUtils.getExtension(fileUrl))
+        val file = fileService.getFile(fileName)
+        if (file.exists())
+          response.ok.file(file).header("File-Extension",FilenameUtils.getExtension(fileName))
+        else
+          response.badRequest.jsonError("File does not exist")
       } catch {
         case ex: Exception =>{
           println(ex)
@@ -36,15 +40,15 @@ class FileController @Inject() (fileService: FileService) extends Controller {
 
         var checkImages = fileService.checkImagesUpload(map);
         if (checkImages == -1){
-          response.internalServerError.body("Only selected images")
+          response.badRequest.jsonError("Only selected images")
         }
         else if (checkImages == 0){
-          response.internalServerError.body("Only selected image <= 5MB")
+          response.badRequest.jsonError("Only selected image <= 5MB")
         }
         else if (checkImages == 1){
           var uploadFiles : Map[String, UploadFile] = fileService.uploadFiles(map);
 
-          if (uploadFiles.isEmpty  ){
+          if (uploadFiles.isEmpty){
             response.internalServerError.jsonError("Can not add images")
           }
           else  response.created.body(uploadFiles)
@@ -61,13 +65,13 @@ class FileController @Inject() (fileService: FileService) extends Controller {
     }
 
     delete("/delete") {request: Request =>{
-      val fileUrl = request.getParam("file_url")
+      val fileName = request.getParam("file_name")
 
       try {
-        if (fileService.deleteFile(fileUrl) ){
+        if (fileService.deleteFile(fileName) ){
           response.ok.body("Delete file successfully")
         }
-        else response.internalServerError.jsonError("File does not exist")
+        else response.badRequest.jsonError("File does not exist")
       } catch {
         case ex: Exception =>{
           println(ex)

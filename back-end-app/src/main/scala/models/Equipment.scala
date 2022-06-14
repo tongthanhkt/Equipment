@@ -7,26 +7,157 @@ import java.util
 case class Page(value:Int,isCurrent:Boolean)
 
 case class Equipment(
-                             id: Int = 0,
+                             id: String = null,
                              deviceId: String = null,
-                             name: String,
-                             startStatus: Int,
-                             price: Double,
-                             depreciatedValue: Double,
-                             depreciationPeriod: Double,
-                             periodType: Int,
-                             importDate: Long,
-                             takeOverStatus: Int = 0 ,
-                             categoryId: Int,
-                             deviceStatus : Int = 0,
-                             metadataInfo: Map[String, UploadFile] = Map(),
+                             name: String = null ,
+                             startStatus: String = null,
+                             price: String = null,
+                             depreciatedValue:  String = null,
+                             depreciationPeriod:  String = null,
+                             periodType: String = null,
+                             importDate: String = null,
+                             takeOverStatus: String = null ,
+                             categoryId: String = null,
+                             deviceStatus :String = null,
+                             metadataInfo: Map[String, UploadFile]  = Map(),
                              createdBy: String = null,
-                             createdTime: Long = 0,
+                             createdTime: String = null,
                              updatedBy: String = null,
-                             updatedTime: Long = 0,
+                             updatedTime: String = null,
                              takeOverPersonId: String = null,
                              takeOverPersonName : String = null
-                           )
+                           ){
+  def checkFitInsert(convertString: ConvertString): Map[Int,String]  ={
+    var check : Map[Int,String] =Map()
+    if (name == null)
+      check = check + (1 -> "The 'Name' field cannot be blank ")
+    if (startStatus == null)
+      check = check + (2 -> "The 'Start Status' field cannot be blank ")
+    else if (!convertString.isInt(startStatus))
+     check = check + (3 -> "The 'Start Status' field : type mismatch, required : Int ")
+    else if (convertString.isInt(startStatus) && (convertString.toInt(startStatus).get > 7 || convertString.toInt(startStatus).get < 1))
+      check = check + (4 -> "Start status of device is incorrect")
+
+    if (price == null)
+      check = check + (5 -> "The 'Price' field cannot be blank ")
+    else if (!convertString.isDouble(price))
+      check = check + (6 -> "The 'Price' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(price) && (convertString.toDouble(price).get < 0))
+      check = check + (7 -> "Price of device must be > 0")
+
+    if (depreciatedValue == null)
+      check = check + (8 -> "The 'Depreciated Value' field cannot be blank ")
+    else if (!convertString.isDouble(depreciatedValue))
+      check = check + (9 -> "The 'Depreciated Value' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(depreciatedValue) && (convertString.toDouble(depreciatedValue).get > 1 || convertString.toDouble(depreciatedValue).get < 0))
+      check = check + (10 -> "'Depreciated Value' must be > 0")
+
+    if (depreciationPeriod == null)
+      check = check + (11 -> "The 'Depreciation Period' field cannot be blank ")
+    else if (!convertString.isDouble(depreciationPeriod))
+      check = check + (12 -> "The 'Depreciation Period' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(depreciationPeriod) && (convertString.toDouble(depreciationPeriod).get < 0))
+      check = check + (13 -> "'Depreciation Period' of device is incorrect")
+
+    if (periodType == null)
+      check = check + (14 -> "The 'Period Type' field cannot be blank ")
+    else if (!convertString.isInt(periodType))
+      check = check + (15 -> "The 'Period Type' field : type mismatch, required : Int ")
+    else if (convertString.isInt(periodType) && (convertString.toInt(periodType).get > 2 || convertString.toInt(periodType).get < 1))
+      check = check + (16 -> "Period Type of device is incorrect")
+
+    if (importDate == null)
+      check = check + (17 -> "The 'Import Date' field cannot be blank ")
+    else if (!convertString.isLong(importDate))
+      check = check + (18 -> "The 'Import Date' field : type mismatch, required : Long ")
+    else if (convertString.isLong(importDate) && (convertString.toLong(importDate).get < 0 ))
+      check = check + (19 -> "Import Date of device is incorrect")
+
+    if (categoryId == null)
+      check = check + (20 -> "The 'Category Id' field cannot be blank ")
+    else if (!convertString.isInt(categoryId))
+      check = check + (21 -> "The 'Category Id' field : type mismatch, required : Int ")
+
+    if (deviceStatus == null)
+      check = check + (22 -> "The 'Device Status' field cannot be blank ")
+    else if (!convertString.isInt(deviceStatus))
+      check = check + (23-> "The 'Device Status' field : type mismatch, required : Int ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 2 || convertString.toInt(deviceStatus).get < -1))
+      check = check + (24 -> "Start device of device is incorrect")
+
+    if (createdBy == null)
+      check = check + (25 -> "There is not information of created person")
+    var i = 26
+    if (metadataInfo.nonEmpty){
+      for (key <- metadataInfo.keys){
+        if (metadataInfo(key).file_description == null ) {
+          check = check +  (i -> s" File $key has not description")
+          i+=1
+        }
+      }
+    }
+     return check
+  }
+  def checkFitUpdate(convertString: ConvertString): Map[Int,String] ={
+    var check : Map[Int,String] =Map()
+    if (id == null)
+      check = check + (0 -> "The 'Id' field cannot be blank ")
+     if (startStatus != null && !convertString.isInt(startStatus))
+      check = check + (1 -> "The 'Start Status' field : type mismatch, required : Int ")
+    else if (convertString.isInt(startStatus) && (convertString.toInt(startStatus).get > 7 || convertString.toInt(startStatus).get < 1))
+      check = check + (2 -> "Start status of device is incorrect")
+
+
+    if (price!= null && !convertString.isDouble(price))
+      check = check + (3 -> "The 'Price' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(price) && (convertString.toDouble(price).get < 0))
+      check = check + (4 -> "Price of device must be > 0")
+
+
+    if (depreciatedValue != null && !convertString.isDouble(depreciatedValue))
+      check = check + (5 -> "The 'Depreciated Value' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(depreciatedValue) && (convertString.toDouble(depreciatedValue).get > 1 || convertString.toDouble(depreciatedValue).get < 0))
+      check = check + (6 -> "'Depreciated Value' must be > 0")
+
+    if (depreciationPeriod != null && !convertString.isDouble(depreciationPeriod))
+      check = check + (7 -> "The 'Depreciation Period' field : type mismatch, required : Double ")
+    else if (convertString.isDouble(depreciationPeriod) && (convertString.toDouble(depreciationPeriod).get < 0))
+      check = check + (8 -> "'Depreciation Period' of device is incorrect")
+
+    if (periodType != null && !convertString.isInt(periodType))
+      check = check + (9 -> "The 'Period Type' field : type mismatch, required : Int ")
+    else if (convertString.isInt(periodType) && (convertString.toInt(periodType).get > 2 || convertString.toInt(periodType).get < 1))
+      check = check + (10 -> "Period Type of device is incorrect")
+
+    if (importDate != null && !convertString.isLong(importDate))
+      check = check + (11 -> "The 'Import Date' field : type mismatch, required : Long ")
+    else if (convertString.isLong(importDate) && (convertString.toLong(importDate).get < 0 ))
+      check = check + (12 -> "Import Date of device is incorrect")
+
+
+    if (categoryId != null && !convertString.isInt(categoryId))
+      check = check + (13 -> "The 'Category Id' field : type mismatch, required : Int ")
+
+    if (deviceStatus != null && !convertString.isInt(deviceStatus))
+      check = check + (14-> "The 'Device Status' field : type mismatch, required : Int ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 2 || convertString.toInt(deviceStatus).get < -1))
+      check = check + (15 -> "Start device of device is incorrect")
+
+    if (updatedBy == null)
+      check = check + (16 -> "There is not information of updated person")
+
+    var i = 17
+    if (metadataInfo.nonEmpty){
+      for (key <- metadataInfo.keys){
+        if (metadataInfo(key).file_description == null ) {
+          check = check +  (i -> s" File $key has not description")
+          i+=1
+        }
+      }
+    }
+    return check
+  }
+}
 
 case class SearchEquipmentsResponse(equipments: util.ArrayList[Equipment],
                                    empty: Boolean,
@@ -51,10 +182,9 @@ case class SearchEquipmentByIdRequest(@RouteParam id :Int)
 case class UploadFile(file_url : String,
                       file_name: String,
                       size : Long,
-                      file_extension: String
-                ){
-
-}
+                      file_extension: String,
+                      file_description: String ,
+                )
 
 case class DeleteImageByIdRequest(@RouteParam equipmentId :Int,
                                   @QueryParam imageName:Int)

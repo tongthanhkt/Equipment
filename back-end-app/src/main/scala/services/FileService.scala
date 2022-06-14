@@ -9,9 +9,10 @@ import java.nio.file.{Files, Paths, StandardOpenOption}
 
 
 class FileService {
-
+  val dirName :String = System.getProperty("user.dir")+"/images/";
   @throws[Exception]
-  def deleteFile(fileUrl :String):Boolean = {
+  def deleteFile(fileName :String):Boolean = {
+    val fileUrl = dirName.concat(fileName)
     val fileTemp = new File(fileUrl)
     if (fileTemp.exists) {
       fileTemp.delete()
@@ -20,7 +21,8 @@ class FileService {
     false
   }
 
-  def getFile(fileUrl: String): File ={
+  def getFile(fileName: String): File ={
+    val fileUrl = dirName.concat(fileName)
     new File(fileUrl)
   }
 
@@ -42,7 +44,6 @@ class FileService {
   @throws[Exception]
   def uploadFiles(map: Map[String, MultipartItem]): Map[String, UploadFile] ={
     var uploadFiles : Map[String, UploadFile] = Map();
-    val dirName :String = System.getProperty("user.dir")+"/images/";
     for (key <- map.keys){
       val file = map.get(key).get
       val fileName :String = "image"+System.currentTimeMillis();
@@ -53,7 +54,7 @@ class FileService {
       val size = data.length
 
       Files.write(path,data, StandardOpenOption.CREATE)
-      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = path.toString,file_name = baseName,size = size ,file_extension=extension))
+      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+baseName,file_name = baseName,size = size ,file_extension=extension,null))
     }
     return uploadFiles
   }
