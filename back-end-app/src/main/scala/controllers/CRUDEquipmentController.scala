@@ -110,19 +110,7 @@ class CRUDEquipmentController @Inject() (
       println(request)
 
       try {
-//        val result = equipmentService.add(request)
-//        if (result ==1) {
-//          val equipmentId= equipmentService.getIdEquipmentDESC();
-//          response.created.json(
-//            s"""|id: $equipmentId
-//              |""".stripMargin)
-//        }  else if (result == -1)
-//          response.internalServerError.jsonError("There is not information of created person")
-//        else if (result == -2)
-//          response.internalServerError.jsonError("Start status of device is incorrect")
-//        else if (result == -3)
-//          response.internalServerError.jsonError("Device status of equipment is incorrect")
-//        else  response.internalServerError
+
         val check = request.checkFitInsert(convertString)
 
         if (check.isEmpty){
@@ -148,6 +136,7 @@ class CRUDEquipmentController @Inject() (
     put("/update"){request:Equipment=>{
       try {
         val check = request.checkFitUpdate(convertString)
+
         println(check)
         if (check.isEmpty){
           val e = equipmentService.searchById(convertString.toInt(request.id).get)
@@ -160,7 +149,7 @@ class CRUDEquipmentController @Inject() (
           else response.internalServerError.jsonError("Can not update equipment")
         }
         else
-          response.badRequest.jsonError(check.mkString)
+          response.badRequest.jsonError(s"${check.mkString}")
 
       } catch {
         case ex: Exception =>{

@@ -242,13 +242,19 @@ class CRUDEquipmentService @Inject() (
   @throws[SQLException]
   def updateById(e: Equipment): Int={
 
+    var uploadFile :String =null
+    if(e.metadataInfo.nonEmpty)
+      uploadFile = s"""
+                      |{"files": ${JSON.write(e.metadataInfo)}}
+                      |""".stripMargin
+
     val sql =
         """UPDATE equipment
           SET  device_id = if(? is not null, ?,device_id) , name = if(? is not null, ?,name),
            start_status = if(? is not null, ?,start_status),category_id = if(? is not null, ?,category_id),
            price = if(? is not null, ?,price),depreciated_value = if(? is not null, ?, depreciated_value)
            ,depreciation_period = if(? is not null, ?,depreciation_period) ,period_type = if(? is not null, ?,period_type),
-           metadata_info = ?,import_date = if(? is not null, ?,import_date),
+           metadata_info = if(? is not null, ?,metadata_info),import_date = if(? is not null, ?,import_date),
            device_status = if(? is not null, ?,device_status) ,
            updated_by = ?,updated_time = ?
           WHERE device_status != ? and id = ?;"""
@@ -271,20 +277,18 @@ class CRUDEquipmentService @Inject() (
     pst.setString(14, e.depreciationPeriod)
     pst.setString(15, e.periodType)
     pst.setString(16, e.periodType)
-      pst.setString(17,
-        s"""
-           |{"files": ${JSON.write(e.metadataInfo)}}
-           |""".stripMargin)
-      pst.setString(18,e.importDate)
-      pst.setString(19,e.importDate)
+    pst.setString(17,uploadFile)
+    pst.setString(18,uploadFile)
+    pst.setString(19,e.importDate)
+    pst.setString(20,e.importDate)
 
-      pst.setString(20, e.deviceStatus)
-      pst.setString(21, e.deviceStatus)
-      pst.setString(22,e.updatedBy)
+    pst.setString(21, e.deviceStatus)
+    pst.setString(22, e.deviceStatus)
+    pst.setString(23,e.updatedBy)
 
-      pst.setLong(23,System.currentTimeMillis())
-      pst.setInt(24,-1)
-      pst.setString(25,e.id)
+      pst.setLong(24,System.currentTimeMillis())
+      pst.setInt(25,-1)
+      pst.setString(26,e.id)
       val rs = pst.executeUpdate()
       con.close();
       return rs
