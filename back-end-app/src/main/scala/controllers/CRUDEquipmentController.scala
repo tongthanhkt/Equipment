@@ -1,6 +1,7 @@
 package controllers
 
 import com.twitter.finatra.http.Controller
+import com.twitter.util.jackson.JSON
 import models.{ConvertString, CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.CRUDEquipmentService
 
@@ -124,7 +125,10 @@ class CRUDEquipmentController @Inject() (
             response.internalServerError.jsonError("Can not add new equipment")
         }
         else
-          response.badRequest.jsonError(check.mkString)
+          response.badRequest.json(
+            s"""{
+               |"errors" : [${JSON.write(check)}]
+               |}""".stripMargin)
       } catch {
         case ex: Exception =>{
           println(ex)
@@ -134,6 +138,7 @@ class CRUDEquipmentController @Inject() (
     }}
 
     put("/update"){request:Equipment=>{
+      println(request)
       try {
         val check = request.checkFitUpdate(convertString)
 
@@ -149,7 +154,10 @@ class CRUDEquipmentController @Inject() (
           else response.internalServerError.jsonError("Can not update equipment")
         }
         else
-          response.badRequest.jsonError(s"${check.mkString}")
+          response.badRequest.json(
+            s"""{
+              |"errors" : [${JSON.write(check)}]
+              |}""".stripMargin)
 
       } catch {
         case ex: Exception =>{

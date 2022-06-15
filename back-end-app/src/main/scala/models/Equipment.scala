@@ -1,8 +1,11 @@
 package models
 
 import com.twitter.finatra.http.annotations.{QueryParam, RouteParam}
+
 import java.io.File
 import java.util
+import scala.util.control._
+
 
 case class Page(value:Int,isCurrent:Boolean)
 
@@ -87,14 +90,16 @@ case class Equipment(
 
     if (createdBy == null)
       check = check + (25 -> "There is not information of created person. ")
-    var i = 26
+
     if (metadataInfo.nonEmpty){
+      val loop = new Breaks;
+      loop.breakable {
       for (key <- metadataInfo.keys){
         if (metadataInfo(key).file_description == null ) {
-          check = check +  (i -> s" File $key has not description. ")
-          i+=1
+          check = check +  (26 -> s" File must have description. ")
+         loop.break
         }
-      }
+      }}
     }
      return check
   }
@@ -103,57 +108,59 @@ case class Equipment(
     if (id == null)
       check = check + (0 -> s"The 'Id' field cannot be blank. ")
      if (startStatus != null && !convertString.isInt(startStatus))
-      check = check + (1 -> s"The 'Start Status' field : type mismatch, required : Int. ")
+      check = check + (3 -> s"The 'Start Status' field : type mismatch, required : Int. ")
     else if (convertString.isInt(startStatus) && (convertString.toInt(startStatus).get > 7 || convertString.toInt(startStatus).get < 1))
-      check = check + (2 -> s"Start status of device is incorrect. ")
+      check = check + (4 -> s"Start status of device is incorrect. ")
 
 
     if (price!= null && !convertString.isDouble(price))
-      check = check + (3 -> "The 'Price' field : type mismatch, required : Double. ")
+      check = check + (6 -> "The 'Price' field : type mismatch, required : Double. ")
     else if (convertString.isDouble(price) && (convertString.toDouble(price).get < 0))
-      check = check + (4 -> "Price of device must be > 0. ")
+      check = check + (7 -> "Price of device must be > 0. ")
 
 
     if (depreciatedValue != null && !convertString.isDouble(depreciatedValue))
-      check = check + (5 -> "The 'Depreciated Value' field : type mismatch, required : Double.  ")
+      check = check + (9 -> "The 'Depreciated Value' field : type mismatch, required : Double.  ")
     else if (convertString.isDouble(depreciatedValue) && (convertString.toDouble(depreciatedValue).get > 1 || convertString.toDouble(depreciatedValue).get < 0))
-      check = check + (6 -> "'Depreciated Value' must be > 0. ")
+      check = check + (10 -> "'Depreciated Value' must be > 0. ")
 
     if (depreciationPeriod != null && !convertString.isDouble(depreciationPeriod))
-      check = check + (7 -> "The 'Depreciation Period' field : type mismatch, required : Double. ")
+      check = check + (12 -> "The 'Depreciation Period' field : type mismatch, required : Double. ")
     else if (convertString.isDouble(depreciationPeriod) && (convertString.toDouble(depreciationPeriod).get < 0))
-      check = check + (8 -> "'Depreciation Period' of device is incorrect. ")
+      check = check + (13 -> "'Depreciation Period' of device is incorrect. ")
 
     if (periodType != null && !convertString.isInt(periodType))
-      check = check + (9 -> "The 'Period Type' field : type mismatch, required : Int. ")
+      check = check + (15 -> "The 'Period Type' field : type mismatch, required : Int. ")
     else if (convertString.isInt(periodType) && (convertString.toInt(periodType).get > 2 || convertString.toInt(periodType).get < 1))
-      check = check + (10 -> "Period Type of device is incorrect. ")
+      check = check + (16 -> "Period Type of device is incorrect. ")
 
     if (importDate != null && !convertString.isLong(importDate))
-      check = check + (11 -> "The 'Import Date' field : type mismatch, required : Long. ")
+      check = check + (18 -> "The 'Import Date' field : type mismatch, required : Long. ")
     else if (convertString.isLong(importDate) && (convertString.toLong(importDate).get < 0 ))
-      check = check + (12 -> "Import Date of device is incorrect. ")
+      check = check + (19 -> "Import Date of device is incorrect. ")
 
 
     if (categoryId != null && !convertString.isInt(categoryId))
-      check = check + (13 -> "The 'Category Id' field : type mismatch, required : Int. ")
+      check = check + (21 -> "The 'Category Id' field : type mismatch, required : Int. ")
 
     if (deviceStatus != null && !convertString.isInt(deviceStatus))
-      check = check + (14-> "The 'Device Status' field : type mismatch, required : Int.  ")
+      check = check + (23-> "The 'Device Status' field : type mismatch, required : Int.  ")
     else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 2 || convertString.toInt(deviceStatus).get < -1))
-      check = check + (15 -> "Start device of device is incorrect. ")
+      check = check + (24 -> "Start device of device is incorrect. ")
 
     if (updatedBy == null)
-      check = check + (16 -> "There is not information of updated person. ")
+      check = check + (27 -> "There is not information of updated person. ")
 
-    var i = 17
+
     if (metadataInfo.nonEmpty){
+      val loop = new Breaks;
+      loop.breakable {
       for (key <- metadataInfo.keys){
         if (metadataInfo(key).file_description == null ) {
-          check = check +  (i -> s" File $key has not description. ")
-          i+=1
+          check = check +  (26 -> s" Files must have description. ")
+          loop.break
         }
-      }
+      }}
     }
     return check
   }
@@ -183,7 +190,7 @@ case class UploadFile(file_url : String,
                       file_name: String,
                       size : Long,
                       file_extension: String,
-                      file_description: String ,
+                      file_description: String = null,
                 )
 
 case class DeleteImageByIdRequest(@RouteParam equipmentId :Int,

@@ -45,7 +45,7 @@ class CRUDEquipmentService @Inject() (
       pst.setString(6,searchRequest.categoryId)
       pst.setString(7, searchRequest.takeOverPerson)
       pst.setString(8, searchRequest.takeOverPerson)
-    pst.setString(9, searchRequest.takeOverPerson)
+      pst.setString(9, searchRequest.takeOverPerson)
       pst.setString(10, searchRequest.deviceStatus)
       pst.setString(11,searchRequest.deviceStatus)
       pst.setString(12, searchRequest.takeOverStatus)
@@ -58,9 +58,9 @@ class CRUDEquipmentService @Inject() (
           deviceId=rs.getString("device_id"),
           name=rs.getString("name"),
           startStatus=rs.getString("start_status"),
-          price = rs.getString("price"),
-          depreciatedValue = rs.getString("depreciated_value"),
-          depreciationPeriod = rs.getString("depreciation_period"),
+          price = rs.getDouble("price").toString,
+          depreciatedValue = rs.getDouble("depreciated_value").toString,
+          depreciationPeriod = rs.getDouble("depreciation_period").toString,
           periodType =rs.getString("period_type"),
           importDate = rs.getString("import_date"),
           takeOverStatus=rs.getString("takeover_status"),
@@ -161,9 +161,9 @@ class CRUDEquipmentService @Inject() (
           deviceId=rs.getString("device_id"),
           name=rs.getString("name"),
           startStatus=rs.getString("start_status"),
-          price = rs.getString("price"),
-          depreciatedValue = rs.getString("depreciated_value"),
-          depreciationPeriod = rs.getString("depreciation_period"),
+          price = rs.getDouble("price").toString,
+          depreciatedValue = rs.getDouble("depreciated_value").toString,
+          depreciationPeriod = rs.getDouble("depreciation_period").toString,
           periodType =rs.getString("period_type"),
           importDate = rs.getString("import_date"),
           takeOverStatus=rs.getString("takeover_status"),
