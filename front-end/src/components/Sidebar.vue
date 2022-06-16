@@ -57,7 +57,7 @@
             ></path>
           </svg>
 
-          <span class="mx-4">Danh sách thiết bị</span>
+          <span class="mx-4" @click="backHomePage">Danh sách thiết bị</span>
         </router-link>
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"

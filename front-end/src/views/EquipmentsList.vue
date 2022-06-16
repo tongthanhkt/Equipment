@@ -21,17 +21,12 @@
     <div class="h-24">
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
+          <button
+            class="bg-stone-700 text-white font-bold py-2 px-4 rounded"
+            @click="searchEquipments()"
+          >
+            Tìm kiếm
+          </button>
 
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
@@ -40,12 +35,6 @@
             v-model="this.inputSeach"
             v-bind="this.inputSearch"
           />
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            @click="searchEquipments()"
-          >
-            Tìm kiếm
-          </button>
         </div>
       </div>
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
@@ -120,18 +109,27 @@
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="inline-block category">
           <div class="relative">
-            <div class="flex flex-col ml-10">
-              <select
-                placeholder="Danh mục"
-                id="country"
-                name="country"
-                autocomplete="country-name"
-                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            <div class="flex flex-row ml-10">
+              <a
+                class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
               >
-                <option value="-1">Danh mục</option>
-                <option value="1">Máy tính</option>
-                <option value="2">Màn hình</option>
-                <option value="3">Phụ kiện</option>
+                Danh mục
+              </a>
+              <select
+                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                v-model="categoryId"
+                @change="filterCategory(categoryId)"
+                required
+                name=""
+              >
+                <option v-bind:value="0" selected>Tất cả</option>
+                <option
+                  v-for="(category, index) in categories"
+                  v-bind:value="category.value"
+                  v-bind:selected="index === 0"
+                >
+                  {{ category.name }}
+                </option>
               </select>
             </div>
           </div>
@@ -139,9 +137,7 @@
       </div>
       <router-link to="/add-equipment">
         <div class="inline-block w-full px-8 sm:w-1/2 xl:w-1/4">
-          <a
-            class="bg-blue-500 font-bold text-white px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6"
-          >
+          <a class="bg-stone-700 text-white font-bold py-2 px-4 rounded">
             Tạo mới thiết bị
           </a>
         </div>
@@ -283,7 +279,7 @@
                     <div class="ml-4">
                       <div class="text-sm leading-5 text-center text-gray-500">
                         {{
-                          equipment.take_over_status == "0"
+                          equipment.take_over_status == "1"
                             ? "Bàn giao"
                             : "Tồn kho"
                         }}
@@ -466,59 +462,103 @@ import Equipment from "@/types/Equipment";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import { Vue, Options } from "vue-property-decorator";
 import Pagination from "./Pagination.vue";
+
 @Options({
   components: {
     Pagination,
   },
 })
 export default class Dashboard extends Vue {
+  public categories = [
+    { value: 1, name: "Máy tính" },
+    { value: 2, name: "Màn hình" },
+    { value: 3, name: "Phụ kiện" },
+  ];
   public inputSeach: String = "";
   public equipments: Equipment[] = [];
   public sumOfTakeOverEquipment: number | undefined;
   public sumOfEquipments: number = 0;
   public sumOfInventoryEquipment: number = 0;
   public sumOfDamagedEquipment: number = 0;
+
   public currentPage: number = 1;
-  public totalPages: number = 6;
-  onClickFirstPage() {
-    this.$router.push({
-      name: "search",
-      query: { page: 1 },
-    });
+  public currentLimit: number = 5;
+  public currentCategoryId: number | null = null;
+
+  public totalPages: number = 0;
+  public valueCategory: number = 1;
+  public queryParams: any;
+
+  async filterCategory(categoryId: number) {
+    console.log(this.queryParams);
+    if (categoryId == 0 || categoryId == null) {
+      this.currentCategoryId = null;
+      this.currentPage = 1;
+      this.retrieveEquipments(this.getQueryParams());
+    } else {
+      this.$router.push({
+        name: "search",
+        query: {
+          page: this.currentPage,
+          categoryId: this.currentCategoryId,
+        },
+      });
+      this.currentPage = 1;
+      this.currentCategoryId = categoryId;
+      this.retrieveEquipments(this.getQueryParams());
+    }
+  }
+  async onClickFirstPage() {
     this.currentPage = 1;
-    this.retrieveEquipments(1);
+    this.retrieveEquipments(this.getQueryParams());
   }
   onClickNextPage() {
     if (this.currentPage != this.totalPages) {
       this.currentPage++;
-      this.$router.push({
-        name: "search",
-        query: { page: this.currentPage },
-      });
-      this.retrieveEquipments(this.currentPage);
+      this.retrieveEquipments(this.getQueryParams());
     }
   }
   onClickPreviousPage() {
     if (this.currentPage != 1) {
       this.currentPage--;
-      console.log(this.currentPage);
-      this.$router.push({
-        name: "search",
-        query: { page: this.currentPage },
-      });
-      this.retrieveEquipments(this.currentPage);
+      this.retrieveEquipments(this.getQueryParams());
     }
   }
   onClickLastPage() {
-    this.$router.push({
-      name: "search",
-      query: { page: this.totalPages },
-    });
-    this.retrieveEquipments(this.totalPages);
     this.currentPage = this.totalPages;
+    this.retrieveEquipments(this.getQueryParams());
+  }
+  getQueryParams() {
+    this.queryParams = {
+      page: this.currentPage,
+      limit: this.currentLimit,
+      category_id: this.currentCategoryId,
+    };
+    console.log(this.queryParams);
+    Object.keys(this.queryParams).forEach((key) => {
+      if (
+        this.queryParams[key] === null ||
+        this.queryParams[key] === undefined
+      ) {
+        delete this.queryParams[key];
+      }
+    });
+    let queryParams = "";
+    const temp = Object.entries(this.queryParams);
+    console.log(temp);
+    for (let i = 0; i < temp.length; i++) {
+      if (i < temp.length - 1) {
+        let param = temp[i][0] + "=" + temp[i][1] + "&";
+        queryParams += param;
+      } else {
+        let param = temp[i][0] + "=" + temp[i][1];
+        queryParams += param;
+      }
+    }
+    return queryParams;
   }
   async mounted() {
-    this.retrieveEquipments(this.currentPage);
+    this.retrieveEquipments(this.getQueryParams());
     EquipmentDataService.getCountTotal().then((res) => {
       this.sumOfEquipments = res.data.total_equipments;
       this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
@@ -549,11 +589,11 @@ export default class Dashboard extends Vue {
     var d = new Date(parseInt(data));
     return d.toLocaleDateString();
   }
-  async retrieveEquipments(page: number) {
-    EquipmentDataService.getAllEquipments(page)
+  async retrieveEquipments(queryParams: string) {
+    EquipmentDataService.getAllEquipments(queryParams)
       .then((res: any) => {
+        console.log(res.data);
         this.totalPages = res.data.n_pages;
-        console.log(res.data.n_pages);
         this.equipments = res.data.equipments;
       })
       .then(() => {
@@ -574,22 +614,23 @@ export default class Dashboard extends Vue {
     this.$router.push({ name: "update", params: { id: id } });
   }
   deleteEquipment(id: String) {
+    let queryParams = `page=1`;
     if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
       EquipmentDataService.deleteEquipment(id)
         .then((res) => console.log("Delete Successfully !!"))
-        .then(() => this.retrieveEquipments(this.currentPage))
+        .then(() => this.retrieveEquipments(this.getQueryParams()))
         .catch((err) => console.log(err));
     }
   }
 
   searchEquipments() {
-    // const keyword = this.inputSeach;
-    // EquipmentDataService.searchEquipment(keyword)
-    //   .then((res) => {
-    //     this.equipments = res.data.equipments;
-    //     alert("Tìm kiếm thành công");
-    //   })
-    //   .catch((err) => alert("Lỗi tìm kiếm"));
+    const keyword = this.inputSeach;
+    EquipmentDataService.searchEquipment(keyword)
+      .then((res) => {
+        this.equipments = res.data.equipments;
+        alert("Tìm kiếm thành công");
+      })
+      .catch((err) => alert("Lỗi tìm kiếm"));
   }
 }
 </script>

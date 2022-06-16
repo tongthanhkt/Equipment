@@ -3,7 +3,7 @@ export default interface Equipment {
   category_name: string;
   created_by: String;
   create_time: String;
-  device_id: String;
+  device_id: String | null;
   id: String;
   import_date: string;
   name: String;

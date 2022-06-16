@@ -6,8 +6,9 @@ class EquipmentDataService {
   addData(data: any) {
     return http.post("/equipment/add", data);
   }
-  getAllEquipments(currentPage: number) {
-    return http.get(`/equipment/search?limit=3&&page=${currentPage}`);
+  getAllEquipments(queyParams: string) {
+    console.log(queyParams);
+    return http.get(`/equipment/search?${queyParams}`);
   }
   updateEquipment(data: any) {
     return http.put("/equipment/update", data);

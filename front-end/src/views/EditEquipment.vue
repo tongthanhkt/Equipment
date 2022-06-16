@@ -80,7 +80,7 @@
             <div class="flex flex-col">
               <label class="leading-loose">Giá tiền</label>
               <input
-                type="text"
+                type="number"
                 class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.price"
@@ -102,7 +102,7 @@
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Thời gian khấu hao</label>
               <input
-                type="text"
+                type="number"
                 class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-32 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.depreciation_period"
@@ -131,7 +131,7 @@
             <div class="flex flex-col ml-14">
               <label class="leading-loose">Giá trị khấu hao</label>
               <input
-                type="text"
+                type="number"
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-32 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.depreciated_value"
@@ -249,7 +249,7 @@ export default class AddEquipment extends Vue {
     depreciated_value: "",
     depreciation_period: "",
     period_type: "",
-    import_date: "07062022",
+    import_date: "",
     take_over_status: "1",
     category_id: "1",
     category_name: "",
@@ -269,50 +269,85 @@ export default class AddEquipment extends Vue {
   private allNewImageFile: File[] = [];
   private currentMetadataInfo: any;
   private oldMetadataInfo: any;
-  private date: string = "test";
-  selectImage(e: InputEvent) {
-    const value = e!.target as HTMLInputElement;
-    this.currentImage = value?.files?.item(0);
-    if (this.currentImage != null) {
-      const temp = URL.createObjectURL(this.currentImage);
-      this.allImageCurrentURL.push(temp);
-      this.currentMetadataInfo.push(this.currentImage);
-    }
-  }
-  handleDate() {
-    const date = new Date(this.equipment.import_date).toLocaleDateString();
-    this.equipment.import_date = date;
-  }
-  deleteImage(index: any) {
-    this.allImageCurrentURL.splice(index, 1);
-    this.currentMetadataInfo.splice(index, 1);
-  }
+  private saveDate: number = 0;
 
   async mounted() {
+    this.retrieveEquipment();
+  }
+  async retrieveEquipment() {
     const idParam = this.$route.params.id;
     const response = await EquipmentDataService.getEquipmentDetail(
       idParam
     ).then((response) => {
       this.equipment = response.data;
-      const d = new Date(response.data.import_date);
-      this.equipment.import_date = d.toLocaleDateString();
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
       let result = allImage.map((Image: any) => Image.file_url);
       result.forEach((URL, index) => {
-        this.allImageCurrentURL[
-          index
-        ] = `http://localhost:8887/file/get_file?file_url=${URL}`;
+        this.allImageCurrentURL[index] = `${URL}`;
       });
-      // this.equipment = response.data;
-      // console.log(response.data.metadata_info);
-      // const a: any = Object.values(response.data.metadata_info);
-      // for (let i = 0; i < a.length; i++) {
-      //   console.log(a[i].file_url);
-      //   this.allImageCurrentURL.push(a[i].file_url);
-      // }
     });
+    const temp = parseInt(this.equipment.import_date);
+    var d = new Date(temp);
+    this.equipment.import_date = d.toLocaleDateString();
+    this.handleDate();
+  }
+  async handleDate() {
+    const date = new Date(this.equipment.import_date).toLocaleDateString();
+    this.equipment.import_date = date;
+
+    await this.handleSaveDate();
+  }
+  handleSaveDate() {
+    var date = new Date(this.equipment.import_date); // some mock date
+    var milliseconds = date.getTime();
+    this.saveDate = milliseconds;
+  }
+  async saveEquipment() {
+    console.log(this.saveDate);
+    const data = {
+      id: this.$route.params.id,
+      device_id: this.equipment.device_id,
+      name: this.equipment.name,
+      start_status: this.equipment.start_status,
+      price: this.equipment.price,
+      depreciation_period: this.equipment.depreciation_period,
+      period_type: this.equipment.period_type,
+      depreciated_value: this.equipment.depreciated_value,
+      import_date: this.saveDate,
+      take_over_status: this.equipment.take_over_status,
+      category_id: this.equipment.category_id,
+      created_by: this.equipment.created_by,
+      created_time: "1655043885811",
+      device_status: this.equipment.device_status,
+
+      updated_time: "13062022",
+      updated_by: "tatthanh",
+      metadata_info: await this.getUpdatedMetaData(),
+    };
+    if (confirm("Bạn có chắc chắn cập nhật thiết bị ?")) {
+      EquipmentDataService.updateEquipment(data)
+        .then((res) => console.log("Success"))
+        .catch((err) => alert(err.response.data.errors));
+    }
+    console.log(data);
+    for (let i = 0; i < this.currentMetadataInfo.length; i++) {
+      if (!(this.currentMetadataInfo[i] instanceof File)) {
+        console.log(this.currentMetadataInfo[i]);
+      }
+    }
+  }
+  async getUpdatedMetaData() {
+    await this.getDeletedImage();
+    const newFile = await this.getNewImageFile();
+    const currentFile = this.getCurrentImageFile();
+    const result = Object.assign(currentFile, newFile);
+    return result;
+  }
+  deleteImage(index: any) {
+    this.allImageCurrentURL.splice(index, 1);
+    this.currentMetadataInfo.splice(index, 1);
   }
   async getDeletedImage() {
     for (let i = 0; i < this.oldMetadataInfo.length; i++) {
@@ -326,7 +361,9 @@ export default class AddEquipment extends Vue {
         }
       }
       if (temp == 0) {
-        await UploadFilesService.deleteFile(this.oldMetadataInfo[i][1].file_url)
+        await UploadFilesService.deleteFile(
+          this.oldMetadataInfo[i][1].file_name
+        )
           .then(() => console.log("Delete done!"))
           .catch((err) => console.log(err));
       }
@@ -343,6 +380,7 @@ export default class AddEquipment extends Vue {
         );
       }
     }
+    console.log(obj);
     return obj;
   }
   getCurrentImageFile() {
@@ -352,50 +390,13 @@ export default class AddEquipment extends Vue {
     );
     return obj;
   }
-
-  async getUpdatedMetaData() {
-    await this.getDeletedImage();
-    const newFile = await this.getNewImageFile();
-    const currentFile = this.getCurrentImageFile();
-    const result = Object.assign(currentFile, newFile);
-    return result;
-  }
-  convertDate(date: any) {
-    const test = new Date(date);
-    var temp = test.getTime();
-    return temp;
-  }
-  async saveEquipment() {
-    const data = {
-      id: this.$route.params.id,
-      device_id: this.equipment.device_id,
-      name: this.equipment.name,
-      start_status: this.equipment.start_status,
-      price: this.equipment.price,
-      depreciation_period: this.equipment.depreciation_period,
-      period_type: this.equipment.period_type,
-      depreciated_value: this.equipment.depreciated_value,
-      import_date: this.convertDate(this.equipment.import_date),
-      take_over_status: this.equipment.take_over_status,
-      category_id: this.equipment.category_id,
-      created_by: this.equipment.created_by,
-      created_time: "1655043885811",
-      device_status: this.equipment.device_status,
-      metadata_info: await this.getUpdatedMetaData(),
-      updated_time: "13062022",
-      updated_by: "tatthanh",
-    };
-    console.log(data);
-    if (confirm("Bạn có chắc chắn cập nhật thiết bị ?")) {
-      EquipmentDataService.updateEquipment(data)
-        .then(() => alert("Cập nhật thành công !"))
-        .catch((err) => alert("Cập nhật thất bại"));
-    }
-
-    for (let i = 0; i < this.currentMetadataInfo.length; i++) {
-      if (!(this.currentMetadataInfo[i] instanceof File)) {
-        console.log(this.currentMetadataInfo[i]);
-      }
+  selectImage(e: InputEvent) {
+    const value = e!.target as HTMLInputElement;
+    this.currentImage = value?.files?.item(0);
+    if (this.currentImage != null) {
+      const temp = URL.createObjectURL(this.currentImage);
+      this.allImageCurrentURL.push(temp);
+      this.currentMetadataInfo.push(this.currentImage);
     }
   }
 }

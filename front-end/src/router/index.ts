@@ -8,6 +8,7 @@ import EquipmentsList from "../views/EquipmentsList.vue";
 import AddEquipment from "../views/AddEquipment.vue";
 import UploadImage from "../views/UploadImage.vue";
 import EditEquipment from "../views/EditEquipment.vue";
+import HomeLayout from "../components/HomeLayout.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
