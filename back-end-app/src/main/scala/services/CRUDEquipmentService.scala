@@ -208,6 +208,9 @@ class CRUDEquipmentService @Inject() (
 
   @throws[Exception]
   def add(e: Equipment): Int={
+      var uploadFiles :  Map[String, UploadFile] = Map()
+      if(e.metadataInfo != null)
+        uploadFiles =e.metadataInfo
 
       val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
              depreciated_value,depreciation_period,period_type,
@@ -231,7 +234,7 @@ class CRUDEquipmentService @Inject() (
       pst.setLong(13,System.currentTimeMillis())
       pst.setString(14,
         s"""
-           |{"files": ${JSON.write(e.metadataInfo)}}
+           |{"files": ${JSON.write(uploadFiles)}}
            |""".stripMargin)
 
       val rs = pst.executeUpdate()
@@ -243,7 +246,7 @@ class CRUDEquipmentService @Inject() (
   def updateById(e: Equipment): Int={
 
     var uploadFile :String =null
-    if(e.metadataInfo.nonEmpty)
+    if(e.metadataInfo != null)
       uploadFile = s"""
                       |{"files": ${JSON.write(e.metadataInfo)}}
                       |""".stripMargin
