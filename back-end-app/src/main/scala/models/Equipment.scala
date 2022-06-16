@@ -91,16 +91,16 @@ case class Equipment(
     if (createdBy == null)
       check = check + (25 -> "There is not information of created person. ")
 
-    if (metadataInfo.nonEmpty){
-      val loop = new Breaks;
-      loop.breakable {
-      for (key <- metadataInfo.keys){
-        if (metadataInfo(key).file_description == null ) {
-          check = check +  (26 -> s" File must have description. ")
-         loop.break
-        }
-      }}
-    }
+//    if (metadataInfo.nonEmpty){
+//      val loop = new Breaks;
+//      loop.breakable {
+//      for (key <- metadataInfo.keys){
+//        if (metadataInfo(key).file_description == null ) {
+//          check = check +  (26 -> s" File must have description. ")
+//         loop.break
+//        }
+//      }}
+//    }
      return check
   }
   def checkFitUpdate(convertString: ConvertString): Map[Int,String] ={
@@ -152,16 +152,16 @@ case class Equipment(
       check = check + (27 -> "There is not information of updated person. ")
 
 
-    if (metadataInfo.nonEmpty){
-      val loop = new Breaks;
-      loop.breakable {
-      for (key <- metadataInfo.keys){
-        if (metadataInfo(key).file_description == null ) {
-          check = check +  (26 -> s" Files must have description. ")
-          loop.break
-        }
-      }}
-    }
+//    if (metadataInfo.nonEmpty){
+//      val loop = new Breaks;
+//      loop.breakable {
+//      for (key <- metadataInfo.keys){
+//        if (metadataInfo(key).file_description == null ) {
+//          check = check +  (26 -> s" Files must have description. ")
+//          loop.break
+//        }
+//      }}
+//    }
     return check
   }
 }
@@ -190,7 +190,7 @@ case class UploadFile(file_url : String,
                       file_name: String,
                       size : Long,
                       file_extension: String,
-                      file_description: String = null,
+//                      file_description: String = null,
                 )
 
 case class DeleteImageByIdRequest(@RouteParam equipmentId :Int,

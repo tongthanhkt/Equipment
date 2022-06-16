@@ -54,7 +54,7 @@ class FileService {
       val size = data.length
 
       Files.write(path,data, StandardOpenOption.CREATE)
-      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+baseName,file_name = baseName,size = size ,file_extension=extension,null))
+      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+baseName,file_name = baseName,size = size ,file_extension=extension))
     }
     return uploadFiles
   }
