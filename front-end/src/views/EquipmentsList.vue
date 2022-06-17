@@ -21,19 +21,12 @@
     <div class="h-24">
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
-          <button
-            class="bg-stone-700 text-white font-bold py-2 px-4 rounded"
-            @click="searchEquipments()"
-          >
-            Tìm kiếm
-          </button>
-
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
             type="text"
             placeholder="Thiết bị"
-            v-model="this.inputSeach"
-            v-bind="this.inputSearch"
+            v-model="this.keyword"
+            v-on:input="searchEquipments()"
           />
         </div>
       </div>
@@ -44,24 +37,12 @@
               class="h-10 bg-white flex border border-gray-200 rounded items-center ml-3"
             >
               <input
+                class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                type="text"
                 placeholder="Người sử dụng"
-                name="select1"
-                id="select1"
-                class="px-4 appearance-none outline-none text-gray-800 w-full"
+                v-model="this.takeOverPerson"
+                v-on:input="searchTakeOverPerson()"
               />
-              <button
-                class="cursor-pointer outline-none focus:outline-none transition-all text-gray-300 hover:text-gray-600"
-              >
-                <svg
-                  class="w-4 h-4 mx-2 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></svg>
-              </button>
               <label
                 for=""
                 class="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-gray-600"
@@ -126,7 +107,6 @@
                 <option
                   v-for="(category, index) in categories"
                   v-bind:value="category.value"
-                  v-bind:selected="index === 0"
                 >
                   {{ category.name }}
                 </option>
@@ -409,48 +389,52 @@
               </tr>
             </tbody>
           </table>
-          <ul class="pagination justify-center mt-8">
-            <li class="pagination-item">
-              <button class="w-36" type="button" @click="onClickFirstPage">
-                First
-              </button>
-            </li>
-            <li class="pagination-item">
-              <button
-                class="w-36"
-                type="button"
-                @click="onClickPreviousPage"
-                :disabled="isInFirstPage"
-              >
-                Previous
-              </button>
-            </li>
+          <nav aria-label="Page navigation example">
+            <ul class="inline-flex -space-x-px">
+              <li>
+                <a
+                  type="button"
+                  @click="onClickFirstPage"
+                  class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >First</a
+                >
+              </li>
+              <li>
+                <a
+                  type="button"
+                  @click="onClickPreviousPage"
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Preivous</a
+                >
+              </li>
 
-            <li class="pagination-item">
-              <button class="w-36" type="button">
-                {{ this.currentPage }}
-              </button>
-            </li>
-            <li class="pagination-item">
-              <button
-                class="w-36"
-                type="button"
-                @click="onClickNextPage"
-                :disabled="isInLastPage"
-              >
-                Next
-              </button>
-            </li>
-            <li class="pagination-item">
-              <button
-                type="button"
-                @click="onClickLastPage"
-                :disabled="isInLastPage"
-              >
-                Last
-              </button>
-            </li>
-          </ul>
+              <li>
+                <a
+                  type="button"
+                  aria-current="page"
+                  class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                  >{{ currentPage }}</a
+                >
+              </li>
+              <li>
+                <a
+                  type="button"
+                  @click="onClickNextPage"
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Next</a
+                >
+              </li>
+
+              <li>
+                <a
+                  type="button"
+                  @click="onClickLastPage"
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Last</a
+                >
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
@@ -474,7 +458,7 @@ export default class Dashboard extends Vue {
     { value: 2, name: "Màn hình" },
     { value: 3, name: "Phụ kiện" },
   ];
-  public inputSeach: String = "";
+
   public equipments: Equipment[] = [];
   public sumOfTakeOverEquipment: number | undefined;
   public sumOfEquipments: number = 0;
@@ -484,25 +468,99 @@ export default class Dashboard extends Vue {
   public currentPage: number = 1;
   public currentLimit: number = 5;
   public currentCategoryId: number | null = null;
+  public keyword: string | null = null;
+  public takeOverPerson: string | null = null;
 
   public totalPages: number = 0;
   public valueCategory: number = 1;
   public queryParams: any;
+  async mounted() {
+    this.retrieveEquipments(this.getQueryParams());
+    EquipmentDataService.getCountTotal().then((res) => {
+      this.sumOfEquipments = res.data.total_equipments;
+      this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
+      this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
+      this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
+    });
+  }
+  async retrieveEquipments(queryParams: string) {
+    EquipmentDataService.getAllEquipments(queryParams)
+      .then((res: any) => {
+        console.log(res.data);
+        this.totalPages = res.data.n_pages;
+        this.equipments = res.data.equipments;
+      })
+      .then(() => {
+        for (let i = 0; i < this.equipments.length; i++) {
+          if (this.equipments[i].updated_time != null) {
+            this.equipments[i].updated_time = this.handleImportDate(
+              this.equipments[i].updated_time
+            );
+          }
+          if (this.equipments[i].import_date != null) {
+            this.equipments[i].import_date = this.handleImportDate(
+              this.equipments[i].import_date
+            );
+          }
 
+          this.equipments[i].category_name = this.handleCategoryEquipment(
+            this.equipments[i].category_id
+          );
+        }
+      });
+  }
+
+  getQueryParams() {
+    this.queryParams = {
+      page: this.currentPage,
+      limit: this.currentLimit,
+      category_id: this.currentCategoryId,
+      keyword: this.keyword,
+      take_over_person: this.takeOverPerson,
+    };
+
+    Object.keys(this.queryParams).forEach((key) => {
+      if (
+        this.queryParams[key] === null ||
+        this.queryParams[key] === undefined
+      ) {
+        delete this.queryParams[key];
+      }
+    });
+    this.$router.push({ name: "search", query: this.queryParams });
+
+    let queryParams = "";
+    const temp = Object.entries(this.queryParams);
+    for (let i = 0; i < temp.length; i++) {
+      if (i < temp.length - 1) {
+        let param = temp[i][0] + "=" + temp[i][1] + "&";
+        queryParams += param;
+      } else {
+        let param = temp[i][0] + "=" + temp[i][1];
+        queryParams += param;
+      }
+    }
+    return queryParams;
+  }
+  editEquipment(id: any) {
+    this.$router.push({ name: "update", params: { id: id } });
+  }
+  deleteEquipment(id: String) {
+    let queryParams = `page=1`;
+    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+      EquipmentDataService.deleteEquipment(id)
+        .then((res) => console.log("Delete Successfully !!"))
+        .then(() => this.retrieveEquipments(this.getQueryParams()))
+        .catch((err) => console.log(err));
+    }
+  }
   async filterCategory(categoryId: number) {
-    console.log(this.queryParams);
     if (categoryId == 0 || categoryId == null) {
       this.currentCategoryId = null;
+
       this.currentPage = 1;
       this.retrieveEquipments(this.getQueryParams());
     } else {
-      this.$router.push({
-        name: "search",
-        query: {
-          page: this.currentPage,
-          categoryId: this.currentCategoryId,
-        },
-      });
       this.currentPage = 1;
       this.currentCategoryId = categoryId;
       this.retrieveEquipments(this.getQueryParams());
@@ -528,44 +586,7 @@ export default class Dashboard extends Vue {
     this.currentPage = this.totalPages;
     this.retrieveEquipments(this.getQueryParams());
   }
-  getQueryParams() {
-    this.queryParams = {
-      page: this.currentPage,
-      limit: this.currentLimit,
-      category_id: this.currentCategoryId,
-    };
-    console.log(this.queryParams);
-    Object.keys(this.queryParams).forEach((key) => {
-      if (
-        this.queryParams[key] === null ||
-        this.queryParams[key] === undefined
-      ) {
-        delete this.queryParams[key];
-      }
-    });
-    let queryParams = "";
-    const temp = Object.entries(this.queryParams);
-    console.log(temp);
-    for (let i = 0; i < temp.length; i++) {
-      if (i < temp.length - 1) {
-        let param = temp[i][0] + "=" + temp[i][1] + "&";
-        queryParams += param;
-      } else {
-        let param = temp[i][0] + "=" + temp[i][1];
-        queryParams += param;
-      }
-    }
-    return queryParams;
-  }
-  async mounted() {
-    this.retrieveEquipments(this.getQueryParams());
-    EquipmentDataService.getCountTotal().then((res) => {
-      this.sumOfEquipments = res.data.total_equipments;
-      this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
-      this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
-      this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
-    });
-  }
+
   handleDeviceStatus(device_status: String) {
     if (device_status == "0") {
       return "Bị mất";
@@ -589,47 +610,22 @@ export default class Dashboard extends Vue {
     var d = new Date(parseInt(data));
     return d.toLocaleDateString();
   }
-  async retrieveEquipments(queryParams: string) {
-    EquipmentDataService.getAllEquipments(queryParams)
-      .then((res: any) => {
-        console.log(res.data);
-        this.totalPages = res.data.n_pages;
-        this.equipments = res.data.equipments;
-      })
-      .then(() => {
-        for (let i = 0; i < this.equipments.length; i++) {
-          this.equipments[i].import_date = this.handleImportDate(
-            this.equipments[i].import_date
-          );
-          this.equipments[i].updated_time = this.handleImportDate(
-            this.equipments[i].updated_time
-          );
-          this.equipments[i].category_name = this.handleCategoryEquipment(
-            this.equipments[i].category_id
-          );
-        }
-      });
-  }
-  editEquipment(id: any) {
-    this.$router.push({ name: "update", params: { id: id } });
-  }
-  deleteEquipment(id: String) {
-    let queryParams = `page=1`;
-    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
-      EquipmentDataService.deleteEquipment(id)
-        .then((res) => console.log("Delete Successfully !!"))
-        .then(() => this.retrieveEquipments(this.getQueryParams()))
-        .catch((err) => console.log(err));
-    }
-  }
 
   searchEquipments() {
-    const keyword = this.inputSeach;
-    EquipmentDataService.searchEquipment(keyword)
-      .then((res) => {
-        this.equipments = res.data.equipments;
-        alert("Tìm kiếm thành công");
-      })
+    if (this.keyword == "") {
+      this.keyword = null;
+    }
+    this.retrieveEquipments(this.getQueryParams())
+      .then((res) => {})
+      .catch((err) => alert("Lỗi tìm kiếm"));
+  }
+
+  searchTakeOverPerson() {
+    if (this.takeOverPerson == "") {
+      this.takeOverPerson = null;
+    }
+    this.retrieveEquipments(this.getQueryParams())
+      .then((res) => {})
       .catch((err) => alert("Lỗi tìm kiếm"));
   }
 }

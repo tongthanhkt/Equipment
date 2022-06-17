@@ -40,7 +40,8 @@
               class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="1">Máy tính</option>
-              <option value="2">Bàn phím PC</option>
+              <option value="2">Màn hình</option>
+              <option value="3">Phụ kiện</option>
             </select>
           </div>
           <div class="flex flex-row">
@@ -269,6 +270,8 @@ export default class AddEquipment extends Vue {
   private allNewImageFile: File[] = [];
   private currentMetadataInfo: any;
   private oldMetadataInfo: any;
+  private date: string = "test";
+
   private saveDate: number = 0;
 
   async mounted() {
@@ -283,6 +286,7 @@ export default class AddEquipment extends Vue {
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
+
       let result = allImage.map((Image: any) => Image.file_url);
       result.forEach((URL, index) => {
         this.allImageCurrentURL[index] = `${URL}`;
@@ -296,7 +300,6 @@ export default class AddEquipment extends Vue {
   async handleDate() {
     const date = new Date(this.equipment.import_date).toLocaleDateString();
     this.equipment.import_date = date;
-
     await this.handleSaveDate();
   }
   handleSaveDate() {
@@ -305,7 +308,6 @@ export default class AddEquipment extends Vue {
     this.saveDate = milliseconds;
   }
   async saveEquipment() {
-    console.log(this.saveDate);
     const data = {
       id: this.$route.params.id,
       device_id: this.equipment.device_id,
@@ -321,17 +323,25 @@ export default class AddEquipment extends Vue {
       created_by: this.equipment.created_by,
       created_time: "1655043885811",
       device_status: this.equipment.device_status,
-
       updated_time: "13062022",
       updated_by: "tatthanh",
       metadata_info: await this.getUpdatedMetaData(),
     };
+    console.log(data);
     if (confirm("Bạn có chắc chắn cập nhật thiết bị ?")) {
       EquipmentDataService.updateEquipment(data)
-        .then((res) => console.log("Success"))
-        .catch((err) => alert(err.response.data.errors));
+        .then(() => alert("Cập nhật thành công !"))
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          let temp = "";
+          Object.values(errors).forEach((error) => {
+            temp = temp + error + "\n";
+          });
+          alert(temp);
+        });
     }
-    console.log(data);
+
     for (let i = 0; i < this.currentMetadataInfo.length; i++) {
       if (!(this.currentMetadataInfo[i] instanceof File)) {
         console.log(this.currentMetadataInfo[i]);
@@ -343,12 +353,15 @@ export default class AddEquipment extends Vue {
     const newFile = await this.getNewImageFile();
     const currentFile = this.getCurrentImageFile();
     const result = Object.assign(currentFile, newFile);
+    console.log(result);
     return result;
   }
+
   deleteImage(index: any) {
     this.allImageCurrentURL.splice(index, 1);
     this.currentMetadataInfo.splice(index, 1);
   }
+
   async getDeletedImage() {
     for (let i = 0; i < this.oldMetadataInfo.length; i++) {
       let temp = 0;
@@ -380,9 +393,9 @@ export default class AddEquipment extends Vue {
         );
       }
     }
-    console.log(obj);
     return obj;
   }
+
   getCurrentImageFile() {
     let obj = Object.fromEntries(this.currentMetadataInfo);
     Object.keys(obj).forEach((key) =>
@@ -390,6 +403,7 @@ export default class AddEquipment extends Vue {
     );
     return obj;
   }
+
   selectImage(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.currentImage = value?.files?.item(0);

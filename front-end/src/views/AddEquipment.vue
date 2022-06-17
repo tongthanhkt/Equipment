@@ -35,6 +35,7 @@
                 class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.name"
+                required
               />
             </div>
           </div>
@@ -48,7 +49,8 @@
               class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="1">Máy tính</option>
-              <option value="2">Bàn phím PC</option>
+              <option value="2">Màn hình</option>
+              <option value="3">Phụ kiện</option>
             </select>
           </div>
           <div class="flex flex-row">
@@ -237,12 +239,12 @@ export default class AddEquipment extends Vue {
     depreciated_value: "",
     depreciation_period: "",
     period_type: "",
-    import_date: "07062022",
-    take_over_status: "1",
-    category_id: "1",
-    device_status: "1",
+    import_date: "1655372446944",
+    take_over_status: "0",
+    category_id: "",
+    device_status: "",
     created_by: "tatthanh@rever.vn",
-    create_time: "07062022",
+    create_time: "1655372446944",
     updated_by: "",
     updated_time: "",
     take_over_person_id: "",
@@ -268,10 +270,6 @@ export default class AddEquipment extends Vue {
   deleteImage(index: number) {
     this.allImageCurrentURL.splice(index, 1);
     this.allImageFile.splice(index, 1);
-  }
-  upload() {
-    console.log(this.allImageFile);
-    console.log(this.allImageCurrentURL);
   }
   async getImageFile() {
     let obj = {};
@@ -299,10 +297,18 @@ export default class AddEquipment extends Vue {
       device_status: this.equipment.device_status,
       metadata_info: await this.getImageFile(),
     };
-    console.log(data);
+
     EquipmentDataService.addData(data)
       .then(() => alert("Thêm thiết bị thành công !!"))
-      .catch((err) => console.log(err.response.data.errors));
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        console.log(errors);
+        let temp = "";
+        Object.values(errors).forEach((error) => {
+          temp = temp + error + "\n";
+        });
+        alert(temp);
+      });
     // const a = this.allImageFile.forEach((imageFile) => {});
     // await Promise.all([a]).then((values) => console.log(values));
 
