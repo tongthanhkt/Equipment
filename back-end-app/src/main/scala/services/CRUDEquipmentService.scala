@@ -29,7 +29,7 @@ class CRUDEquipmentService @Inject() (
                                                 as used on used.equipment_id=e.id
                                             left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ?
-      and (? is null or e.name LIKE CONCAT('%',?,'%') or e.device_id LIKE CONCAT('%',?,'%') )
+      and (? is null or e.name LIKE CONCAT('%' ,?,'%') or e.device_id LIKE CONCAT('%',?,'%') )
       and (? is null or e.category_id = ? )
       and (? is null or u.username LIKE CONCAT('%',?,'%') or u.fullname LIKE CONCAT('%',?,'%') )
       and (? is null or e.device_status = ? )
@@ -46,12 +46,12 @@ class CRUDEquipmentService @Inject() (
       pst.setString(7, searchRequest.takeOverPerson)
       pst.setString(8, searchRequest.takeOverPerson)
       pst.setString(9, searchRequest.takeOverPerson)
-      pst.setString(10, searchRequest.deviceStatus)
-      pst.setString(11,searchRequest.deviceStatus)
-      pst.setString(12, searchRequest.takeOverStatus)
-      pst.setString(13, searchRequest.takeOverStatus)
-      pst.setInt(14,searchRequest.limit)
-      pst.setInt(15,offset)
+      pst.setString(10, searchRequest.deviceStatus)//null
+      pst.setString(11,searchRequest.deviceStatus) //device status
+      pst.setString(12, searchRequest.takeOverStatus)//null
+      pst.setString(13, searchRequest.takeOverStatus)//take over status
+      pst.setInt(14,searchRequest.limit) //litmit
+      pst.setInt(15,offset) //offset
       val rs = pst.executeQuery
       while ( rs.next) {
         val e = Equipment(id=rs.getString("id"),
@@ -138,7 +138,7 @@ class CRUDEquipmentService @Inject() (
   }
 
   @throws[SQLException]
-  def searchById(equipmentId:Int): Equipment = {
+  def   searchById(equipmentId:Int): Equipment = {
 
       val sql = """
       SELECT *

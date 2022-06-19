@@ -29,7 +29,7 @@ class CRUDEquipmentController @Inject() (
           pageNumbers.add(Page(i,i==currentPage));
         }
         val offset = (currentPage-1)*request.limit
-        val result:util.ArrayList[Equipment] =equipmentService.search(request,offset);
+        val result:util.ArrayList[Equipment] =equipmentService. search(request,offset);
         response.ok.body(SearchEquipmentsResponse(equipments = result,
           empty = result.isEmpty,nPages =nPages,
          pageNumbers = pageNumbers,firstPage = +request.page==1,
@@ -109,11 +109,8 @@ class CRUDEquipmentController @Inject() (
 
     post("/add"){request:Equipment =>{
       println(request)
-
       try {
-
         val check = request.checkFitInsert(convertString)
-
         if (check.isEmpty){
           val result = equipmentService.add(request)
           if (result ==1) {
