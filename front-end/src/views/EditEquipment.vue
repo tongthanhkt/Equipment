@@ -24,7 +24,7 @@
               <label class="leading-loose">Tên thiết bị</label>
               <input
                 type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.name"
               />
@@ -40,7 +40,8 @@
               class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="1">Máy tính</option>
-              <option value="2">Bàn phím PC</option>
+              <option value="2">Màn hình</option>
+              <option value="3">Phụ kiện</option>
             </select>
           </div>
           <div class="flex flex-row">
@@ -80,8 +81,8 @@
             <div class="flex flex-col">
               <label class="leading-loose">Giá tiền</label>
               <input
-                type="text"
-                class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                type="number"
+                class="w-48 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.price"
               />
@@ -95,30 +96,44 @@
                 autocomplete="country-name"
                 class="w-24 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option value="0">Tháng</option>
-                <option value="1">Năm</option>
+                <option value="1">Tháng</option>
+                <option value="2">Năm</option>
               </select>
             </div>
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Thời gian khấu hao</label>
               <input
-                type="text"
-                class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                type="number"
+                class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-32 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.depreciation_period"
               />
             </div>
           </div>
-          <div class="flex flex-row w-36">
+          <div class="flex flex-row w-48">
             <div class="flex flex-col">
-              <label class="leading-loose">Thời gian nhập thiết bị</label>
-              <DatePicker class="w-64" />
+              <label class="leading-loose w-64 inline-block"
+                >Thời gian nhập thiết bị</label
+              >
+              <div class="flex flex-row">
+                <input
+                  type="text"
+                  class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                  placeholder=""
+                  v-model="equipment.import_date"
+                />
+                <Datepicker
+                  class="w-3 inline-block"
+                  v-model="equipment.import_date"
+                  @update:modelValue="handleDate"
+                ></Datepicker>
+              </div>
             </div>
             <div class="flex flex-col ml-14">
               <label class="leading-loose">Giá trị khấu hao</label>
               <input
-                type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                type="number"
+                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-32 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.depreciated_value"
               />
@@ -126,12 +141,59 @@
           </div>
           <div class="flex flex-row">
             <div class="flex flex-col">
-              <label class="leading-loose">Tệp đính kèm </label>
-              <input
-                type="text"
-                class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                placeholder=""
-              />
+              <div>
+                <div class="row">
+                  <div class="col-8">
+                    <label class="btn btn-default p-0">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref="file"
+                        @change="selectImage"
+                      />
+                    </label>
+                  </div>
+                  <div class="col-4">
+                    <button
+                      class="btn btn-success btn-sm float-right"
+                      @click="upload"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </div>
+                <div v-if="currentImage" class="progress">
+                  <div
+                    class="progress-bar progress-bar-info"
+                    role="progressbar"
+                    :aria-valuenow="progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    :style="{ width: progress + '%' }"
+                  >
+                    {{ progress }}%
+                  </div>
+                </div>
+
+                <div v-if="message" class="alert alert-secondary" role="alert">
+                  {{ message }}
+                </div>
+                <div class="card mt-3">
+                  <div class="card-header">List of Images</div>
+                  <ul class="list-group list-group-flush">
+                    <div v-for="(image, index) in allImageCurrentURL">
+                      <div>
+                        <div class="img-wrap">
+                          <span class="close" @click="deleteImage(index)"
+                            >&times;</span
+                          >
+                          <img class="w-64 preview my-3" :src="image" alt="" />
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -168,12 +230,16 @@
   </div>
 </template>
 <script lang="ts">
-import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import { Vue, Options } from "vue-property-decorator";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import UploadFilesService from "@/services/equipments/UploadFilesService";
 @Options({
-  components: { DatePicker },
+  components: {
+    Datepicker,
+  },
 })
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
@@ -184,9 +250,10 @@ export default class AddEquipment extends Vue {
     depreciated_value: "",
     depreciation_period: "",
     period_type: "",
-    import_date: "07062022",
+    import_date: "",
     take_over_status: "1",
     category_id: "1",
+    category_name: "",
     device_status: "1",
     created_by: "tatthanh@rever.vn",
     create_time: "07062022",
@@ -196,14 +263,52 @@ export default class AddEquipment extends Vue {
     take_over_person_name: "Minh Duy",
 
     id: "",
+    metadata_info: "",
   };
+  private allImageCurrentURL: string[] = []; // Địa chỉ API của hình ảnh ;
+  private currentImage: File | null | undefined = null;
+  private allNewImageFile: File[] = [];
+  private currentMetadataInfo: any;
+  private oldMetadataInfo: any;
+  private date: string = "test";
+
+  private saveDate: number = 0;
+
   async mounted() {
-    const idParam = this.$route.params.id;
-    const response = await EquipmentDataService.getEquipmentDetail(idParam);
-    this.equipment = response.data;
-    console.log(this.equipment);
+    this.retrieveEquipment();
   }
-  saveEquipment() {
+  async retrieveEquipment() {
+    const idParam = this.$route.params.id;
+    const response = await EquipmentDataService.getEquipmentDetail(
+      idParam
+    ).then((response) => {
+      console.log(response.data);
+      this.equipment = response.data;
+      const allImage = Object.values(response.data.metadata_info);
+      this.currentMetadataInfo = Object.entries(response.data.metadata_info);
+      this.oldMetadataInfo = Object.entries(response.data.metadata_info);
+
+      let result = allImage.map((Image: any) => Image.file_url);
+      result.forEach((URL, index) => {
+        this.allImageCurrentURL[index] = `${URL}`;
+      });
+    });
+    const temp = parseInt(this.equipment.import_date);
+    var d = new Date(temp);
+    this.equipment.import_date = d.toLocaleDateString();
+    this.handleDate();
+  }
+  async handleDate() {
+    const date = new Date(this.equipment.import_date).toLocaleDateString();
+    this.equipment.import_date = date;
+    await this.handleSaveDate();
+  }
+  handleSaveDate() {
+    var date = new Date(this.equipment.import_date); // some mock date
+    var milliseconds = date.getTime();
+    this.saveDate = milliseconds;
+  }
+  async saveEquipment() {
     const data = {
       id: this.$route.params.id,
       device_id: this.equipment.device_id,
@@ -213,17 +318,103 @@ export default class AddEquipment extends Vue {
       depreciation_period: this.equipment.depreciation_period,
       period_type: this.equipment.period_type,
       depreciated_value: this.equipment.depreciated_value,
-      import_date: this.equipment.import_date,
+      import_date: this.saveDate,
       take_over_status: this.equipment.take_over_status,
       category_id: this.equipment.category_id,
       created_by: this.equipment.created_by,
-      created_time: this.equipment.create_time,
+      created_time: "1655043885811",
       device_status: this.equipment.device_status,
+      updated_time: "13062022",
+      updated_by: "tatthanh",
+      metadata_info: await this.getUpdatedMetaData(),
     };
     console.log(data);
     EquipmentDataService.updateEquipment(data)
-      .then((res) => alert("Cập nhật thiết bị thành công"))
-      .catch((err) => console.log(err));
+      .then(() => alert("Cập nhật thành công !"))
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        console.log(errors);
+        let temp = "";
+        Object.values(errors).forEach((error) => {
+          temp = temp + error + "\n";
+        });
+        alert(temp);
+      });
+
+    // for (let i = 0; i < this.currentMetadataInfo.length; i++) {
+    //   if (!(this.currentMetadataInfo[i] instanceof File)) {
+    //     console.log(this.currentMetadataInfo[i]);
+    //   }
+    // }
+  }
+  async getUpdatedMetaData() {
+    await this.getDeletedImage();
+    const newFile = await this.getNewImageFile();
+    const currentFile = this.getCurrentImageFile();
+    let result = Object.assign(currentFile, newFile);
+    if (result == null) {
+      return (result = { files: {} });
+    }
+    return result;
+  }
+
+  deleteImage(index: any) {
+    this.allImageCurrentURL.splice(index, 1);
+    this.currentMetadataInfo.splice(index, 1);
+  }
+
+  //
+  async getDeletedImage() {
+    for (let i = 0; i < this.oldMetadataInfo.length; i++) {
+      let temp = 0;
+      for (let j = 0; j < this.currentMetadataInfo.length; j++) {
+        if (
+          this.oldMetadataInfo[i][0] === this.currentMetadataInfo[j][0] &&
+          !(this.currentMetadataInfo[i] instanceof File)
+        ) {
+          temp = 1;
+        }
+      }
+      if (temp == 0) {
+        await UploadFilesService.deleteFile(
+          this.oldMetadataInfo[i][1].file_name
+        )
+          .then(() => console.log("Delete done!"))
+          .catch((err) => console.log(err));
+      }
+    }
+  }
+
+  async getNewImageFile() {
+    let obj = {};
+    for (let i = 0; i < this.currentMetadataInfo.length; i++) {
+      if (this.currentMetadataInfo[i] instanceof File) {
+        await UploadFilesService.upload(this.currentMetadataInfo[i]).then(
+          (response) => {
+            obj = Object.assign(response.data, obj);
+          }
+        );
+      }
+    }
+    return obj;
+  }
+
+  getCurrentImageFile() {
+    let obj = Object.fromEntries(this.currentMetadataInfo);
+    Object.keys(obj).forEach((key) =>
+      obj[key] === undefined ? delete obj[key] : {}
+    );
+    return obj;
+  }
+
+  selectImage(e: InputEvent) {
+    const value = e!.target as HTMLInputElement;
+    this.currentImage = value?.files?.item(0);
+    if (this.currentImage != null) {
+      const temp = URL.createObjectURL(this.currentImage);
+      this.allImageCurrentURL.push(temp);
+      this.currentMetadataInfo.push(this.currentImage);
+    }
   }
 }
 </script>

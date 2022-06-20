@@ -1,3 +1,11 @@
+<style scoped>
+.img-wrap {
+  position: relative;
+}
+.img-wrap .close {
+  position: absolute;
+}
+</style>
 <template>
   <div>
     <div class="row">
@@ -33,64 +41,80 @@
         {{ progress }}%
       </div>
     </div>
-    <div v-if="previewImage">
-      <div>
-        <img class="preview my-3" :src="previewImage" alt="" />
-      </div>
-    </div>
+
     <div v-if="message" class="alert alert-secondary" role="alert">
       {{ message }}
     </div>
     <div class="card mt-3">
       <div class="card-header">List of Images</div>
       <ul class="list-group list-group-flush">
-        <li
-          class="list-group-item"
-          v-for="(image, index) in imageInfos"
-          :key="index"
-        >
-          <a :href="image.url">{{ image.name }}</a>
-        </li>
+        <div v-for="(image, index) in allImageCurrentURL">
+          <div>
+            <div class="img-wrap">
+              <span class="close" @click="deleteImage(index)">&times;</span>
+              <img class="w-64 preview my-3" :src="image" alt="" />
+            </div>
+          </div>
+        </div>
       </ul>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { Vue, Ref } from "vue-property-decorator";
 import UploadService from "../services/equipments/UploadFilesService";
-export default {
-  name: "upload-image",
-  data() {
-    return {
-      currentImage: undefined,
-      previewImage: undefined,
-      progress: 0,
-      message: "",
-      imageInfos: [],
-    };
-  },
-  mounted() {
-    UploadService.getFiles().then((response) => {
-      this.imageInfos = response.data;
+export default class UploadImage extends Vue {
+  @Ref("file") inpuFile!: HTMLInputElement;
+  private allImageCurrentURL: String[] = [];
+  private currentImage: File | null | undefined = null;
+  private allImageFile: File[] = [];
+  selectImage(e: InputEvent) {
+    const value = e!.target as HTMLInputElement;
+    this.currentImage = value?.files?.item(0);
+    if (this.currentImage != null) {
+      const temp = URL.createObjectURL(this.currentImage);
+      this.allImageFile.push(this.currentImage);
+      this.allImageCurrentURL.push(temp);
+    }
+  }
+  deleteImage(index: number) {
+    this.allImageCurrentURL.splice(index, 1);
+    this.allImageFile.splice(index, 1);
+  }
+  upload() {
+    console.log(this.allImageFile);
+    console.log(this.allImageCurrentURL);
+    this.allImageFile.forEach((imageFile) => {
+      UploadService.upload(imageFile);
     });
-  },
-  methods: {
-    selectImage() {
-      (this.currentImage = this.$refs.file.files.item(0)),
-        (this.previewImage = URL.createObjectURL(this.currentImage));
-      (this.progress = 0), (this.message = "");
-    },
-    upload() {
-      this.progress = 0;
-      UploadService.upload(this.currentImage, (event) => {
-        this.progress = Math.round((100 * event.load) / event.total);
-      })
-        .then((images) => (this.imageInfos = images.data))
-        .catch((err) => {
-          this.progress = 0;
-          this.message = "Could not upload the image !" + err;
-          this.currentImage = undefined;
-        });
-    },
-  },
-};
+  }
+}
+
+// export default {
+//   name: "upload-image",
+//   data() {
+//     return {
+//       allImageCurrentURL: [],
+//       currentImage: File[],
+//       allImageFile: [],
+//     };
+//   },
+//   methods: {
+//     selectImage() {
+//       this.currentImage = this.$refs.file.files.item(0);
+//       this.allImageCurrentURL.push(URL.createObjectURL(this.currentImage));
+//       this.allImageFile.push(this.currentImage);
+//     },
+//     deleteImage(index) {
+//       this.allImageCurrentURL.splice(index, 1);
+//       console.log(this.allImageCurrentURL);
+//     },
+//     upload() {
+//       console.log(this.allImageFile);
+//       // this.allImageFile.forEach((image) => {
+//       //   console.log(this.currentImage);
+//       // });
+//     },
+//   },
+// };
 </script>

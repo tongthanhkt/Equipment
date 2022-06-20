@@ -1,10 +1,11 @@
 export default interface Equipment {
-  category_id: String;
+  category_id: string;
+  category_name: string;
   created_by: String;
   create_time: String;
-  device_id: String;
+  device_id: String | null;
   id: String;
-  import_date: String;
+  import_date: string;
   name: String;
   price: String;
   start_status: String;
@@ -12,9 +13,10 @@ export default interface Equipment {
   take_over_person_name: String;
   take_over_status: String;
   updated_by: String;
-  updated_time: String;
+  updated_time: string;
   device_status: String;
   depreciated_value: String;
   depreciation_period: String;
   period_type: String;
+  metadata_info: Object;
 }

@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import DashboardLayout from "./components/DashboardLayout.vue";
+import HomeLayout from "./components/HomeLayout.vue";
 </script>
 <template>
-  <DashboardLayout />
-
-  //test
+  <HomeLayout />
 </template>

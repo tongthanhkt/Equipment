@@ -1,25 +1,30 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  RouteRecordRaw,
+  createWebHashHistory,
+} from "vue-router";
 import EquipmentsList from "../views/EquipmentsList.vue";
 import AddEquipment from "../views/AddEquipment.vue";
-import Tables from "../views/Tables.vue";
-import UIElements from "../views/UIElements.vue";
-import Login from "../views/Login.vue";
-import Modal from "../views/Modal.vue";
-import Chart from "../views/ChartView.vue";
-import Card from "../views/CardView.vue";
 import UploadImage from "../views/UploadImage.vue";
-import NotFound from "../views/NotFound.vue";
 import EditEquipment from "../views/EditEquipment.vue";
-import EquipmentDetail from "../views/EquipmentDetail.vue";
+import HomeLayout from "../components/HomeLayout.vue";
+import DetailEquipment from "../views/DetailEquipment.vue";
+import AddTakeOver from "../views/AddTakeOver.vue";
+import TakeOverHistory from "../views/TakeOverHistory.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Login",
+    name: "Home",
     component: EquipmentsList,
   },
-
   {
-    path: "/dashboard",
+    path: "/equipment/",
+    name: "search",
+    component: EquipmentsList,
+  },
+  {
+    path: "/equipments",
     name: "EquipmentsList",
     component: EquipmentsList,
   },
@@ -34,36 +39,27 @@ const routes: Array<RouteRecordRaw> = [
     component: EditEquipment,
   },
   {
-    path: "/cards",
-    name: "Cards",
-    component: Card,
+    path: "/add-takeover",
+    name: "AddTakeOver",
+    component: AddTakeOver,
   },
   {
-    path: "/tables",
-    name: "Tables",
-    component: Tables,
+    path: "/detail-equipment/:id",
+    name: "DetailEquipment",
+    component: DetailEquipment,
   },
+  
   {
-    path: "/ui-elements",
-    name: "UIElements",
-    component: UIElements,
+    path: "/takeover-history",
+    name: "TakeOverHistory",
+    component: TakeOverHistory,
   },
-  {
-    path: "/modal",
-    name: "Modal",
-    component: Modal,
-  },
-  {
-    path: "/charts",
-    name: "Chart",
-    component: Chart,
-  },
-  {
-    path: "/blank",
-    name: "Blank",
-    component: UploadImage,
-  },
-  { path: "/:pathMatch(.*)*", component: NotFound },
+
+  // {
+  //   path: "/upload_image",
+  //   name: "UploadImage",
+  //   component: UploadImage,
+  // },
   {
     path: "/equipments/update/:id",
     name: "update",
@@ -72,7 +68,8 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
+
   routes,
 });
 
