@@ -20,6 +20,41 @@
   <div class="px-3">
     <div class="h-24">
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
+        <div class="inline-block category">
+          <div class="relative">
+            <div class="flex flex-row">
+              <a
+                class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
+              >
+                Danh mục
+              </a>
+              <select
+                class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                v-model="categoryId"
+                @change="filterCategory(categoryId)"
+                required
+                name=""
+              >
+                <option v-bind:value="0" selected>Tất cả</option>
+                <option
+                  v-for="(category, index) in categories"
+                  v-bind:value="category.value"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <router-link to="/add-equipment">
+        <div class="inline-block w-full px-3 sm:w-1/2 xl:w-1/4">
+          <a class="bg-stone-700 text-white font-bold py-2 px-4 rounded">
+            Tạo mới thiết bị
+          </a>
+        </div>
+      </router-link>
+      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -43,9 +78,9 @@
         </div>
       </div>
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
-        <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
+        <div class="ml-10 btn-search relative mx-4 lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+            <svg class="h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
               <path
                 d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
                 stroke="currentColor"
@@ -65,42 +100,6 @@
           />
         </div>
       </div>
-
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
-        <div class="inline-block category">
-          <div class="relative">
-            <div class="flex flex-row ml-10">
-              <a
-                class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
-              >
-                Danh mục
-              </a>
-              <select
-                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                v-model="categoryId"
-                @change="filterCategory(categoryId)"
-                required
-                name=""
-              >
-                <option v-bind:value="0" selected>Tất cả</option>
-                <option
-                  v-for="(category, index) in categories"
-                  v-bind:value="category.value"
-                >
-                  {{ category.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <router-link to="/add-equipment">
-        <div class="inline-block w-full px-8 sm:w-1/2 xl:w-1/4">
-          <a class="bg-stone-700 text-white font-bold py-2 px-4 rounded">
-            Tạo mới thiết bị
-          </a>
-        </div>
-      </router-link>
     </div>
     <div class="flex flex-wrap -mx-6">
       <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
@@ -204,13 +203,10 @@
             </thead>
 
             <tbody class="bg-white">
-              <tr
-                class="list_equipments"
-                v-for="(equipment, index) in equipments"
-                :key="index"
-              >
+              <tr v-for="(equipment, index) in equipments" :key="index">
                 <td
-                  class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
+                  class="px-6 py-4 border-b border-gray-200 whitespace-nowrap list_equipments"
+                  @click.prevent="detailEquipment(equipment.id)"
                 >
                   <div class="flex items-center">
                     <div class="ml-4">
@@ -322,10 +318,12 @@
                 <td>
                   <div class="flex justify-around w-48">
                     <span class="flex justify-center">
-                      <button class="w-20 bg-sky-500">Bàn giao</button>
+                      <button class="list_equipments w-20 bg-sky-500">
+                        Bàn giao
+                      </button>
 
                       <a
-                        class="mx-2 px-2 rounded-md"
+                        class="mx-2 px-2 rounded-md list_equipments"
                         @click.prevent="editEquipment(equipment.id)"
                       >
                         <svg
@@ -346,7 +344,7 @@
                       </a>
 
                       <button
-                        class="mx-2 px-2 rounded-md"
+                        class="mx-2 px-2 rounded-md list_equipments"
                         @click="deleteEquipment(equipment.id)"
                       >
                         <svg
@@ -455,12 +453,6 @@ export default class Dashboard extends Vue {
   public queryParams: any;
   async mounted() {
     this.retrieveEquipments(this.getQueryParams());
-    EquipmentDataService.getCountTotal().then((res) => {
-      this.sumOfEquipments = res.data.total_equipments;
-      this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
-      this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
-      this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
-    });
   }
   async retrieveEquipments(queryParams: string) {
     EquipmentDataService.getAllEquipments(queryParams)
@@ -487,6 +479,12 @@ export default class Dashboard extends Vue {
           );
         }
       });
+    EquipmentDataService.getCountTotal(this.getQueryParams()).then((res) => {
+      this.sumOfEquipments = res.data.total_equipments;
+      this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
+      this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
+      this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
+    });
   }
 
   getQueryParams() {
@@ -523,6 +521,9 @@ export default class Dashboard extends Vue {
   }
   editEquipment(id: any) {
     this.$router.push({ name: "update", params: { id: id } });
+  }
+  detailEquipment(id: any) {
+    this.$router.push({ name: "DetailEquipment", params: { id: id } });
   }
   deleteEquipment(id: String) {
     let queryParams = `page=1`;

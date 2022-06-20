@@ -43,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
     component: AddTakeOver,
   },
   {
-    path: "/detail-equipment",
+    path: "/detail-equipment/:id",
     name: "DetailEquipment",
     component: DetailEquipment,
   },

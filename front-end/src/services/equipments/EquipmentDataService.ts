@@ -22,8 +22,8 @@ class EquipmentDataService {
   searchEquipment(keyword: String) {
     return http.get(`equipment/search?keyword=${keyword}&size=10`);
   }
-  getCountTotal() {
-    return http.get(`equipment/count_total`);
+  getCountTotal(queryParams: string) {
+    return http.get(`equipment/count_total?${queryParams}`);
   }
   getSumOfDamagedEquipment() {}
 }

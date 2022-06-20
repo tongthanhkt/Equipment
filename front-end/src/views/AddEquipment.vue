@@ -309,14 +309,13 @@ export default class AddEquipment extends Vue {
         });
         alert(temp);
       });
-    // const a = this.allImageFile.forEach((imageFile) => {});
-    // await Promise.all([a]).then((values) => console.log(values));
+    const a = this.allImageFile.forEach((imageFile) => {});
+    await Promise.all([a]).then((values) => console.log(values));
 
-    // console.log(data);
-    // this.upload();
-    // EquipmentDataService.addData(data)
-    //   .then((res) => alert("Thêm thiết bị thành công"))
-    //   .catch((err) => console.log(err));
+    console.log(data);
+    EquipmentDataService.addData(data)
+      .then((res) => alert("Thêm thiết bị thành công"))
+      .catch((err) => console.log(err));
   }
 }
 </script>
