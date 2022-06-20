@@ -22,7 +22,7 @@ case class Equipment(
                              takeOverStatus: String = null ,
                              categoryId: String = null,
                              deviceStatus :String = null,
-                             metadataInfo: Map[String, UploadFile]  = Map(),
+                             metadataInfo: Map[String, UploadFile]  = null,
                              createdBy: String = null,
                              createdTime: String = null,
                              updatedBy: String = null,
