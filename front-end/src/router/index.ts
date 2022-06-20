@@ -9,6 +9,11 @@ import AddEquipment from "../views/AddEquipment.vue";
 import UploadImage from "../views/UploadImage.vue";
 import EditEquipment from "../views/EditEquipment.vue";
 import HomeLayout from "../components/HomeLayout.vue";
+<<<<<<< HEAD
+=======
+import DetailEquipment from "../views/DetailEquipment.vue"
+import AddTakeOver from "../views/AddTakeOver.vue"
+>>>>>>> origin/master
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -35,6 +40,19 @@ const routes: Array<RouteRecordRaw> = [
     name: "EditEquipment",
     component: EditEquipment,
   },
+<<<<<<< HEAD
+=======
+  {
+    path: "/add-takeover",
+    name: "AddTakeOver",
+    component: AddTakeOver,
+  },
+  {
+    path: "/detail-equipment",
+    name: "DetailEquipment",
+    component: DetailEquipment,
+  },
+>>>>>>> origin/master
 
   // {
   //   path: "/upload_image",

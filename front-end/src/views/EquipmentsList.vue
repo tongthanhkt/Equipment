@@ -21,6 +21,18 @@
     <div class="h-24">
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
             type="text"
@@ -31,62 +43,29 @@
         </div>
       </div>
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
-        <div class="inline-block category">
-          <div class="relative">
-            <div
-              class="h-10 bg-white flex border border-gray-200 rounded items-center ml-3"
-            >
-              <input
-                class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                type="text"
-                placeholder="Người sử dụng"
-                v-model="this.takeOverPerson"
-                v-on:input="searchTakeOverPerson()"
+        <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               />
-              <label
-                for=""
-                class="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-gray-600"
-              >
-                <svg
-                  class="w-4 h-4 mx-2 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-              </label>
-            </div>
+            </svg>
+          </span>
 
-            <input type="" name="" id="" class="hidden peer" />
-            <div
-              class="absolute rounded shadow bg-white overflow-hidden hidden peer-checked:flex flex-col w-full mt-1 border border-gray-200"
-            >
-              <div class="cursor-pointer group">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >Máy tính</a
-                >
-              </div>
-              <div class="cursor-pointer group border-t">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 border-blue-600 group-hover:bg-gray-100"
-                  >Màn hình</a
-                >
-              </div>
-              <div class="cursor-pointer group border-t">
-                <a
-                  class="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"
-                  >PC</a
-                >
-              </div>
-            </div>
-          </div>
+          <input
+            class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+            type="text"
+            placeholder="Người sử dụng"
+            v-model="this.takeOverPerson"
+            v-on:input="searchTakeOverPerson()"
+          />
         </div>
       </div>
+
       <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
         <div class="inline-block category">
           <div class="relative">
@@ -389,8 +368,8 @@
               </tr>
             </tbody>
           </table>
-          <nav aria-label="Page navigation example">
-            <ul class="inline-flex -space-x-px">
+          <nav class="flex justify-center">
+            <ul class="flex -space-x-px inline-block">
               <li>
                 <a
                   type="button"

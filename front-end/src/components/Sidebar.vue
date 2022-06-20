@@ -57,12 +57,14 @@
             ></path>
           </svg>
 
-          <span class="mx-4" @click="backHomePage">Danh sách thiết bị</span>
+          <span class="mx-4" @click="">Danh sách thiết bị</span>
         </router-link>
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'UIElements' ? activeClass : inactiveClass]"
-          to="/ui-elements"
+          :class="[
+            $route.name === 'DetailEquipment' ? activeClass : inactiveClass,
+          ]"
+          to="/detail-equipment"
         >
           <svg
             class="w-5 h-5"
@@ -92,8 +94,10 @@
 
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Tables' ? activeClass : inactiveClass]"
-          to="/tables"
+          :class="[
+            $route.name === 'EditTakeOver' ? activeClass : inactiveClass,
+          ]"
+          to="/edit-takeover"
         >
           <svg
             class="w-5 h-5"

@@ -82,7 +82,7 @@
               <label class="leading-loose">Giá tiền</label>
               <input
                 type="number"
-                class="w-32 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                class="w-48 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.price"
               />
@@ -96,8 +96,8 @@
                 autocomplete="country-name"
                 class="w-24 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option value="0">Tháng</option>
-                <option value="1">Năm</option>
+                <option value="1">Tháng</option>
+                <option value="2">Năm</option>
               </select>
             </div>
             <div class="flex flex-col ml-10">
@@ -282,6 +282,7 @@ export default class AddEquipment extends Vue {
     const response = await EquipmentDataService.getEquipmentDetail(
       idParam
     ).then((response) => {
+      console.log(response.data);
       this.equipment = response.data;
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
@@ -328,32 +329,32 @@ export default class AddEquipment extends Vue {
       metadata_info: await this.getUpdatedMetaData(),
     };
     console.log(data);
-    if (confirm("Bạn có chắc chắn cập nhật thiết bị ?")) {
-      EquipmentDataService.updateEquipment(data)
-        .then(() => alert("Cập nhật thành công !"))
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          console.log(errors);
-          let temp = "";
-          Object.values(errors).forEach((error) => {
-            temp = temp + error + "\n";
-          });
-          alert(temp);
+    EquipmentDataService.updateEquipment(data)
+      .then(() => alert("Cập nhật thành công !"))
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        console.log(errors);
+        let temp = "";
+        Object.values(errors).forEach((error) => {
+          temp = temp + error + "\n";
         });
-    }
+        alert(temp);
+      });
 
-    for (let i = 0; i < this.currentMetadataInfo.length; i++) {
-      if (!(this.currentMetadataInfo[i] instanceof File)) {
-        console.log(this.currentMetadataInfo[i]);
-      }
-    }
+    // for (let i = 0; i < this.currentMetadataInfo.length; i++) {
+    //   if (!(this.currentMetadataInfo[i] instanceof File)) {
+    //     console.log(this.currentMetadataInfo[i]);
+    //   }
+    // }
   }
   async getUpdatedMetaData() {
     await this.getDeletedImage();
     const newFile = await this.getNewImageFile();
     const currentFile = this.getCurrentImageFile();
-    const result = Object.assign(currentFile, newFile);
-    console.log(result);
+    let result = Object.assign(currentFile, newFile);
+    if (result == null) {
+      return (result = { files: {} });
+    }
     return result;
   }
 
@@ -362,6 +363,7 @@ export default class AddEquipment extends Vue {
     this.currentMetadataInfo.splice(index, 1);
   }
 
+  //
   async getDeletedImage() {
     for (let i = 0; i < this.oldMetadataInfo.length; i++) {
       let temp = 0;
@@ -382,6 +384,7 @@ export default class AddEquipment extends Vue {
       }
     }
   }
+
   async getNewImageFile() {
     let obj = {};
     for (let i = 0; i < this.currentMetadataInfo.length; i++) {
