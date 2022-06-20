@@ -353,29 +353,55 @@
           </tr>
         </tbody>
       </table>
-      <Pagination></Pagination>
+      
     </div>
   </div>
   <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                
-                <li class="page-item">
-                    <a class="page-link" >Previous</a>
-                </li>
-                <li class="page-item ">
-                            <a class="page-link" >1</a>
-                        </li>
-                         <li class="page-item active">
-                            <a class="page-link" >2</a>
-                        </li>
-                         <li class="page-item ">
-                            <a class="page-link" >3</a>
-                        </li>
-                <li class="page-item">
-                    <a class="page-link" >Next</a>
-                </li>
+            <ul class="inline-flex -space-x-px">
+              <li>
+                <a
+                  type="button"
+                 
+                  class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >First</a
+                >
+              </li>
+              <li>
+                <a
+                  type="button"
+                  
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Preivous</a
+                >
+              </li>
+
+              <li>
+                <a
+                  type="button"
+                  aria-current="page"
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >1</a
+                >
+              </li>
+              <li>
+                <a
+                  type="button"
+                 
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Next</a
+                >
+              </li>
+
+              <li>
+                <a
+                  type="button"
+                  
+                  class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >Last</a
+                >
+              </li>
             </ul>
-        </nav>
+          </nav>
 </div>
 </div>
 
