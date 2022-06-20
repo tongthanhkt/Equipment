@@ -10,7 +10,7 @@
           </button>
     </div>
     
-      <div class="overflow-auto bg-indigo-100 hover:overflow-scroll h-4/5">
+      <div class="overflow-auto overflow-x-hidden bg-indigo-100  h-4/5">
         <div class=" pl-3 text-sm  grid grid-cols-3 grid-flow-row">
       <div class="p-1   font-medium text-gray-700">Mã thiết bị</div>
       <div class="p-1  col-span-2   font-medium text-gray-700">Tên thiết bị</div>
@@ -95,20 +95,25 @@
 </template>
 
 <script>
-export default {
-    
-    methods :{
-        changeShow(e){
-            this.$emit('changeDetailTakeOverShow',false)
 
-        },
-        showEditTakeOver(e){
-          this.$emit('changeEditTakeOverShow',true)
-          //console.log("show edit ne")
-        }
-    }
 
+import { Vue, Options,Emit,Ref } from "vue-property-decorator";
+
+
+
+
+export default class EditTakeOver extends Vue {
+  @Emit('changeDetailTakeOverShow')
+  changeShow() {
+   return false
+  }
+
+  @Emit('changeEditTakeOverShow')
+  showEditTakeOver() {
+   return true
+  }
 }
+
 
 </script>
 

@@ -62,9 +62,9 @@
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[
-            $route.name === 'DetailEquipment' ? activeClass : inactiveClass,
+            $route.name === 'TakeOverHistory' ? activeClass : inactiveClass,
           ]"
-          to="/detail-equipment"
+          to="/takeover-history"
         >
           <svg
             class="w-5 h-5"
@@ -89,7 +89,7 @@
               fill="currentColor"
             />
           </svg>
-          <span class="mx-4">Bàn giao thiết bị</span>
+          <span class="mx-4">Lịch sử bàn giao</span>
         </router-link>
 
         <router-link

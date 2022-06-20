@@ -11,6 +11,7 @@ import EditEquipment from "../views/EditEquipment.vue";
 import HomeLayout from "../components/HomeLayout.vue";
 import DetailEquipment from "../views/DetailEquipment.vue";
 import AddTakeOver from "../views/AddTakeOver.vue";
+import TakeOverHistory from "../views/TakeOverHistory.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -46,6 +47,12 @@ const routes: Array<RouteRecordRaw> = [
     path: "/detail-equipment/:id",
     name: "DetailEquipment",
     component: DetailEquipment,
+  },
+  
+  {
+    path: "/takeover-history",
+    name: "TakeOverHistory",
+    component: TakeOverHistory,
   },
 
   // {

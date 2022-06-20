@@ -10,7 +10,7 @@
           </button>
     </div>
     
-      <div class="relative overflow-auto bg-indigo-100 hover:overflow-scroll h-4/5">
+      <div class="relative overflow-x-hidden overflow-auto bg-indigo-100  h-4/5">
         <div class=" pl-3 text-sm  grid grid-cols-3 grid-flow-row mt-2 mb-3.5">
       <div class="p-1   font-medium text-gray-700">Mã thiết bị</div>
       <div class="p-1  col-span-2   font-medium text-gray-700">Tên thiết bị</div>
@@ -91,7 +91,7 @@
        
     
       <div class="pl-1 font-medium text-gray-700">Message</div>
-      <textarea id="w3review" name="w3review" rows="3" cols="55" class="mx-1 my-2  px-2 py-1.5 border rounded">
+      <textarea id="w3review" name="w3review" rows="3" cols="50" class="mx-1 my-2  px-2 py-1.5 border rounded">
 Khi thực hiện bàn giao thì mình sẽ có 1 bước xác nhận từ người được bàn giao
   + Trước khi người được bàn giao xác nhận đã nhận được thiết bị
 </textarea>
