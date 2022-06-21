@@ -53,6 +53,20 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         }
       }
     }}
+    get("/:id"){request:SearchTakeOverByIdRequest=>{
+      val takeOverId= request.id;
+      try{
+        val result=takeOverService.searchTakeOverById(takeOverId)
+        if(result==null)
+          response.noContent
+        else response.ok.body(result)
+      }catch {
+        case ex:Exception=>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+    }}
     post("/add"){request:TakeOver=>{
       print(request)
       try{
