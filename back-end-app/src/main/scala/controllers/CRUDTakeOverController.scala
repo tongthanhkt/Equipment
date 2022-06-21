@@ -2,7 +2,7 @@ package controllers
 
 import com.twitter.finatra.http.Controller
 import com.twitter.util.jackson.JSON
-import models.{ConvertString, DeleteTakeOverRequest, Page, SearchTakeOverByIdRequest, SearchTakeOverRequest, SearchTakeOverResponse, TakeOver}
+import models._
 import services.CRUDTakeOverService
 
 import java.util
@@ -109,6 +109,22 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         }
       }
     }
+    }
+    get("/equipment/:id"){
+      request:SearchTakeOverByIdEquipmentRequest=>{
+        val equipmentId= request.id;
+        try{
+          val result=takeOverService.searchTakeOverByEquipmentId(equipmentId)
+          if(result==null)
+            response.noContent
+          else response.ok.body(result)
+        }catch {
+          case ex:Exception=>{
+            println(ex)
+            response.internalServerError.jsonError(ex.getMessage)
+          }
+        }
+      }
     }
   }
 
