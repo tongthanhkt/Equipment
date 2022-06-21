@@ -15,9 +15,13 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   def searchTakeOverByEquipmentId(equipmentId:Int): util.ArrayList[TakeOver] = {
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql = """
-      SELECT *
-      FROM equipment_management.takeover_equipment_info as temp
-      WHERE  temp.equipment_id = ?;"""
+      SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
+          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
+        FROM equipment_management.takeover_equipment_info as tov
+        LEFT JOIN equipment_management.equipment as e
+        on e.id = tov.equipment_id
+        where tov.status!=-1
+      AND  temp.equipment_id = ?;"""
 
     val con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
@@ -36,7 +40,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         cost=rs.getString("cost"),
         createdBy=rs.getString("created_by"),
         createdTime=rs.getString("created_time"),
-        updatedBy=rs.getString("updated_time"),
+        updatedBy=rs.getString("updated_by"),
         updatedTime=rs.getString("updated_time"));
 
       takeOverList.add(e);
@@ -48,7 +52,9 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
       """
-        SELECT * FROM equipment_management.takeover_equipment_info as tov
+         SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
+          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
+        FROM equipment_management.takeover_equipment_info as tov
         LEFT JOIN equipment_management.equipment as e
         on e.id = tov.equipment_id
         where tov.status!=?
@@ -91,7 +97,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       cost=rs.getString("cost"),
       createdBy=rs.getString("created_by"),
       createdTime=rs.getString("created_time"),
-      updatedBy=rs.getString("updated_time"),
+      updatedBy=rs.getString("updated_by"),
       updatedTime=rs.getString("updated_time"),
       metadataInfo = toMap(rs.getString("metadata_info")));
 
@@ -138,11 +144,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
-      SELECT *
-      FROM equipment_management.takeover_equipment_info as tov
-      LEFT JOIN equipment_management.equipment as e
-      on e.id = tov.equipment_id
-      WHERE  tov.id = ?;"""
+     SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
+          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
+        FROM equipment_management.takeover_equipment_info as tov
+        LEFT JOIN equipment_management.equipment as e
+        on e.id = tov.equipment_id
+        WHERE  tov.id = ?;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -164,7 +171,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         cost=rs.getString("cost"),
         createdBy=rs.getString("created_by"),
         createdTime=rs.getString("created_time"),
-        updatedBy=rs.getString("updated_time"),
+        updatedBy=rs.getString("updated_by"),
         updatedTime=rs.getString("updated_time"));
     }
     con.close();
