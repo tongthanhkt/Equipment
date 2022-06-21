@@ -14,7 +14,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     get("/list") { request: SearchTakeOverRequest => {
       print(request)
       try {
-        val totalTakeOverList = takeOverService.countBySearchTakeOver(request.username,request.takeOverPerson,request.Type,request.status)
+        val totalTakeOverList = takeOverService.countBySearchTakeOver(request.username,request.takeOverPerson,request.typeTakeOver,request.status,request.equipmentId)
         var nPages:Int=totalTakeOverList/request.limit;
         val currentPage=request.page;
         if(totalTakeOverList%request.limit>0){

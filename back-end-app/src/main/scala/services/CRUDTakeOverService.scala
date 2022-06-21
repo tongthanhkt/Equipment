@@ -54,7 +54,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         and (? is null or temp.take_over_person LIKE CONCAT('%',?,'%'))
         and (? is null or temp.type = ?)
         and (? is null or temp.status= ?)
-
+        and (? is null or temp.equipment_id= ?)
         LIMIT ? OFFSET ?
          ;"""
         val con = databaseConnection.getConnection()
@@ -64,12 +64,14 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     pst.setString(3,searchTakeOverRequest.username);
     pst.setString(4,searchTakeOverRequest.takeOverPerson);
     pst.setString(5,searchTakeOverRequest.takeOverPerson);
-    pst.setString(6,searchTakeOverRequest.Type);
-    pst.setString(7,searchTakeOverRequest.Type);
+    pst.setString(6,searchTakeOverRequest.typeTakeOver);
+    pst.setString(7,searchTakeOverRequest.typeTakeOver);
     pst.setString(8,searchTakeOverRequest.status);
     pst.setString(9,searchTakeOverRequest.status);
-    pst.setInt(10,searchTakeOverRequest.limit);
-    pst.setInt(11,offset);
+    pst.setString(10,searchTakeOverRequest.equipmentId);
+    pst.setString(11,searchTakeOverRequest.equipmentId);
+    pst.setInt(12,searchTakeOverRequest.limit);
+    pst.setInt(13,offset);
 
     val rs = pst.executeQuery
     while(rs.next){
@@ -95,7 +97,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return takeOverList;
   }
   @throws[SQLException]
-  def countBySearchTakeOver(username:String,takeOverPerson:String,Type:String,status:String):Int={
+  def countBySearchTakeOver(username:String,takeOverPerson:String,typeTakeOver:String,status:String,equipmentId:String):Int={
     val sql=
       """
         |SELECT count(*) as  total
@@ -104,7 +106,11 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         |        (? is null or temp.username LIKE CONCAT('%',?,'%'))
         |        and (? is null or temp.take_over_person LIKE CONCAT('%',?,'%'))
         |        and (? is null or temp.type = ?)
-        |        and (? is null or temp.status= ?);
+        |        and (? is null or temp.status= ?)
+        |        and (? is null or temp.equipment_id= ?)
+        |        ;
+        |
+        |
         |""".stripMargin
         val con =databaseConnection.getConnection()
         val pst=con.prepareStatement(sql)
@@ -112,10 +118,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     pst.setString(2,username);
     pst.setString(3,takeOverPerson);
     pst.setString(4,takeOverPerson);
-    pst.setString(5,Type);
-    pst.setString(6,Type);
+    pst.setString(5,typeTakeOver);
+    pst.setString(6,typeTakeOver);
     pst.setString(7,status);
     pst.setString(8,status);
+    pst.setString(9,equipmentId);
+    pst.setString(10,equipmentId);
     val rs = pst.executeQuery
     var total =0
     while ( rs.next) {

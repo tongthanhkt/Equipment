@@ -26,8 +26,9 @@ case class TakeOver(
 case class SearchTakeOverRequest(
                                   @QueryParam username: String = null,
                                   @QueryParam takeOverPerson: String = null,
-                                  @QueryParam Type: String = null,
+                                  @QueryParam typeTakeOver: String = null,
                                   @QueryParam status: String = null,
+                                  @QueryParam equipmentId: String = null,
                                   @QueryParam page: Int = 1,
                                   @QueryParam limit: Int = 10
                                 )
