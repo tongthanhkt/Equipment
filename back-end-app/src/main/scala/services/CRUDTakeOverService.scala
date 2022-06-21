@@ -80,7 +80,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val e = TakeOver(id=rs.getString("id"),
       equipmentId =rs.getString("equipment_id") ,
       deviceId=rs.getString("device_id"),
-      name=rs.getString("device_id"),
+      name=rs.getString("name"),
       username =rs.getString("username") ,
       takeOverTime =rs.getString("take_over_time") ,
       status=rs.getString("status"),
@@ -197,35 +197,38 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   @throws[Exception]
   def add(e: TakeOver): Int={
-    var test:TakeOver  = checkDeviceIdForTakeOver(e);
-    print(test.id);
-    val sql = """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
+    var equipment:TakeOver  = checkDeviceIdForTakeOver(e);
+    print(equipment.id);
+    if(equipment.id!=null){
+      val sql = """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
               take_over_person,metadata_info,type,
               message,cost,created_by,created_time,updated_by,updated_time)
               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
-    var con = databaseConnection.getConnection()
-    val pst = con.prepareStatement(sql)
-    pst.setString(1,e.equipmentId)
-    pst.setString(2, e.username)
-    pst.setString(3,e.takeOverTime )
-    pst.setString(4, e.status)
-    pst.setString(5,e.verifier)
-    pst.setString(6,e.takeOverPerson )
-    pst.setString(7,
-      s"""
-         |{"files": ${JSON.write(e.metadataInfo)}}
-         |""".stripMargin)
-    pst.setString(8, e.Type)
-    pst.setString(9,e.message)
-    pst.setString(10,e.cost)
-    pst.setString(11, e.createdBy)
-    pst.setLong(12,System.currentTimeMillis())
-    pst.setString(13, e.updatedBy)
-    pst.setString(14,e.updatedTime)
-    val rs = pst.executeUpdate()
-    con.close();
-    return rs
+      var con = databaseConnection.getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setString(1,e.equipmentId)
+      pst.setString(2, e.username)
+      pst.setString(3,e.takeOverTime )
+      pst.setString(4, e.status)
+      pst.setString(5,e.verifier)
+      pst.setString(6,e.takeOverPerson )
+      pst.setString(7,
+        s"""
+           |{"files": ${JSON.write(e.metadataInfo)}}
+           |""".stripMargin)
+      pst.setString(8, e.Type)
+      pst.setString(9,e.message)
+      pst.setString(10,e.cost)
+      pst.setString(11, e.createdBy)
+      pst.setLong(12,System.currentTimeMillis())
+      pst.setString(13, e.updatedBy)
+      pst.setString(14,e.updatedTime)
+      val rs = pst.executeUpdate()
+      con.close();
+      return rs
+    }
+    return 0;
   }
   @throws[SQLException]
   def getIdTakeOverDESC():Int = {
