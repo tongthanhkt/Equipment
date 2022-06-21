@@ -1,17 +1,17 @@
 export default interface TakeOverRecord {
   id: string;
-  equipment_id: String;
+  equipment_id: string;
   username: string;
-  take_over_time: String;
-  status: String;
-  verifier: String;
-  take_over_person: String;
-  type: String;
-  message: String;
+  take_over_time: string;
+  status: string;
+  verifier: string;
+  take_over_person: string;
+  type: string;
+  message: string;
   cost: string;
-  created_by: String;
-  created_time: String;
-  updated_by: String;
-  updated_time: String;
+  created_by: string;
+  created_time: string;
+  updated_by: string;
+  updated_time: string;
   metadata_info: Object;
 }
