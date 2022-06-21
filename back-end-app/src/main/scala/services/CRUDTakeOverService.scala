@@ -48,13 +48,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
       """
-        SELECT * FROM equipment_management.takeover_equipment_info as takeover left join equipment_management.equipment as e
-        on e.id = takeover.equipment_id
-        WHERE  takeover.status!= ?
-        and (? is null or takeover.username LIKE CONCAT('%',?,'%'))
-        and (? is null or takeover.take_over_person LIKE CONCAT('%',?,'%'))
-        and (? is null or takeover.type = ?)
-        and (? is null or takeover.status= ?)
+        SELECT * FROM equipment_management.takeover_equipment_info as temp
+        WHERE  temp.status!= ?
+        and (? is null or temp.username LIKE CONCAT('%',?,'%'))
+        and (? is null or temp.take_over_person LIKE CONCAT('%',?,'%'))
+        and (? is null or temp.type = ?)
+        and (? is null or temp.status= ?)
 
         LIMIT ? OFFSET ?
          ;"""
@@ -75,8 +74,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val rs = pst.executeQuery
     while(rs.next){
     val e = TakeOver(id=rs.getString("id"),
-      deviceId =rs.getString("device_id") ,
-      name = rs.getString("name"),
+      equipmentId =rs.getString("equipment_id") ,
       username =rs.getString("username") ,
       takeOverTime =rs.getString("take_over_time") ,
       status=rs.getString("status"),

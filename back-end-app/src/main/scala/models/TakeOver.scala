@@ -6,9 +6,7 @@ import java.util
 
 case class TakeOver(
                      id: String = null,
-                     equipmentId:String=null,
-                     deviceId: String = null,
-                     name:String=null,
+                     equipmentId: String = null,
                      username: String = null,
                      takeOverTime: String = null,
                      status: String = null,
