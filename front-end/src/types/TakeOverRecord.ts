@@ -14,4 +14,6 @@ export default interface TakeOverRecord {
   updated_by: string;
   updated_time: string;
   metadata_info: Object;
+  device_id: string,
+  name: string
 }

@@ -4,7 +4,7 @@
           <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Bàn giao thiết bị</h1>
            <button
             class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors   w-auto text-white  rounded-md focus:outline-none"
-             v-on:click="changeShow"
+             v-on:click="changeShow(true)"
          >
             <fa icon="xmark"  class="px-2 py-2" ></fa>          
           </button>
@@ -160,6 +160,7 @@ Khi thực hiện bàn giao thì mình sẽ có 1 bước xác nhận từ ngư�
           </button>
           <button
             class=" bg-red-500 hover:bg-red-600 m-3.5 transition-colors   w-auto text-white p-2 rounded-md focus:outline-none"
+             v-on:click="changeShow(false)"
           >
             <fa icon="xmark"  class="px-1 " ></fa>
             Hủy 
@@ -188,8 +189,8 @@ import { Vue, Options,Emit,Ref } from "vue-property-decorator";
 })
 export default class AddTakeOver extends Vue {
   @Emit('changeAddTakeOverShow')
-  changeShow() {
-   return false
+  changeShow(data:boolean) {
+   return data
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
