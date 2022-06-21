@@ -14,7 +14,7 @@ case class TakeOver(
                      status: String = null,
                      verifier: String = null,
                      takeOverPerson: String = null,
-                     metadataInfo: Map[String, UploadFileTakeOver]  = Map(),
+                     metadataInfo: Map[String, UploadFile]  = null,
                      Type: String = null,
                      message: String = null,
                      cost: String = null,
@@ -45,10 +45,5 @@ case class SearchTakeOverResponse(
                                  )
 
 case class SearchTakeOverByIdRequest(@RouteParam id: Int)
+case class SearchTakeOverByIdEquipmentRequest(@RouteParam id: Int)
 case class DeleteTakeOverRequest(@QueryParam id:Int)
-case class UploadFileTakeOver(file_url : String,
-                      file_name: String,
-                      size : Long,
-                      file_extension: String,
-                      //                      file_description: String = null,
-                     )

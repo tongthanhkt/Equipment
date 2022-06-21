@@ -11,7 +11,39 @@ import java.util
 import javax.inject.Inject
 
 class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString){
-  @throws[SQLException]
+
+  def searchTakeOverByEquipmentId(equipmentId:Int): util.ArrayList[TakeOver] = {
+    val takeOverList = new util.ArrayList[TakeOver]()
+    val sql = """
+      SELECT *
+      FROM equipment_management.takeover_equipment_info as temp
+      WHERE  temp.equipment_id = ?;"""
+
+    val con = databaseConnection.getConnection()
+    val pst= con.prepareStatement(sql)
+    pst.setInt(1, equipmentId)
+    val rs = pst.executeQuery
+    while(rs.next){
+      val e = TakeOver(id=rs.getString("id"),
+        equipmentId =rs.getString("equipment_id") ,
+        username =rs.getString("username") ,
+        takeOverTime =rs.getString("take_over_time") ,
+        status=rs.getString("status"),
+        verifier=rs.getString("verifier"),
+        takeOverPerson =rs.getString("take_over_person") ,
+        Type=rs.getString("type"),
+        message=rs.getString("message"),
+        cost=rs.getString("cost"),
+        createdBy=rs.getString("created_by"),
+        createdTime=rs.getString("created_time"),
+        updatedBy=rs.getString("updated_time"),
+        updatedTime=rs.getString("updated_time"));
+
+      takeOverList.add(e);
+    }
+    con.close()
+    return takeOverList;
+  }
   def searchTakeOver(searchTakeOverRequest: SearchTakeOverRequest,offset:Int):util.ArrayList[TakeOver]={
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
@@ -57,7 +89,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       createdTime=rs.getString("created_time"),
       updatedBy=rs.getString("updated_time"),
       updatedTime=rs.getString("updated_time"),
-      metadataInfo=null);
+      metadataInfo = toMap(rs.getString("metadata_info")));
 
       takeOverList.add(e);
     }
@@ -98,7 +130,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql = """
       SELECT *
       FROM equipment_management.takeover_equipment_info as temp
-      WHERE  temp.equipment_id = ?;"""
+      WHERE  temp.id = ?;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -200,6 +232,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
   }
   def updateById(e:TakeOver):Int={
+    var uploadFile :String =null
+    if(e.metadataInfo != null)
+      uploadFile = s"""
+                      |{"files": ${JSON.write(e.metadataInfo)}}
+                      |""".stripMargin
+
     val sql=
       """UPDATE takeover_equipment_info
           SET  equipment_id = if(? is not null, ?,equipment_id) , username = if(? is not null, ?,username),
@@ -208,8 +246,9 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
            type = if(? is not null, ?,type),
            message = if(? is not null,?,message),cost = if(? is not null,?,cost), created_by = if(? is not null, ?,created_by),
            created_time = if(? is not null, ?,created_time),
-           updated_by = if(? is not null, ?,updated_by),updated_time = if(? is not null, ?,updated_time)
-          WHERE status != ? and id = ?;"""
+           updated_by = if(? is not null, ?,updated_by),updated_time = if(? is not null, ?,updated_time),
+           metadata_info = if(? is not null, ?,metadata_info)
+           WHERE status != ? and id = ?;"""
           var con = databaseConnection.getConnection()
           val pst= con.prepareStatement(sql)
     pst.setString(1,e.equipmentId);
@@ -238,11 +277,14 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     pst.setString(24,e.updatedBy);
     pst.setString(25,e.updatedTime);
     pst.setString(26,e.updatedTime);
-    pst.setInt(27,-1);
-    pst.setString(28,e.id);
+    pst.setString(27,uploadFile);
+    pst.setString(28,uploadFile);
+    pst.setInt(29,-1);
+    pst.setString(30,e.id);
     val rs = pst.executeUpdate()
     con.close();
     return rs
 
   }
+
 }
