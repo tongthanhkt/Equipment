@@ -5,6 +5,8 @@
 /front-end/tests/e2e/videos/
 /front-end/tests/e2e/screenshots/
 /back-end-app/src/main/resources/
+/back-end-app/target/
+/back-end-app/images/
 
 
 
