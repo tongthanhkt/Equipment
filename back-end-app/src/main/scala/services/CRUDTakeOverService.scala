@@ -48,13 +48,15 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
       """
-        SELECT * FROM equipment_management.takeover_equipment_info as temp
-        WHERE  temp.status!= ?
-        and (? is null or temp.username LIKE CONCAT('%',?,'%'))
-        and (? is null or temp.take_over_person LIKE CONCAT('%',?,'%'))
-        and (? is null or temp.type = ?)
-        and (? is null or temp.status= ?)
-        and (? is null or temp.equipment_id= ?)
+        SELECT * FROM equipment_management.takeover_equipment_info as tov
+        LEFT JOIN equipment_management.equipment as e
+        on e.id = tov.equipment_id
+        where tov.status!=?
+        and (? is null or tov.username LIKE CONCAT('%',?,'%'))
+        and (? is null or tov.take_over_person LIKE CONCAT('%',?,'%'))
+        and (? is null or tov.type = ?)
+        and (? is null or tov.status= ?)
+        and (? is null or tov.equipment_id= ?)
         LIMIT ? OFFSET ?
          ;"""
         val con = databaseConnection.getConnection()
@@ -77,6 +79,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     while(rs.next){
     val e = TakeOver(id=rs.getString("id"),
       equipmentId =rs.getString("equipment_id") ,
+      deviceId=rs.getString("device_id"),
+      name=rs.getString("device_id"),
       username =rs.getString("username") ,
       takeOverTime =rs.getString("take_over_time") ,
       status=rs.getString("status"),
@@ -174,13 +178,31 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
     return map
   }
+  def checkDeviceIdForTakeOver(e:TakeOver):TakeOver={
+    val sql =
+      """
+        |SELECT * from equipment
+        |WHERE equipment.id = ? and device_status!=-1
+        |""".stripMargin
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setString(1,e.equipmentId)
+    val rs = pst.executeQuery()
+    var result :TakeOver = null
+    while ( rs.next) {
+      result = TakeOver(id=rs.getString("id"));
+    }
+    con.close();
+    return result
+  }
   @throws[Exception]
   def add(e: TakeOver): Int={
-
+    var test:TakeOver  = checkDeviceIdForTakeOver(e);
+    print(test.id);
     val sql = """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
-             take_over_person,metadata_info,type,
-            message,cost,created_by,created_time,updated_by,updated_time)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+              take_over_person,metadata_info,type,
+              message,cost,created_by,created_time,updated_by,updated_time)
+              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)

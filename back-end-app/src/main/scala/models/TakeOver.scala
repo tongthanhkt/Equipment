@@ -7,6 +7,8 @@ import java.util
 case class TakeOver(
                      id: String = null,
                      equipmentId: String = null,
+                     deviceId:String=null,
+                     name:String=null,
                      username: String = null,
                      takeOverTime: String = null,
                      status: String = null,
@@ -20,6 +22,7 @@ case class TakeOver(
                      createdTime: String = null,
                      updatedBy: String = null,
                      updatedTime: String = null,
+
 
                    )
 
