@@ -23,9 +23,10 @@ class CRUDEquipmentService @Inject() (
       val sql = """
       SELECT *
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
-                                                  FROM takeover_equipment_info
-                                                  WHERE not exists (SELECT username,equipment_id
-                                                                    FROM takeback_equipment_info))
+                                                  FROM takeover_equipment_info o
+                                                  WHERE not exists (SELECT *
+                                                                    FROM takeback_equipment_info b
+                                                                    where b.takeover_id = o.id ))
                                                 as used on used.equipment_id=e.id
                                             left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ?
@@ -87,9 +88,10 @@ class CRUDEquipmentService @Inject() (
     val sql = """
       SELECT count(*) as total
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
-                                                  FROM takeover_equipment_info
-                                                  WHERE not exists (SELECT username,equipment_id
-                                                                    FROM takeback_equipment_info))
+                                                  FROM takeover_equipment_info o
+                                                  WHERE not exists (SELECT *
+                                                                    FROM takeback_equipment_info b
+                                                                    where b.takeover_id = o.id ))
                                                 as used on used.equipment_id=e.id
                                             left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ?
