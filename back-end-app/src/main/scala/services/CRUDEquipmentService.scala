@@ -312,8 +312,6 @@ class CRUDEquipmentService @Inject() (
     return map
   }
 }
-
-
 object test {
   def toInt(s: String): Option[Int] = {
     try {
