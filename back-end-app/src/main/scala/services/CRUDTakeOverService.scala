@@ -284,7 +284,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     pst.setString(1, e.equipmentId)
       pst.setString(2, e.username)
       pst.setString(3,e.takeOverTime )
-      pst.setString(4, e.status)
+      pst.setInt(4, 0)
       pst.setString(5,e.verifier)
       pst.setString(6,e.takeOverPerson )
     pst.setString(7,
