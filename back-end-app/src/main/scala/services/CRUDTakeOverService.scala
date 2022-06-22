@@ -21,8 +21,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         LEFT JOIN equipment_management.equipment as e
         on e.id = tov.equipment_id
         where tov.status!=-1
-      AND  temp.equipment_id = ?;"""
-
+      AND  tov.equipment_id = ?;"""
     val con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
     pst.setInt(1, equipmentId)
@@ -41,7 +40,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         createdBy=rs.getString("created_by"),
         createdTime=rs.getString("created_time"),
         updatedBy=rs.getString("updated_by"),
-        updatedTime=rs.getString("updated_time"));
+        updatedTime=rs.getString("updated_time"),
+        metadataInfo = toMap(rs.getString("metadata_info")));
 
       takeOverList.add(e);
     }
@@ -106,6 +106,18 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return takeOverList;
   }
+  private def toMap (metadata : String): Map[String, UploadFile] ={
+    var map : Map[String,UploadFile] = Map()
+
+    val images = parse(metadata)
+    implicit val formats = DefaultFormats
+    for (image <- (images \\ "files" ).children){
+
+      map = image.extract[Map[String,UploadFile]]
+    }
+
+    return map
+  }
   @throws[SQLException]
   def countBySearchTakeOver(username:String,takeOverPerson:String,typeTakeOver:String,status:String,equipmentId:String):Int={
     val sql=
@@ -144,12 +156,9 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
-     SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
-          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
-        FROM equipment_management.takeover_equipment_info as tov
-        LEFT JOIN equipment_management.equipment as e
-        on e.id = tov.equipment_id
-        WHERE  tov.id = ?;"""
+      SELECT *
+      FROM equipment_management.takeover_equipment_info as tov
+      WHERE  tov.id = ?;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -159,8 +168,6 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     while ( rs.next) {
       result = TakeOver(id=rs.getString("id"),
         equipmentId =rs.getString("equipment_id") ,
-        deviceId=rs.getString("device_id"),
-        name=rs.getString("name"),
         username =rs.getString("username") ,
         takeOverTime =rs.getString("take_over_time") ,
         status=rs.getString("status"),
@@ -171,23 +178,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         cost=rs.getString("cost"),
         createdBy=rs.getString("created_by"),
         createdTime=rs.getString("created_time"),
-        updatedBy=rs.getString("updated_by"),
-        updatedTime=rs.getString("updated_time"));
+        updatedBy=rs.getString("updated_time"),
+        updatedTime=rs.getString("updated_time"),
+        metadataInfo = toMap(rs.getString("metadata_info")));
     }
     con.close();
     return result
-  }
-  private def toMap (metadata : String): Map[String, UploadFile] ={
-    var map : Map[String,UploadFile] = Map()
-
-    val images = parse(metadata)
-    implicit val formats = DefaultFormats
-    for (image <- (images \\ "files" ).children){
-
-      map = image.extract[Map[String,UploadFile]]
-    }
-
-    return map
   }
   def checkDeviceIdForTakeOver(e:TakeOver):TakeOver={
     val sql =
@@ -274,59 +270,44 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
   }
   def updateById(e:TakeOver):Int={
-    var uploadFile :String =null
-    if(e.metadataInfo != null)
-      uploadFile = s"""
-                      |{"files": ${JSON.write(e.metadataInfo)}}
-                      |""".stripMargin
-
     val sql=
       """UPDATE takeover_equipment_info
-          SET  equipment_id = if(? is not null, ?,equipment_id) , username = if(? is not null, ?,username),
+          SET  username = if(? is not null, ?,username),
            take_over_time = if(? is not null, ?,take_over_time),status = if(? is not null, ?,status),
            verifier = if(? is not null, ?,verifier),take_over_person = if(? is not null, ?, take_over_person),
            type = if(? is not null, ?,type),
-           message = if(? is not null,?,message),cost = if(? is not null,?,cost), created_by = if(? is not null, ?,created_by),
-           created_time = if(? is not null, ?,created_time),
-           updated_by = if(? is not null, ?,updated_by),updated_time = if(? is not null, ?,updated_time),
-           metadata_info = if(? is not null, ?,metadata_info)
-           WHERE status != ? and id = ?;"""
-          var con = databaseConnection.getConnection()
-          val pst= con.prepareStatement(sql)
-    pst.setString(1,e.equipmentId);
-    pst.setString(2,e.equipmentId);
-    pst.setString(3,e.username);
-    pst.setString(4,e.username);
-    pst.setString(5,e.takeOverTime);
-    pst.setString(6,e.takeOverTime);
-    pst.setString(7,e.status);
-    pst.setString(8,e.status);
-    pst.setString(9,e.verifier);
-    pst.setString(10,e.verifier);
-    pst.setString(11,e.takeOverPerson);
-    pst.setString(12,e.takeOverPerson);
-    pst.setString(13,e.Type);
-    pst.setString(14,e.Type);
-    pst.setString(15,e.message);
-    pst.setString(16,e.message);
-    pst.setString(17,e.cost);
-    pst.setString(18,e.cost);
-    pst.setString(19,e.createdBy);
-    pst.setString(20,e.createdBy);
-    pst.setString(21,e.createdTime);
-    pst.setString(22,e.createdTime);
-    pst.setString(23,e.updatedBy);
-    pst.setString(24,e.updatedBy);
-    pst.setString(25,e.updatedTime);
-    pst.setString(26,e.updatedTime);
-    pst.setString(27,uploadFile);
-    pst.setString(28,uploadFile);
-    pst.setInt(29,-1);
-    pst.setString(30,e.id);
+           message = if(? is not null,?,message),cost = if(? is not null,?,cost),
+           updated_by = if(? is not null, ?,updated_by),updated_time = if(? is not null, ?,updated_time)
+          WHERE status != ? and id = ?;"""
+    var con = databaseConnection.getConnection()
+    val pst= con.prepareStatement(sql)
+    pst.setString(1,e.username);
+    pst.setString(2,e.username);
+    pst.setString(3,e.takeOverTime);
+    pst.setString(4,e.takeOverTime);
+    pst.setString(5,e.status);
+    pst.setString(6,e.status);
+    pst.setString(7,e.verifier);
+    pst.setString(8,e.verifier);
+    pst.setString(9,e.takeOverPerson);
+    pst.setString(10,e.takeOverPerson);
+    pst.setString(11,e.Type);
+    pst.setString(12,e.Type);
+    pst.setString(13,e.message);
+    pst.setString(14,e.message);
+    pst.setString(15,e.cost);
+    pst.setString(16,e.cost);
+    pst.setString(17,e.updatedBy);
+    pst.setString(18,e.updatedBy);
+    pst.setString(19,e.updatedTime);
+    pst.setString(20,e.updatedTime);
+    pst.setInt(21,-1);
+    pst.setString(22,e.id);
     val rs = pst.executeUpdate()
     con.close();
     return rs
 
   }
+
 
 }
