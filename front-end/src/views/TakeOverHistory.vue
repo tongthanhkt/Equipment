@@ -163,7 +163,7 @@
                       transition-colors
                       border-b border-gray-200
                     "
-                    v-on:click="handleDetailTakeOverShow(true);recordId=parseInt(record.id)"
+                    v-on:click="recordId=parseInt(record.id),handleDetailTakeOverShow(true)"
                     v-for="(record, index) in records" :key="index"
                   >
                     <td>
@@ -173,13 +173,13 @@
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        Phạm Nguyen Tuong Vy
+                        {{record.device_id}}
                       </div>
                     </td>
 
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        Phạm Nguyen Tuong Vy
+                        {{record.name}}
                       </div>
                     </td>
                     <td>
@@ -231,7 +231,7 @@
                               rounded-md
                               focus:outline-none
                             "
-                            v-on:click.stop="handleEditTakeOverShow(true)"
+                            v-on:click.stop="recordId=parseInt(record.id),handleEditTakeOverShow(true)"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>
@@ -409,7 +409,7 @@ export default class TakeOverHistory extends Vue {
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isEditTakeOverShow: Boolean = false;
-  public records: TakeOverRecord[] = [];
+  private records: TakeOverRecord[] = [];
   currentPage: number = 1;
   currentLimit: number = 20;
   currentTakeOverStatus: number | null = null;
@@ -436,7 +436,7 @@ export default class TakeOverHistory extends Vue {
   }
   
 
-  async retrieveTakeOverRecords(params:Object){
+  async retrieveTakeOverRecords(params:String){
       await TakeOverService.getRecordsBySearch(params)
       .then(res=>{
         console.log(res.data);
@@ -467,15 +467,26 @@ export default class TakeOverHistory extends Vue {
       }
     });
     this.$router.push({ name: "TakeOverHistory", query: queryParams });
-    return Object.entries(queryParams)
+    let params = "";
+    const temp = Object.entries(queryParams);
+    for (let i = 0; i < temp.length; i++) {
+      if (i < temp.length - 1) {
+        let param = temp[i][0] + "=" + temp[i][1] + "&";
+        params += param;
+      } else {
+        let param = temp[i][0] + "=" + temp[i][1];
+        params += param;
+      }
+    }
+    return params;
   }
   handleDate(data: string) {
-    var d = new Date(parseInt(data));
-    return d.toLocaleDateString();
+    var d = new Date(Number(data));
+    return d.toLocaleString()
   }
   async deleteRecord(id: String) {
    
-    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+    if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
      await TakeOverService.deleteById(id)
         .then((res) => alert("Delete Successfully !!"))
         .then(() => this.retrieveTakeOverRecords(this.getQueryParams()))

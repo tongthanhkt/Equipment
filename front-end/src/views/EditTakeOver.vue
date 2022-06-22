@@ -4,7 +4,7 @@
           <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Chỉnh sửa thông tin bàn giao</h1>
            <button
             class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors   w-auto text-white  rounded-md focus:outline-none"
-             v-on:click="changeShow"
+             v-on:click="changeShow(true)"
          >
             <fa icon="xmark"  class="px-2 py-2" ></fa>          
           </button>
@@ -20,7 +20,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.device_id"
               />
       </div>
       <div class="col-span-2">
@@ -28,7 +28,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.name"
               />
       </div>
        <div class="p-1   font-medium text-gray-700">Chi phí</div>
@@ -39,11 +39,17 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.cost"
               />
       </div>
-      <div class="col-span-2">
-         <DatePicker class="w-5/6 mx-1 mb-1 text-gray-600" />
+      <div class="flex flex-row col-span-2 w-5/6">
+          <input
+                  type="text"
+                  class="mx-1 w-5/6 px-2 py-1.5 border focus:ring-gray-500  hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
+                  placeholder=""
+                  v-model="record.take_over_time"
+                />
+         <DatePicker class="ml-1.5 w-min inline-block" v-model="record.take_over_time"/>
       </div>
       
       
@@ -54,7 +60,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.take_over_person"
               />
       </div>
       <div class="col-span-2">
@@ -62,7 +68,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.type"
               />
       </div>
        <div class="p-1   font-medium text-gray-700">Người nhận thiết bị</div>
@@ -73,7 +79,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.username"
               />
       </div>
       <div>
@@ -81,7 +87,7 @@
                 type="text"
                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
-                
+                v-model="record.verifier"
               />
       </div>
       
@@ -91,9 +97,8 @@
        
     
       <div class="pl-1 font-medium text-gray-700">Message</div>
-      <textarea id="w3review" name="w3review" rows="3" cols="50" class="mx-1 my-2  px-2 py-1.5 border rounded">
-Khi thực hiện bàn giao thì mình sẽ có 1 bước xác nhận từ người được bàn giao
-  + Trước khi người được bàn giao xác nhận đã nhận được thiết bị
+      <textarea id="w3review" name="w3review" rows="3" cols="50" class="mx-1 my-2  px-2 py-1.5 border rounded" v-model="record.message">
+
 </textarea>
        <div class="pl-1   font-medium text-gray-700">Tệp đính kèm</div>
        <!-- <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
@@ -160,6 +165,7 @@ Khi thực hiện bàn giao thì mình sẽ có 1 bước xác nhận từ ngư�
           </button>
           <button
             class=" bg-red-500 hover:bg-red-600 m-3.5 transition-colors   w-auto text-white p-2 rounded-md focus:outline-none"
+            v-on:click="changeShow(false)"
           >
             <fa icon="xmark"  class="px-1 " ></fa>
             Hủy 
@@ -176,7 +182,9 @@ Khi thực hiện bàn giao thì mình sẽ có 1 bước xác nhận từ ngư�
 <script lang="ts">
 import DatePicker from "./DatePicker.vue";
 import UploadService from "../services/equipments/UploadFilesService";
-import { Vue, Options,Emit,Ref } from "vue-property-decorator";
+import TakeOverService from "@/services/takeover/TakeOverService";
+import TakeOverRecord from "@/types/TakeOverRecord";
+import { Vue, Options,Prop,Emit,Ref } from "vue-property-decorator";
 
 
 
@@ -187,9 +195,32 @@ import { Vue, Options,Emit,Ref } from "vue-property-decorator";
   },
 })
 export default class EditTakeOver extends Vue {
+  record : TakeOverRecord ={
+  id: "",
+  equipment_id: "",
+  username: "",
+  take_over_time: "",
+  status: "",
+  verifier: "",
+  take_over_person: "",
+  type: "",
+  message: "",
+  cost: "",
+  created_by: "",
+  created_time: "",
+  updated_by: "",
+  updated_time: "",
+  metadata_info: "",
+  device_id: "",
+  name: ""
+
+  }
+  @Prop() id!: number
+
+
   @Emit('changeEditTakeOverShow')
-  changeShow() {
-   return false
+  changeShow(data:boolean) {
+   return data
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
@@ -217,6 +248,32 @@ export default class EditTakeOver extends Vue {
       });
     }
     return obj;
+  }
+
+  async created(){
+    
+    this.retrieveRecord()
+    
+  }
+
+  async retrieveRecord(){
+    await TakeOverService.getRecordById(this.id)
+      .then(res=>{
+        
+        this.record = res.data
+        console.log(this.record);
+        this.record.take_over_time = this.handleDate(this.record.take_over_time)
+
+      })
+      .catch(err=>{
+        alert(err.response.data)
+      })
+  }
+  handleDate(data: string|undefined) {
+    if (data === undefined )
+    return ""
+    var d = new Date(Number(data));
+    return d.toLocaleString()
   }
 
 }

@@ -1,17 +1,18 @@
 import http from "@/http-common";
+import TakeOverRecord from "@/types/TakeOverRecord";
 class   TakeOverService {
  
-  add(data: any) {
+  add(data: TakeOverRecord) {
     return http.post("/take_over/add", data);
   }
-  getRecordsBySearch(queryParams: Object) {
+  getRecordsBySearch(queryParams: String) {
     console.log(queryParams);
-    return http.get(`/take_over/list`,{params: queryParams});
+    return http.get(`/take_over/list?${queryParams}`);
   }
-  update(data: any) {
+  update(data: TakeOverRecord) {
     return http.put("/take_over/update", data);
   }
-  getRecordById(id: any) {
+  getRecordById(id: number) {
     return http.get(`/take_over/${id}`);
   }
   deleteById(id: String) {
