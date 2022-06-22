@@ -48,6 +48,26 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return takeOverList;
   }
+  def searchUser(searchUserRequest:SearchUserRequest):util.ArrayList[User]={
+    val userList = new util.ArrayList[User]()
+    val sql =
+      """
+        |SELECT * from user as us
+        |where (? is null or us.username LIKE CONCAT('%',?,'%') or us.fullname LIKE CONCAT('%',?,'%'));
+        |""".stripMargin
+        val con = databaseConnection.getConnection()
+        val pst = con.prepareStatement(sql)
+        pst.setString(1,searchUserRequest.keyword);
+        pst.setString(2,searchUserRequest.keyword);
+        pst.setString(3,searchUserRequest.keyword);
+        val rs = pst.executeQuery
+        while(rs.next){
+          val e = User(username=rs.getString("username"),fullname = rs.getString("fullname"))
+          userList.add(e)
+        }
+    con.close()
+    return userList;
+  }
   def searchTakeOver(searchTakeOverRequest: SearchTakeOverRequest,offset:Int):util.ArrayList[TakeOver]={
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
@@ -158,7 +178,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql = """
       SELECT *
       FROM equipment_management.takeover_equipment_info as tov
-      WHERE  tov.id = ?;"""
+      WHERE  tov.id = ? and tov.status != 1;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -185,6 +205,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return result
   }
+
 
   def checkDeviceEquipmentStatusForTakeOver(equipmentId: String): Int = {
     val sql =
@@ -361,6 +382,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
 
   }
+
 
 
 }

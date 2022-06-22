@@ -45,7 +45,7 @@ case class TakeOver(
     if(takeOverPerson==null) check=check + (9->"The field 'takeOverPerson' cannot be blank . ")
 
     if(typeTakeOver==null) check=check + (10->"The field 'Type' cannot be blank . ")
-    else if (!convertString.isInt(typeTakeOver)) check=check + (3 -> "The 'Start Status' field : type mismatch, required : Int. ")
+    else if (!convertString.isInt(typeTakeOver)) check=check + (11 -> "The 'Start Status' field : type mismatch, required : Int. ")
 
 
     if(createdBy==null) check=check + (12->"The field 'createdBy' cannot be blank . ")
@@ -63,7 +63,6 @@ case class TakeOver(
     else if (convertString.isLong(takeOverTime) && (convertString.toLong(takeOverTime).get < 0 ))
       check = check + (17 -> "TakeOver Time of device is incorrect. ")
 
-    if(!convertString.isInt(status)) check=check + (18->"The field 'status' cannot be blank . ")
 
     if(verifier==null) check=check + (19->"The field 'verifier' cannot be blank . ")
 
@@ -73,7 +72,7 @@ case class TakeOver(
     if(typeTakeOver==null) check=check + (21->"The field 'Type' cannot be blank . ")
     else if (!convertString.isInt(typeTakeOver)) check=check + (3 -> "The 'Start Status' field : type mismatch, required : Int. ")
 
-    if(updatedTime==null) check=check + (23->"The field 'createdBy' cannot be blank . ")
+    if(updatedBy==null) check=check + (23->"The field 'update By' cannot be blank . ")
 
     return check
   }
@@ -88,7 +87,8 @@ case class SearchTakeOverRequest(
                                   @QueryParam page: Int = 1,
                                   @QueryParam limit: Int = 10
                                 )
-
+case class SearchUserRequest(@QueryParam keyword:String=null)
+case class SearchUserResponse(@QueryParam userList:util.ArrayList[User])
 case class SearchTakeOverResponse(
                                    takeOverList: util.ArrayList[TakeOver],empty: Boolean,
                                    nPages: Int,

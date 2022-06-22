@@ -85,7 +85,9 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           } else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
           } else if (takeOverService.checkDeviceEquipmentStatusForTakeOver(request.equipmentId) == 0) {
-            response.internalServerError.jsonError("Equipment status is not valid.")
+            response.internalServerError.jsonError("Equipment status was damaged.")
+          }else if (takeOverService.checkUserExist(request.createdBy) == 0) {
+            response.internalServerError.jsonError("Created by not valid. ")
           }
           else {
             val result = takeOverService.add(request)
@@ -116,48 +118,43 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         println(request)
         val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get)
         println(e);
-        if (e == null) {
-          response.badRequest.jsonError(s"Cannot find take over with id = ${e.id}.")
-        }
-
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) {
-
-            if (takeOverService.checkUserExist(request.username) == 0) {
-              response.internalServerError.jsonError("Username not exists.")
-            } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
-              response.internalServerError.jsonError("Take over person not exists.")
-            } else if (takeOverService.checkUserExist(request.verifier) == 0) {
-              response.internalServerError.jsonError("Verifier not exists.")
-            }else{
-              val result = takeOverService.updateById(request)
-              if (result == 1)
-                response.created.body(s"Update take over successfully !")
-              else response.badRequest.json(
-                s"""{
-                      |"errors" : [${JSON.write()}]
-                      |}"""
-              )
-            }
+          if (takeOverService.checkUserExist(request.username) == 0) {
+            response.internalServerError.jsonError("Username not exists.")
+          } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
+            response.internalServerError.jsonError("Take over person not exists.")
+          } else if (takeOverService.checkUserExist(request.verifier) == 0) {
+            response.internalServerError.jsonError("Verifier not exists.")
+          }else{
+            val result = takeOverService.updateById(request)
+            if (result == 1)
+              response.created.body(s"Update take over successfully !")
+            else response.badRequest.json(
+              s"""{
+                 |"errors" : [${JSON.write()}]
+                 |}"""
+            )
+          }
         }
         else{
-            response.badRequest.json(
-              s"""{
+          response.badRequest.json(
+            s"""{
                |"errors" : [${JSON.write(check)}]
                |}""".stripMargin)
 
-            }
-
         }
+
+      }
       catch{
         case ex: Exception => {
           println(ex)
-          response.internalServerError.jsonError("Thiết bị không tồn tại ")
+          response.internalServerError.jsonError("Bàn giao không tồn tại hoặc không thể chỉnh sửa vì trạng thái đã xác thực ")
         }
       }
     }
     }
-      get("/equipment/:id") {
+    get("/equipment/:id") {
         request: SearchTakeOverByIdEquipmentRequest => {
           val equipmentId = request.id;
           try {
@@ -173,6 +170,19 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           }
         }
       }
+    get("/get_user"){request:SearchUserRequest=>
+      try {
+        val result : util.ArrayList[User] = takeOverService.searchUser(request);
+        response.ok.body(SearchUserResponse(userList = result))
+      }catch {
+        case ex: Exception => {
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+
+    }
+
   }
 
 }
