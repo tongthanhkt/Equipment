@@ -15,7 +15,7 @@ class   TakeOverService {
   getRecordById(id: number) {
     return http.get(`/take_over/${id}`);
   }
-  deleteById(id: String) {
+  deleteById(id: number) {
     return http.delete(`/take_over/delete?id=${id}`);
   }
   
