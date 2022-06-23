@@ -1,5 +1,5 @@
 <template>
-  <div  class=" absolute h-screen top-0 right-0   w-5/12  shadow-2xl border-l-2 border-indigo-300  rounded-none  ">
+  <div  class=" absolute h-screen top-0 right-0   w-1/2  shadow-2xl border-l-2 border-indigo-300  rounded-none  ">
     <div class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto   font-semibold  text-base self-start text-black bg-indigo-500">
           <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Bàn giao thiết bị</h1>
            <button
@@ -16,12 +16,12 @@
       <div class="p-1  col-span-2   font-medium text-gray-700">Tên thiết bị</div>
      
       <div>
-         <div class=" mx-1  px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
-         {{record.device_id}}</div>
+         <div class=" mx-1  px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
+         {{device_id}}</div>
       </div>
       <div class="col-span-2">
-         <div class=" mx-1  px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
-          {{record.name}}</div>
+         <div class=" mx-1  px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
+          {{equipment_name}}</div>
       </div>
        <div class="p-1   font-medium text-gray-700">Chi phí</div>
       <div class="p-1  col-span-2   font-medium text-gray-700">Thời gian bàn giao</div>
@@ -29,15 +29,15 @@
       <div>
          <input
                 type="number"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
+                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
                 v-model="record.cost"
               />
       </div>
-      <div class="flex flex-row col-span-2 w-5/6">
+      <div class="flex flex-row col-span-2 w-11/12">
           <input
                   type="text"
-                  class="mx-1 w-5/6 px-2 py-1.5 border focus:ring-gray-500  hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
+                  class="mx-1 w-11/12 px-2 py-1.5 border focus:ring-gray-500  hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                   placeholder=""
                   v-model="record.take_over_time"
                 />
@@ -48,12 +48,48 @@
       <div class="p-1     font-medium text-gray-700">Người bàn giao</div>
       <div class="pl-1 col-span-2  font-medium text-gray-700">Loại bàn giao</div>
        <div>
-         <input
-                type="text"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-                placeholder=""
-                v-model="record.take_over_person"
-              />
+         <v-select
+            class="
+              mx-1
+              bg-white
+              border
+              focus:ring-gray-500
+              w-11/12
+              hover:border-gray-900
+              lg:text-sm
+              sm:text-sm
+              border-gray-300
+              rounded
+              focus:outline-none
+              text-black
+            "
+            :options="options"           
+            v-model="take_over_person"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
+            
+            
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
           
       </div>
       <div class="col-span-2">
@@ -63,7 +99,7 @@
                 id="type"
                 name="type"
                 autocomplete="type-name"
-                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+                 class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
               >
                <option value="0">Bàn giao thiết bị mới</option>
                 <option value="1">Bàn giao thiết bị sau khi sửa chữa</option>
@@ -73,20 +109,92 @@
       <div class="p-1  col-span-2 font-medium text-gray-700">Người xác nhận</div>
       
       <div>
-         <input
-                type="text"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-                placeholder=""
-                v-model="record.username"
-              />
+         <v-select
+            class="
+              mx-1
+              bg-white
+              border
+              focus:ring-gray-500
+              w-11/12
+              hover:border-gray-900
+              lg:text-sm
+              sm:text-sm
+              border-gray-300
+              rounded
+              focus:outline-none
+              text-black
+            "
+            :options="options"           
+            v-model="user"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
+            
+            
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
       </div>
       <div>
-         <input
-                type="text"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-                placeholder=""
-                v-model="record.verifier"
-              />
+         <v-select
+            class="
+              mx-1
+              bg-white
+              border
+              focus:ring-gray-500
+              w-11/12
+              hover:border-gray-900
+              lg:text-sm
+              sm:text-sm
+              border-gray-300
+              rounded
+              focus:outline-none
+              text-black
+            "
+            :options="options"           
+            v-model="verifier"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
+            
+            
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
       </div>
       
  </div>
@@ -181,8 +289,8 @@ import DatePicker from "./DatePicker.vue";
 import UploadService from "../services/equipments/UploadFilesService";
 import { Vue, Options,Emit,Ref,Prop } from "vue-property-decorator";
 import TakeOverRecord from "@/types/TakeOverRecord";
-
-
+import User from "@/types/User";
+import UserService from "@/services/user/UserService";
 
 @Options({
   components: {
@@ -191,8 +299,9 @@ import TakeOverRecord from "@/types/TakeOverRecord";
   },
 })
 export default class AddTakeOver extends Vue {
-  @Prop(String) device_id! :string
-  @Prop(String) equipment_name! : string
+  @Prop(String)  device_id! :string
+  @Prop(String)  equipment_name! : string
+  
   record : TakeOverRecord ={
   id: "",
   equipment_id: "",
@@ -213,10 +322,18 @@ export default class AddTakeOver extends Vue {
   name: ""
 
   }
+  timeOut: any
+  private options: User[] = [];
+  user:User|null =null 
+  take_over_person:User|null =null 
+  verifier:User|null =null 
 
   @Emit('changeAddTakeOverShow')
   changeShow(data:boolean) {
    return data
+  }
+  async created(){
+    
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
@@ -244,6 +361,29 @@ export default class AddTakeOver extends Vue {
       });
     }
     return obj;
+  }
+
+  dropdownShouldOpen(VueSelect :any) {
+      
+
+      return VueSelect.search.length !== 0 
+    }
+
+  async retrieveUser(event:Event) {
+    //console.log(keyword);
+    clearTimeout(this.timeOut);
+
+      this.timeOut = setTimeout( () => {
+         UserService.getBySearch( (event.target as HTMLInputElement).value)
+      .then((res) => {
+        this.options = res.data.user_list;
+        console.log(this.options);
+      })
+      .catch((err) => {
+        alert(err.response.data);
+      });
+      }, 300);
+    
   }
 
 }

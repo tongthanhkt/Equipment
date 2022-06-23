@@ -5,7 +5,7 @@
       h-screen
       top-0
       right-0
-      w-5/12
+      w-1/2
       shadow-2xl
       border-l-2 border-indigo-300
       rounded-none
@@ -27,7 +27,7 @@
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
       >
-        Chỉnh sửa thông tin bàn giao
+        Chỉnh sửa thông tin bàn giao - {{id}}
       </h1>
       <button
         class="
@@ -61,7 +61,7 @@
               border
               bg-gray-200
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
               lg:text-base
               sm:text-sm
@@ -83,7 +83,7 @@
               border
               bg-gray-200
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
               lg:text-base
               sm:text-sm
@@ -93,7 +93,7 @@
               text-gray-700
             "
           >
-            {{ record.name }}
+            {{record.name }}
           </div>
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
@@ -110,7 +110,7 @@
               py-1.5
               border
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
               lg:text-base
               sm:text-sm
@@ -123,14 +123,12 @@
             v-model="record.cost"
           />
         </div>
-        <div class="flex flex-row col-span-2 w-5/6">
-          <input
-            type="text"
-            class="
-              mx-1
-              w-5/6
-              px-2
-              py-1.5
+        <div class="flex flex-row col-span-2 w-11/12">
+          
+          <Datepicker
+            class=" mx-1
+              w-11/12
+             
               border
               focus:ring-gray-500
               hover:border-gray-900
@@ -139,14 +137,10 @@
               border-gray-300
               rounded
               focus:outline-none
-              text-black
-            "
-            placeholder=""
-            v-model="record.take_over_time"
-          />
-          <DatePicker
-            class="ml-1.5 w-min inline-block"
-            v-model="record.take_over_time"
+              text-black"
+            v-model="editDate"
+            
+            :format="format"
           />
         </div>
 
@@ -157,7 +151,7 @@
         <div>
           <!-- <input
                 type="text"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-5/6 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
+                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
                 placeholder=""
                 v-model="record.take_over_person"
               /> -->
@@ -167,19 +161,42 @@
               bg-white
               border
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
-              lg:text-base
+              lg:text-sm
               sm:text-sm
               border-gray-300
               rounded
               focus:outline-none
               text-black
             "
-            :options="['Canada', 'United States']"
+            :options="options"           
+            v-model="take_over_person"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
             
             
-          ></v-select>
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
         </div>
         <div class="col-span-2">
           <select
@@ -193,7 +210,7 @@
               py-1.5
               border
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
               lg:text-base
               sm:text-sm
@@ -213,48 +230,92 @@
         </div>
 
         <div>
-          <input
-            type="text"
+         <v-select
             class="
               mx-1
-              px-2
-              py-1.5
+              bg-white
               border
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
-              lg:text-base
+              lg:text-sm
               sm:text-sm
               border-gray-300
               rounded
               focus:outline-none
               text-black
             "
-            placeholder=""
-            v-model="record.username"
-          />
+            :options="options"           
+            v-model="user"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
+            
+            
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
         </div>
         <div>
-          <input
-            type="text"
+          <v-select
             class="
               mx-1
-              px-2
-              py-1.5
+              bg-white
               border
               focus:ring-gray-500
-              w-5/6
+              w-11/12
               hover:border-gray-900
-              lg:text-base
+              lg:text-sm
               sm:text-sm
               border-gray-300
               rounded
               focus:outline-none
               text-black
             "
-            placeholder=""
-            v-model="record.verifier"
-          />
+            :options="options"           
+            v-model="verifier"
+            :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen"
+            
+            
+          >
+            <template #search="{ attributes, events }">
+      <input
+        
+        class="vs__search
+              bg-white
+              lg:text-base
+              sm:text-sm
+              focus:outline-none
+              text-black"
+        v-bind="attributes"
+        v-on="events"
+        @input="retrieveUser"
+      />
+    </template>
+            <template #option="{ username, fullname }" >
+              {{ fullname }}
+              <br />
+              <cite>{{ username }} </cite>
+            </template>
+          </v-select>
         </div>
       </div>
       <div
@@ -373,18 +434,20 @@
 </template>
 
 <script lang="ts">
-import DatePicker from "./DatePicker.vue";
+import Datepicker from "@vuepic/vue-datepicker";
+import { ref } from 'vue';
 import UploadService from "../services/equipments/UploadFilesService";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeOverRecord from "@/types/TakeOverRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
-import Fuse from 'fuse.js';
-import User from "@/types/User"
+import Fuse from "fuse.js";
+import User from "@/types/User";
+import UserService from "@/services/user/UserService";
 
 @Options({
   components: {
-    DatePicker,
+    Datepicker,
   },
 })
 export default class EditTakeOver extends Vue {
@@ -408,12 +471,39 @@ export default class EditTakeOver extends Vue {
     name: "",
   };
   @Prop() id!: number;
+  options: User[] = [];
+  user:User ={
+    username: this.record.username,
+    fullname: ''
+  }
+  take_over_person:User ={
+    username: this.record.take_over_person,
+    fullname: ''
+  }
+  verifier:User ={
+    username: this.record.verifier,
+    fullname: ''
+  }
+  timeOut:any
+  editDate:any=null;
+  
 
   @Emit("changeEditTakeOverShow")
   changeShow(data: boolean) {
     return data;
   }
 
+  format(date:Date|null|undefined) {
+    if(date === null || date === undefined)
+     return null
+    else {
+    return date.toLocaleString() 
+    }
+  }
+            
+        
+
+  
   @Ref("file") inpuFile!: HTMLInputElement;
   private allImageCurrentURL: String[] = [];
   private currentImage: File | null | undefined = null;
@@ -442,62 +532,72 @@ export default class EditTakeOver extends Vue {
   }
 
   async created() {
-    console.log("edit");
-    console.log(this.id);
-    this.retrieveRecord();
+    
+    await this.retrieveRecord();
+    this.options.push(this.user);
+    this.options.push(this.take_over_person);
+    this.options.push(this.verifier);
+    
   }
+
+  dropdownShouldOpen(VueSelect :any) {
+      console.log(this.editDate)
+      return VueSelect.search.length !== 0 
+    }
 
   async retrieveRecord() {
     await TakeOverService.getRecordById(this.id)
       .then((res) => {
         this.record = res.data;
         console.log(this.record);
-        this.record.take_over_time = this.handleDate(
-          this.record.take_over_time
-        );
+        // this.record.take_over_time = this.handleDate(
+        //   this.record.take_over_time
+        // );
+        this.editDate =ref(new Date(Number(this.record.take_over_time)))
+        
+        console.log(this.editDate);
+        this.user ={
+    username: this.record.username,
+    fullname: ''
+        }
+        this.take_over_person ={
+          username: this.record.take_over_person,
+          fullname: ''
+        }
+        this.verifier ={
+          username: this.record.verifier,
+          fullname: ''
+        }
       })
       .catch((err) => {
         alert(err.response.data);
       });
   }
-  handleDate(data: string | undefined) {
-    if (data === undefined) return "";
-    var d = new Date(Number(data));
-    return d.toLocaleString();
+  handleDate(event:Event ) {
+    if ( (event.target as HTMLInputElement).value === undefined || (event.target as HTMLInputElement).value === null) 
+    return "";
+    var d = new Date((event.target as HTMLInputElement).value);
+    this.record.take_over_time = d.toLocaleString();
   }
 
-  user = [
-    {
-      username : 'tatthanh',
-      fullname : 'Nguyễn Tất Thành'
-    },
-   {
-      username : 'tatthanh@rever.vn',
-      fullname : 'Nguyễn Tất Thành'
-    },
-    {
-      username : 'tuongvy',
-      fullname : 'Phạm Nguyễn Tường Vy'
-    },
-    {
-      username : 'tuongvy@rever.vn',
-      fullname : 'Phạm Nguyễn Tường Vy'
-    },
-  ]
   
-  options: Fuse.IFuseOptions<User>  = {
-    keys: ['username','fullname'],
-};
 
-  // fuseSearch(options :Fuse.IFuseOptions<User> , search) {
-  //     const fuse = new Fuse(options, {
-  //       keys: ['title', 'author.firstName', 'author.lastName'],
-  //       shouldSort: true,
-  //     })
-  //     return search.length
-  //       ? fuse.search(search).map(({ item }) => item)
-  //       : fuse.list
-  //   }
+  async retrieveUser(event:Event) {
+    //console.log(keyword);
+    clearTimeout(this.timeOut);
+
+      this.timeOut = setTimeout( () => {
+         UserService.getBySearch( (event.target as HTMLInputElement).value)
+      .then((res) => {
+        this.options = res.data.user_list;
+        console.log(this.options);
+      })
+      .catch((err) => {
+        alert(err.response.data);
+      });
+      }, 300);
+    
+  }
 }
 </script>
 

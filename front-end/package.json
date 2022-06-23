@@ -19,6 +19,7 @@
     "core-js": "^3.8.3",
     "fuse.js": "^6.6.2",
     "jw-vue-pagination": "^1.0.3",
+    "moment": "^2.29.3",
     "search-dropdown-vue": "^1.0.2",
     "vue": "^3.2.36",
     "vue-class-component": "^8.0.0-rc.1",
