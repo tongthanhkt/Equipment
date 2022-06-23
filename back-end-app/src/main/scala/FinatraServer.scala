@@ -7,12 +7,13 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}
 import com.twitter.finatra.http.routing.HttpRouter
-import controllers.{CRUDEquipmentController, FileController,CRUDTakeOverController}
+import controllers.{CRUDEquipmentController, CRUDTakeOverController, FileController}
 import filters.{CORSFilter, CommonExceptionMapping}
 import modules.{CustomJacksonModule, DependencyModule}
 
-object FinatraServerMain extends FinatraServer
+import scala.controllers.UserController
 
+object FinatraServerMain extends FinatraServer
 
 class FinatraServer extends HttpServer{
 
@@ -26,6 +27,7 @@ class FinatraServer extends HttpServer{
       .add[CRUDEquipmentController]
       .add[CRUDTakeOverController]
       .add[FileController]
+      .add[UserController]
       .exceptionMapper[CommonExceptionMapping]
 
   }

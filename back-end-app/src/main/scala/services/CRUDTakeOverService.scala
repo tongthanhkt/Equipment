@@ -176,9 +176,10 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
-      SELECT *
-      FROM equipment_management.takeover_equipment_info as tov
-      WHERE  tov.id = ? and tov.status != 1;"""
+      SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
+      FROM equipment_management.takeover_equipment_info as tov, equipment as e
+      WHERE  tov.id = ? and tov.status != 1 and tov.equipment_id=e.id
+				;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -188,6 +189,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     while ( rs.next) {
       result = TakeOver(id = rs.getString("id"),
         equipmentId = rs.getString("equipment_id"),
+        deviceId=rs.getString("device_id"),
+        name=rs.getString("name"),
         username = rs.getString("username"),
         takeOverTime = rs.getString("take_over_time"),
         status = rs.getString("status"),

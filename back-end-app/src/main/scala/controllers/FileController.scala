@@ -4,10 +4,11 @@ import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.finatra.http.request.RequestUtils
-import models.UploadFile
-import services.FileService
-import javax.inject.Inject
+import models.{UploadFile, UploadMultiFile}
 import org.apache.commons.io.FilenameUtils
+import services.FileService
+
+import javax.inject.Inject
 
 class FileController @Inject() (fileService: FileService) extends Controller {
 
@@ -20,26 +21,42 @@ class FileController @Inject() (fileService: FileService) extends Controller {
       try {
         val file = fileService.getFile(fileName)
         if (file.exists())
-          response.ok.file(file).header("File-Extension",FilenameUtils.getExtension(fileName))
+          response.ok.file(file).header("File-Extension", FilenameUtils.getExtension(fileName))
         else
           response.badRequest.jsonError("File does not exist")
+      } catch {
+        case ex: Exception => {
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+    }
+    }
+    post("/upload_files") { request: Request => {
+      val map: Map[String, MultipartItem] = RequestUtils.multiParams(request)
+      try {
+        var checkFiles = fileService.checkFilesUpload(map);
+        if(checkFiles==1){
+          var uploadMultiFiles : Map[String,UploadMultiFile] = fileService.UploadMultiFiles(map)
+          if(uploadMultiFiles.isEmpty){
+            response.internalServerError("Can not add file ")
+          }else response.created.body(uploadMultiFiles);
+        }
       } catch {
         case ex: Exception =>{
           println(ex)
           response.internalServerError.jsonError(ex.getMessage)
         }
       }
-    }}
-
-    post("/upload_images"){request: Request =>{
-
-
-      val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
+    }
+    }
+    post("/upload_images") { request: Request => {
+      val map: Map[String, MultipartItem] = RequestUtils.multiParams(request)
 
       try {
 
         var checkImages = fileService.checkImagesUpload(map);
-        if (checkImages == -1){
+        if (checkImages == -1) {
           response.badRequest.jsonError("Only selected images")
         }
         else if (checkImages == 0){
@@ -63,7 +80,6 @@ class FileController @Inject() (fileService: FileService) extends Controller {
 
     }
     }
-
     delete("/delete") {request: Request =>{
       val fileName = request.getParam("file_name")
 
