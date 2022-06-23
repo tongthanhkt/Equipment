@@ -42,12 +42,14 @@
                 >
                   <fa
                     icon="magnifying-glass"
-                    class="text-gray-500 px-2 py-1"
+                    class="text-gray-400 px-2 py-1"
                   ></fa>
                   <input
-                    class="text-base bg-gray-50 w-11/12 focus:outline-none"
+                    class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
-                    placeholder="Nhập mã, tên nhân viên"
+                    placeholder="Tên người sử dụng"
+                    v-model="keyUser"
+                    @input="retrieveRecordsBySearch"
                   />
                 </div>
                 <div
@@ -69,40 +71,54 @@
                 >
                   <fa
                     icon="magnifying-glass"
-                    class="text-gray-500 px-2 py-1"
+                    class="text-gray-400 px-2 py-1"
                   ></fa>
                   <input
-                    class="text-base bg-gray-50 w-11/12 focus:outline-none"
+                    class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
-                    placeholder="Nhập mã, tên thiết bị"
+                    placeholder="Tên người bàn giao"
+                    v-model="keyTakeOverPerson"
+                    @input="retrieveRecordsBySearch"
                   />
                 </div>
               </span>
             </div>
             <div class="p-2 flex justify-end w-auto">
               <select
+                v-model="currentTakeOverStatus"
+                @change="retrieveRecordsBySearch"
                 name="takeover_status"
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option disabled selected hidden>Trạng thái bàn giao</option>
+                <option value=null disabled selected hidden >
+                  Trạng thái
+                </option>
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">
+                  Trạng thái
+                </option>
                 <option value="0" class="bg-white text-black hover:bg-blue-700">
-                  Chưa xác nhận
+                  Chờ xác nhận
                 </option>
                 <option value="1" class="bg-white text-black hover:bg-blue-700">
                   Đã xác nhận
                 </option>
               </select>
               <select
+                v-model="currentTakeOverType"
+                @change="retrieveRecordsBySearch"
                 name="takeover_status"
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option disabled selected hidden>Loại bàn giao</option>
-                <option value="0" class="bg-white text-black hover:bg-blue-700">
+                <option value=null disabled selected hidden >
+                 Loại bàn giao
+                </option>
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">Loại bàn giao</option>
+                <option value="1" class="bg-white text-black hover:bg-blue-700">
                   Bàn giao thiết bị mới
                 </option>
-                <option value="1" class="bg-white text-black hover:bg-blue-700">
+                <option value="2" class="bg-white text-black hover:bg-blue-700">
                   Bàn giao thiết bị sau khi sửa
                 </option>
               </select>
@@ -110,7 +126,7 @@
           </div>
 
           <div class="p-1 mx-1 my-2">
-            <div class="min-w-full align-middle flex justify-items-center">
+            <div class="min-w-full align-middle flex justify-center">
               <table
                 class="
                   hover:border-collapse
@@ -143,7 +159,7 @@
                       Loại bàn giao
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Trạng thái bàn giao
+                      Trạng thái
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
                       Người tạo
@@ -194,12 +210,17 @@
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{record.type}}
+                        {{type[record.type]}}
                       </div>
+                        
                     </td>
                     <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{record.status}}
+                      <div class="p-1 text-sm text-center ">
+                       <div v-if="record.status == '1'" class="text-green-500 italic font-semibold">Đã xác nhận </div>
+                        <div v-else-if="record.status == '0'" class="text-blue-500 italic font-semibold">
+                          Chờ xác nhận
+                        </div>
+                        
                       </div>
                     </td>
                     <td>
@@ -230,13 +251,22 @@
                               py-2
                               rounded-md
                               focus:outline-none
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
                             "
-                            v-on:click.stop="recordId=parseInt(record.id),handleEditTakeOverShow(true)"
+                            v-on:click.stop="
+                              (recordId = parseInt(record.id)),
+                                handleEditTakeOverShow(true)
+                            "
+                            :disabled="record.status == '1'"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>
                           <button
+                            :disabled="record.status == '1'"
                             class="
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
                               bg-gray-100
                               hover:bg-gray-300
                               m-1
@@ -251,7 +281,9 @@
                               rounded-md
                               focus:outline-none
                             "
-                            v-on:click.stop="deleteRecord(record.id)"
+                            v-on:click.stop="
+                              deleteRecord(parseInt(record.id))
+                            "
                           >
                             <fa icon="trash-can"></fa>
                           </button>
@@ -264,114 +296,54 @@
               </table>
             </div>
           </div>
-          <nav aria-label="Page navigation example">
-            <ul class="inline-flex -space-x-px">
+          <nav class="flex justify-center ">
+            <ul class="flex  -space-x-px ">
               <li>
-                <a
-                  type="button"
-                  class="
-                    py-2
-                    px-3
-                    ml-0
-                    leading-tight
-                    text-gray-500
-                    bg-white
-                    rounded-l-lg
-                    border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
-                  "
-                  >First</a
+                <button
+                  @click="onClickFirstPage"
+                  class="py-2 px-3  ml-0 disabled:cursor-not-allowed leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  :disabled='currentPage==1'
+                  
+                  >First</button
                 >
               </li>
               <li>
-                <a
-                  type="button"
-                  class="
-                    py-2
-                    px-3
-                    leading-tight
-                    text-gray-500
-                    bg-white
-                    border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
-                  "
-                  >Preivous</a
+                <button
+                  @click="onClickPreviousPage"
+                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  :disabled='currentPage==1'
+                  >Preivous</button
                 >
               </li>
 
               <li>
                 <a
-                  type="button"
-                  aria-current="page"
-                  class="
-                    py-2
-                    px-3
-                    leading-tight
-                    text-gray-500
-                    bg-white
-                    border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
-                  "
-                  >1</a
+                  
+                  
+                  class="pb-3 leading-tight px-3 mt-4 disable text-white  bg-blue-500 border border-gray-300  dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                  >{{currentPage}}</a
                 >
               </li>
               <li>
-                <a
-                  type="button"
-                  class="
-                    py-2
-                    px-3
-                    leading-tight
-                    text-gray-500
-                    bg-white
-                    border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
-                  "
-                  >Next</a
+                <button
+                  @click="onClickNextPage"
+                  class="py-2 px-3 leading-tight text-gray-500 disabled:cursor-not-allowed bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  :disabled='currentPage==totalPages'
+                  >Next</button
                 >
               </li>
 
               <li>
-                <a
-                  type="button"
-                  class="
-                    py-2
-                    px-3
-                    leading-tight
-                    text-gray-500
-                    bg-white
-                    rounded-r-lg
-                    border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
-                  "
-                  >Last</a
+                <button
+                  @click="onClickLastPage"
+                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  :disabled='currentPage==totalPages'
+                  >Last</button
                 >
               </li>
+            </ul>
+            <ul class="flex  -space-x-px text-gray-500 m-2 text-sm ">
+              Tổng số trang: {{totalPages}}
             </ul>
           </nav>
         </div>
@@ -381,6 +353,7 @@
       v-if="isDetailTakeOverShow"
       v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
       v-on:changeEditTakeOverShow="handleEditTakeOverShow"
+       v-on:deteteTakeOverRecord="deleteRecord"
       v-bind:id="recordId"
     />
 
@@ -409,16 +382,19 @@ export default class TakeOverHistory extends Vue {
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isEditTakeOverShow: Boolean = false;
-  private records: TakeOverRecord[] = [];
-  currentPage: number = 1;
-  currentLimit: number = 20;
-  currentTakeOverStatus: number | null = null;
-  currentTakeOverType: number | null = null;
-  keyUser: string | null = null;
+  public records: TakeOverRecord[] = [];
+  public  currentPage: number = 1;
+  public currentLimit: number = 4;
+  public currentTakeOverStatus: string | null = null;
+  public currentTakeOverType: string | null = null;
+  public keyUser: string | null = null;
   keyTakeOverPerson: string | null = null;
   totalPages: number = 0;
   public recordId :number = 0;
-  
+  type:any = {
+    1 : 'Bàn giao thiết bị mới',
+    2 : 'Bàn giao thiết bị sau khi sửa chữa'
+  }
 
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
@@ -432,11 +408,11 @@ export default class TakeOverHistory extends Vue {
     this.isEditTakeOverShow = data;
   }
   async created(){
-    this.retrieveTakeOverRecords(this.getQueryParams())
+    this.retrieveRecords(this.getQueryParams())
   }
   
 
-  async retrieveTakeOverRecords(params:String){
+  async retrieveRecords(params:String){
       await TakeOverService.getRecordsBySearch(params)
       .then(res=>{
         console.log(res.data);
@@ -449,13 +425,22 @@ export default class TakeOverHistory extends Vue {
       })
   } 
 
+  retrieveRecordsBySearch() {
+    if (this.currentTakeOverStatus == "-1") this.currentTakeOverStatus = null;
+    if (this.currentTakeOverType == "-1") this.currentTakeOverType = null;
+    if (this.keyTakeOverPerson == "") this.keyTakeOverPerson = null;
+    if (this.keyUser == "0") this.keyUser = null;
+    this.currentPage = 1;
+    this.retrieveRecords(this.getQueryParams());
+  }
+
   getQueryParams(){
     const queryParams:any = {
       page: this.currentPage,
       limit: this.currentLimit,
       username: this.keyUser,
       take_over_person: this.keyTakeOverPerson,
-      type: this.currentTakeOverType,
+      type_take_over: this.currentTakeOverType,
       status: this.currentTakeOverStatus
     }
     Object.keys(queryParams).forEach((key) => {
@@ -484,14 +469,35 @@ export default class TakeOverHistory extends Vue {
     var d = new Date(Number(data));
     return d.toLocaleString()
   }
-  async deleteRecord(id: String) {
+  async deleteRecord(id: number) {
    
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
      await TakeOverService.deleteById(id)
         .then((res) => alert("Delete Successfully !!"))
-        .then(() => this.retrieveTakeOverRecords(this.getQueryParams()))
+        .then(() => this.retrieveRecords(this.getQueryParams()))
         .catch((err) => alert(err.response.data));
     }
+  }
+
+  async onClickFirstPage() {
+    this.currentPage = 1;
+    this.retrieveRecords(this.getQueryParams());
+  }
+  onClickNextPage() {
+    if (this.currentPage != this.totalPages) {
+      this.currentPage++;
+      this.retrieveRecords(this.getQueryParams());
+    }
+  }
+  onClickPreviousPage() {
+    if (this.currentPage != 1) {
+      this.currentPage--;
+      this.retrieveRecords(this.getQueryParams());
+    }
+  }
+  onClickLastPage() {
+    this.currentPage = this.totalPages;
+    this.retrieveRecords(this.getQueryParams());
   }
 }
 </script>

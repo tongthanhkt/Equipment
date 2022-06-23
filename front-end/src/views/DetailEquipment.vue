@@ -183,9 +183,31 @@
                     focus:outline-none
                   "
                   v-on:click="handleAddTakeOverShow(true)"
+                  v-if="equipment?.take_over_status == '0'"
                 >
                   <fa icon="rotate-right" class="pr-2"></fa>
                   Bàn giao
+                </button>
+                <button
+                  class="
+                    bg-red-500
+                    hover:bg-red-600
+                    m-2
+                    transition-colors
+                    flex
+                    justify-center
+                    w-auto
+                    items-center
+                    text-white
+                    px-1
+                    py-2
+                    rounded-md
+                    focus:outline-none
+                  "
+                  v-if="equipment?.take_over_status == '1'"
+                >
+                  <fa icon="rotate-left" class="pr-2"></fa>
+                  Thu hồi
                 </button>
                 <button
                   class="
@@ -277,6 +299,8 @@
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
                     placeholder="Tên người sử dụng"
+                    v-model="keyUser"
+                    @input="retrieveRecordsOfEquipmentBySearch"
                   />
                 </div>
                 <div
@@ -304,36 +328,48 @@
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
                     placeholder="Tên người bàn giao"
+                    v-model="keyTakeOverPerson"
+                    @input="retrieveRecordsOfEquipmentBySearch"
                   />
                 </div>
               </span>
             </div>
             <div class="p-2 flex justify-end w-auto">
               <select
+                v-model="currentTakeOverStatus"
+                @change="retrieveRecordsOfEquipmentBySearch"
                 name="takeover_status"
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option value="0" class="bg-white text-black hover:bg-blue-700">
-                  Trạng thái bàn giao
+                <option value=null disabled selected hidden >
+                  Trạng thái
+                </option>
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">
+                  Trạng thái
                 </option>
                 <option value="0" class="bg-white text-black hover:bg-blue-700">
-                  Chưa xác nhận
+                  Chờ xác nhận
                 </option>
                 <option value="1" class="bg-white text-black hover:bg-blue-700">
                   Đã xác nhận
                 </option>
               </select>
               <select
+                v-model="currentTakeOverType"
+                @change="retrieveRecordsOfEquipmentBySearch"
                 name="takeover_status"
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option disabled selected hidden>Loại bàn giao</option>
-                <option value="0" class="bg-white text-black hover:bg-blue-700">
+                <option value=null disabled selected hidden >
+                 Loại bàn giao
+                </option>
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">Loại bàn giao</option>
+                <option value="1" class="bg-white text-black hover:bg-blue-700">
                   Bàn giao thiết bị mới
                 </option>
-                <option value="1" class="bg-white text-black hover:bg-blue-700">
+                <option value="2" class="bg-white text-black hover:bg-blue-700">
                   Bàn giao thiết bị sau khi sửa
                 </option>
               </select>
@@ -341,7 +377,7 @@
           </div>
 
           <div class="p-1 mx-1 my-2">
-            <div class="inline-block min-w-full align-middle">
+            <div class="flex justify-center min-w-full align-middle">
               <table
                 class="
                   hover:border-collapse
@@ -370,7 +406,7 @@
                       Loại bàn giao
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Trạng thái bàn giao
+                      Trạng thái
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
                       Người tạo
@@ -420,12 +456,23 @@
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{ recordOfEquipment.type }}
+                        {{ type[recordOfEquipment.type] }}
                       </div>
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{ recordOfEquipment.status }}
+                        <div
+                          v-if="recordOfEquipment.status == '1'"
+                          class="text-green-500 italic font-semibold"
+                        >
+                          Đã xác nhận
+                        </div>
+                        <div
+                          v-else-if="recordOfEquipment.status == '0'"
+                          class="text-blue-500 italic font-semibold"
+                        >
+                          Chờ xác nhận
+                        </div>
                       </div>
                     </td>
                     <td>
@@ -456,16 +503,20 @@
                               py-2
                               rounded-md
                               focus:outline-none
+                              disabled:cursor-not-allowed disabled:opacity-50
                             "
                             v-on:click.stop="
                               (recordId = parseInt(recordOfEquipment.id)),
                                 handleEditTakeOverShow(true)
                             "
+                            :disabled="recordOfEquipment.status == '1'"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>
                           <button
+                            :disabled="recordOfEquipment.status == '1'"
                             class="
+                              disabled:cursor-not-allowed disabled:opacity-50
                               bg-gray-100
                               hover:bg-gray-300
                               m-1
@@ -480,7 +531,9 @@
                               rounded-md
                               focus:outline-none
                             "
-                            v-on:click.stop="deleteRecord(recordOfEquipment.id)"
+                            v-on:click.stop="
+                              deleteRecord(parseInt(recordOfEquipment.id))
+                            "
                           >
                             <fa icon="trash-can"></fa>
                           </button>
@@ -492,15 +545,16 @@
               </table>
             </div>
           </div>
-          <nav aria-label="Page navigation example">
-            <ul class="inline-flex -space-x-px">
+          <nav class="flex justify-center">
+            <ul class="flex -space-x-px">
               <li>
-                <a
-                  type="button"
+                <button
+                  @click="onClickFirstPage"
                   class="
                     py-2
                     px-3
                     ml-0
+                    disabled:cursor-not-allowed
                     leading-tight
                     text-gray-500
                     bg-white
@@ -513,16 +567,19 @@
                     dark:hover:bg-gray-700
                     dark:hover:text-white
                   "
-                  >First</a
+                  :disabled="currentPage == 1"
                 >
+                  First
+                </button>
               </li>
               <li>
-                <a
-                  type="button"
+                <button
+                  @click="onClickPreviousPage"
                   class="
                     py-2
                     px-3
                     leading-tight
+                    disabled:cursor-not-allowed
                     text-gray-500
                     bg-white
                     border border-gray-300
@@ -533,39 +590,37 @@
                     dark:hover:bg-gray-700
                     dark:hover:text-white
                   "
-                  >Preivous</a
+                  :disabled="currentPage == 1"
                 >
+                  Preivous
+                </button>
               </li>
 
               <li>
                 <a
-                  type="button"
-                  aria-current="page"
                   class="
-                    py-2
-                    px-3
+                    pb-3
                     leading-tight
-                    text-gray-500
-                    bg-white
+                    px-3
+                    mt-4
+                    disable
+                    text-white
+                    bg-blue-500
                     border border-gray-300
-                    hover:bg-gray-100 hover:text-gray-700
-                    dark:bg-gray-800
-                    dark:border-gray-700
-                    dark:text-gray-400
-                    dark:hover:bg-gray-700
-                    dark:hover:text-white
+                    dark:border-gray-700 dark:bg-gray-700 dark:text-white
                   "
-                  >1</a
+                  >{{ currentPage }}</a
                 >
               </li>
               <li>
-                <a
-                  type="button"
+                <button
+                  @click="onClickNextPage"
                   class="
                     py-2
                     px-3
                     leading-tight
                     text-gray-500
+                    disabled:cursor-not-allowed
                     bg-white
                     border border-gray-300
                     hover:bg-gray-100 hover:text-gray-700
@@ -575,17 +630,20 @@
                     dark:hover:bg-gray-700
                     dark:hover:text-white
                   "
-                  >Next</a
+                  :disabled="currentPage == totalPages"
                 >
+                  Next
+                </button>
               </li>
 
               <li>
-                <a
-                  type="button"
+                <button
+                  @click="onClickLastPage"
                   class="
                     py-2
                     px-3
                     leading-tight
+                    disabled:cursor-not-allowed
                     text-gray-500
                     bg-white
                     rounded-r-lg
@@ -597,9 +655,17 @@
                     dark:hover:bg-gray-700
                     dark:hover:text-white
                   "
-                  >Last</a
+                  :disabled="currentPage == totalPages"
                 >
+                  Last
+                </button>
               </li>
+            </ul>
+            <ul class="flex -space-x-px text-gray-500 m-2 text-sm">
+              Tổng số trang:
+              {{
+                totalPages
+              }}
             </ul>
           </nav>
         </div>
@@ -608,11 +674,14 @@
     <AddTakeOver
       v-if="isAddTakeOverShow"
       v-on:changeAddTakeOverShow="handleAddTakeOverShow"
+      v-bind:device_id="equipment?.device_id"
+      v-bind:equipment_name="equipment?.name"
     />
     <DetailTakeOver
       v-if="isDetailTakeOverShow"
       v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
       v-on:changeEditTakeOverShow="handleEditTakeOverShow"
+      v-on:deteteTakeOverRecord="deleteRecord"
       v-bind:id="recordId"
     />
 
@@ -641,23 +710,27 @@ import Equipment from "@/types/Equipment";
   },
 })
 export default class DetailEquipment extends Vue {
-  private equipment: Equipment | null = null;
+  equipment: Equipment | null = null;
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isEditTakeOverShow: Boolean = false;
   recordsOfEquipment: TakeOverRecord[] = [];
   currentPage: number = 1;
   currentLimit: number = 20;
-  currentTakeOverStatus: number | null = null;
-  currentTakeOverType: number | null = null;
+  currentTakeOverStatus: string | null = null;
+  currentTakeOverType: string | null = null;
   keyUser: string | null = null;
   keyTakeOverPerson: string | null = null;
   totalPages: number = 0;
   public recordId: number = 0;
+  type: any = {
+    1: "Bàn giao thiết bị mới",
+    2: "Bàn giao thiết bị sau khi sửa chữa",
+  };
   mounted() {
     const idParams = this.$route.params.id;
     this.retrieveDetailEquipment(idParams);
-    this.retrieveTakeOverRecordsOfEquipment(this.getQueryParams());
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
   }
   async retrieveDetailEquipment(id: any) {
     const response = await EquipmentDataService.getEquipmentDetail(id)
@@ -667,7 +740,7 @@ export default class DetailEquipment extends Vue {
       })
       .catch((err) => console.log(err));
   }
-  
+
   handleAddTakeOverShow(data: Boolean) {
     this.isAddTakeOverShow = data;
     this.isDetailTakeOverShow = false;
@@ -680,12 +753,23 @@ export default class DetailEquipment extends Vue {
   }
 
   handleEditTakeOverShow(data: Boolean) {
+    console.log("handle");
+    console.log(data);
     this.isDetailTakeOverShow = false;
     this.isAddTakeOverShow = false;
     this.isEditTakeOverShow = data;
   }
 
-  async retrieveTakeOverRecordsOfEquipment(params: String) {
+  retrieveRecordsOfEquipmentBySearch() {
+    if (this.currentTakeOverStatus == "-1") this.currentTakeOverStatus = null;
+    if (this.currentTakeOverType == "-1") this.currentTakeOverType = null;
+    if (this.keyTakeOverPerson == "") this.keyTakeOverPerson = null;
+    if (this.keyUser == "0") this.keyUser = null;
+    this.currentPage = 1;
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
+  }
+
+  async retrieveRecordsOfEquipment(params: String) {
     await TakeOverService.getRecordsBySearch(params)
       .then((res) => {
         console.log(res.data);
@@ -704,7 +788,7 @@ export default class DetailEquipment extends Vue {
       limit: this.currentLimit,
       username: this.keyUser,
       take_over_person: this.keyTakeOverPerson,
-      type: this.currentTakeOverType,
+      type_take_over: this.currentTakeOverType,
       status: this.currentTakeOverStatus,
       equipment_id: this.$route.params.id,
     };
@@ -731,15 +815,35 @@ export default class DetailEquipment extends Vue {
     var d = new Date(Number(data));
     return d.toLocaleString();
   }
-  async deleteRecord(id: String) {
+  deleteRecord(id: number) {
+    console.log("handle event1");
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
-      await TakeOverService.deleteById(id)
+      TakeOverService.deleteById(id)
         .then((res) => alert("Delete Successfully !!"))
-        .then(() =>
-          this.retrieveTakeOverRecordsOfEquipment(this.getQueryParams())
-        )
+        .then(() => this.retrieveRecordsOfEquipment(this.getQueryParams()))
         .catch((err) => alert(err.response.data));
     }
+  }
+
+  async onClickFirstPage() {
+    this.currentPage = 1;
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
+  }
+  onClickNextPage() {
+    if (this.currentPage != this.totalPages) {
+      this.currentPage++;
+      this.retrieveRecordsOfEquipment(this.getQueryParams());
+    }
+  }
+  onClickPreviousPage() {
+    if (this.currentPage != 1) {
+      this.currentPage--;
+      this.retrieveRecordsOfEquipment(this.getQueryParams());
+    }
+  }
+  onClickLastPage() {
+    this.currentPage = this.totalPages;
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
   }
 }
 </script>

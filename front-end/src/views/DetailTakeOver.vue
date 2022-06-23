@@ -4,7 +4,7 @@
           <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Xem thông tin chi tiết bàn giao - {{record?.id}}</h1>
            <button
             class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors   w-auto text-white  rounded-md focus:outline-none"
-             v-on:click="changeShow"
+             v-on:click="changeShow(false)"
          >
             <fa icon="xmark"  class="px-2 py-1" ></fa>          
           </button>
@@ -27,14 +27,17 @@
       <div class="p-1     font-medium text-gray-700">Người bàn giao</div>
       <div class="pl-1 col-span-2  font-medium text-gray-700">Loại bàn giao</div>
        <p class="pl-1 text-slate-500">{{record?.take_over_person}}</p>
-      <p class="pl-1  col-span-2  text-slate-500 ">{{record?.type}}</p>
+      <p class="pl-1  col-span-2  text-slate-500 ">{{type[record.type]}}</p>
        <div class="p-1   font-medium text-gray-700">Người nhận thiết bị</div>
       <div class="p-1   font-medium text-gray-700">Người xác nhận</div>
       <div class="p-1     font-medium text-gray-700">Trạng thái</div>
       <p class="pl-1 pb-2 text-slate-500">{{record?.username}}</p>
       <p class="pl-1 pb-2 text-slate-500">{{record?.verifier}}</p>
      
-      <p class="pl-1 pb-2   text-slate-500">{{record?.status}}</p>
+      <div class="pl-1 pb-2   text-slate-500"><div v-if="record?.status == '1'" class="text-green-500 italic font-semibold">Đã xác nhận </div>
+                        <div v-else-if="record?.status == '0'" class="text-blue-500 italic font-semibold">
+                          Chờ xác nhận
+                        </div></div>
       
  </div>
       <div class =" px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300" >   
@@ -75,6 +78,7 @@
           </button>
           <button
             class="justify-self-end bg-indigo-10 hover:bg-gray-300 m-3.5 transition-colors   w-auto text-red-500 p-2 rounded-md focus:outline-none"
+            v-on:click.stop="changeShow(false);deleteDetailRecord(id);"
           >
             <fa icon="ban"  class="px-2 " ></fa>
             Xóa 
@@ -97,13 +101,37 @@ import { Vue, Options,Prop,Emit,Ref } from "vue-property-decorator";
 
 
 
-export default class EditTakeOver extends Vue {
-  record : TakeOverRecord | null = null
+export default class DetailTakeOver extends Vue {
+  record : TakeOverRecord ={
+  id: "",
+  equipment_id: "",
+  username: "",
+  take_over_time: "",
+  status: "",
+  verifier: "",
+  take_over_person: "",
+  type: "",
+  message: "",
+  cost: "",
+  created_by: "",
+  created_time: "",
+  updated_by: "",
+  updated_time: "",
+  metadata_info: "",
+  device_id: "",
+  name: ""
+
+  }
+  type:any = {
+    
+    1 : 'Bàn giao thiết bị mới',
+    2 : 'Bàn giao thiết bị sau khi sửa chữa'
+  }
   @Prop() id!: number
 
   @Emit('changeDetailTakeOverShow')
-  changeShow() {
-   return false
+  changeShow(data: boolean) {
+   return data
   }
 
   @Emit('changeEditTakeOverShow')
@@ -133,6 +161,11 @@ export default class EditTakeOver extends Vue {
     return null
     var d = new Date(Number(data));
     return d.toLocaleString()
+  }
+  @Emit('deteteTakeOverRecord')
+  deleteDetailRecord(id: number) {
+    console.log("event1")
+   return id
   }
 }
 
