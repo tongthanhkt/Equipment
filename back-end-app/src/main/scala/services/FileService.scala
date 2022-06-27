@@ -1,7 +1,7 @@
 package services
 
 import com.twitter.finatra.http.fileupload.MultipartItem
-import models.{UploadFile, UploadMultiFile}
+import models.{UploadFile}
 import org.apache.commons.io.FilenameUtils
 
 import java.io.File
@@ -53,27 +53,11 @@ class FileService {
   }
   //thanh
   @throws[Exception]
-  def UploadMultiFiles(map:Map[String,MultipartItem]):Map[String,UploadMultiFile]={
-    var uploadFiles: Map[String,UploadMultiFile]=Map();
-    for(key<-map.keys){
-      var file = map.get(key).get
-      val fileName : String =key
-      val extension = FilenameUtils.getExtension(file.filename.get)
-      val baseName = fileName.concat(".").concat(extension)
-      val path = Paths.get(dirName,baseName)
-      val data = file.data
-      val size = data.length
-      Files.write(path,data,StandardOpenOption.CREATE)
-      uploadFiles = uploadFiles + (baseName ->UploadMultiFile("http://localhost:8887/file/get_file/"+baseName,file_name = baseName,size = size ,file_extension=extension))
-    }
-    return uploadFiles;
-  }
-  @throws[Exception]
   def uploadFiles(map: Map[String, MultipartItem]): Map[String, UploadFile] ={
     var uploadFiles : Map[String, UploadFile] = Map();
     for (key <- map.keys){
       val file = map.get(key).get
-      val fileName :String = "image"+System.currentTimeMillis();
+      val fileName :String = file.filename.get;
       val extension = FilenameUtils.getExtension(file.filename.get)
       val baseName = fileName.concat(".").concat(extension)
       val path = Paths.get(dirName,baseName)
@@ -81,7 +65,7 @@ class FileService {
       val size = data.length
 
       Files.write(path,data, StandardOpenOption.CREATE)
-      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+baseName,file_name = baseName,size = size ,file_extension=extension))
+      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+fileName,file_name = fileName,size = size ,file_extension=extension))
     }
     return uploadFiles
   }
