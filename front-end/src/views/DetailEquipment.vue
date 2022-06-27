@@ -456,7 +456,7 @@
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{ type[recordOfEquipment.type] }}
+                        {{ type[recordOfEquipment.type_take_over] }}
                       </div>
                     </td>
                     <td>
@@ -676,6 +676,7 @@
       v-on:changeAddTakeOverShow="handleAddTakeOverShow"
       v-bind:device_id="equipment?.device_id"
       v-bind:equipment_name="equipment?.name"
+       v-bind:equipment_id="equipment?.id"
     />
     <DetailTakeOver
       v-if="isDetailTakeOverShow"
@@ -742,7 +743,9 @@ export default class DetailEquipment extends Vue {
   }
 
   handleAddTakeOverShow(data: Boolean) {
-    this.isAddTakeOverShow = data;
+   
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
+     this.isAddTakeOverShow = data;
     this.isDetailTakeOverShow = false;
     this.isEditTakeOverShow = false;
   }
@@ -753,8 +756,8 @@ export default class DetailEquipment extends Vue {
   }
 
   handleEditTakeOverShow(data: Boolean) {
-    console.log("handle");
-    console.log(data);
+    
+    this.retrieveRecordsOfEquipment(this.getQueryParams());
     this.isDetailTakeOverShow = false;
     this.isAddTakeOverShow = false;
     this.isEditTakeOverShow = data;

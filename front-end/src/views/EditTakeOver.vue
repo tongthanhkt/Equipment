@@ -218,8 +218,8 @@
               text-black
             "
           >
-            <option value="0">Bàn giao thiết bị mới</option>
-            <option value="1">Bàn giao thiết bị sau khi sửa chữa</option>
+            <option value="1">Bàn giao thiết bị mới</option>
+            <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
           </select>
         </div>
         <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
@@ -618,6 +618,7 @@ export default class EditTakeOver extends Vue {
         // this.record.take_over_time = this.handleDate(
         //   this.record.take_over_time
         // );
+        this.record.cost=parseFloat(this.record.cost).toString()
         this.editDate = ref(new Date(Number(this.record.take_over_time)));
         this.currentMetaData = Object.entries(res.data.metadata_info);
         let result = Object.values(res.data.metadata_info).map(

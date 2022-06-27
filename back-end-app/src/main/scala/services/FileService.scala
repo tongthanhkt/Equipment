@@ -59,13 +59,13 @@ class FileService {
       val file = map.get(key).get
       val fileName :String = file.filename.get;
       val extension = FilenameUtils.getExtension(file.filename.get)
-      val baseName = fileName.concat(".").concat(extension)
-      val path = Paths.get(dirName,baseName)
+      //val baseName = fileName.concat(".").concat(extension)
+      val path = Paths.get(dirName,fileName)
       val data = file.data
       val size = data.length
 
       Files.write(path,data, StandardOpenOption.CREATE)
-      uploadFiles = uploadFiles + (baseName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+fileName,file_name = fileName,size = size ,file_extension=extension))
+      uploadFiles = uploadFiles + (fileName -> UploadFile(file_url = "http://localhost:8887/file/get_file/"+fileName,file_name = fileName,size = size ,file_extension=extension))
     }
     return uploadFiles
   }

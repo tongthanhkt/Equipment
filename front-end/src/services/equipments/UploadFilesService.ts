@@ -13,5 +13,8 @@ class UploadFilesService {
     formData.append(file.name, file, file.name);
     return http.post("/file/upload_files", formData);
   }
+  getFile(fileUrl:string){
+    return http.get(fileUrl,{ responseType: 'blob' });
+  }
 }
 export default new UploadFilesService();

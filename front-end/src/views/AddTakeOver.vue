@@ -111,8 +111,8 @@
                 autocomplete="type-name"
                  class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
               >
-               <option value="0">Bàn giao thiết bị mới</option>
-                <option value="1">Bàn giao thiết bị sau khi sửa chữa</option>
+               <option value="1">Bàn giao thiết bị mới</option>
+                <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
               </select>
       </div>
        <div class="p-1   font-medium text-gray-700">Người nhận thiết bị</div>
@@ -315,8 +315,8 @@ export default class AddTakeOver extends Vue {
   verifier: "",
   take_over_person: "",
   type_take_over: "",
-  message: "",
-  cost: "",
+  message: null,
+  cost: null,
   created_by: "tatthanh",
   metadata_info: {},
   }
