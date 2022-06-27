@@ -29,10 +29,10 @@ class CRUDEquipmentController @Inject() (
           pageNumbers.add(Page(i,i==currentPage));
         }
         val offset = (currentPage-1)*request.limit
-        val result:util.ArrayList[Equipment] =equipmentService. search(request,offset);
+        val result:util.ArrayList[Equipment] =equipmentService.search(request,offset);
         response.ok.body(SearchEquipmentsResponse(equipments = result,
           empty = result.isEmpty,nPages =nPages,
-         pageNumbers = pageNumbers,firstPage = +request.page==1,
+          pageNumbers = pageNumbers,firstPage = +request.page==1,
           lastPage = +currentPage == nPages,previousPage = +currentPage-1,nextPage = +currentPage+1))
       } catch {
         case ex: Exception =>{
@@ -41,6 +41,7 @@ class CRUDEquipmentController @Inject() (
         }
       }
     }}
+
 
     get("/count_total"){request: SearchRequest => {
       val keyword = request.keyword

@@ -4,7 +4,7 @@ import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
 import com.twitter.finatra.http.fileupload.MultipartItem
 import com.twitter.finatra.http.request.RequestUtils
-import models.{UploadFile, UploadMultiFile}
+import models.{UploadFile}
 import org.apache.commons.io.FilenameUtils
 import services.FileService
 
@@ -37,7 +37,7 @@ class FileController @Inject() (fileService: FileService) extends Controller {
       try {
         var checkFiles = fileService.checkFilesUpload(map);
         if(checkFiles==1){
-          var uploadMultiFiles : Map[String,UploadMultiFile] = fileService.UploadMultiFiles(map)
+          var uploadMultiFiles : Map[String,UploadFile] = fileService.uploadFiles(map)
           if(uploadMultiFiles.isEmpty){
             response.internalServerError("Can not add file ")
           }else response.created.body(uploadMultiFiles);

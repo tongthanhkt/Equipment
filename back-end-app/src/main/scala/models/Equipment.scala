@@ -192,11 +192,6 @@ case class UploadFile(file_url : String,
                       file_extension: String,
 //                      file_description: String = null,
                 )
-case class UploadMultiFile(file_url:String,
-                          file_name:String,
-                          size:Long,
-                          file_extension:String
-                         )
 case class DeleteImageByIdRequest(@RouteParam equipmentId :Int,
                                   @QueryParam imageName:Int)
 
