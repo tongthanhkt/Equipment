@@ -244,7 +244,7 @@ export default class AddEquipment extends Vue {
     category_id: "",
     device_status: "",
     created_by: "tatthanh@rever.vn",
-    create_time: "1655372446944",
+    created_time: "1655372446944",
     updated_by: "",
     updated_time: "",
     take_over_person_id: "",
@@ -293,7 +293,7 @@ export default class AddEquipment extends Vue {
       take_over_status: this.equipment.take_over_status,
       category_id: this.equipment.category_id,
       created_by: this.equipment.created_by,
-      created_time: this.equipment.create_time,
+      created_time: this.equipment.created_time,
       device_status: this.equipment.device_status,
       metadata_info: await this.getImageFile(),
     };
