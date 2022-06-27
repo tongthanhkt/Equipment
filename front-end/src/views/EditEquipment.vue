@@ -255,13 +255,12 @@ export default class AddEquipment extends Vue {
     category_id: "1",
     category_name: "",
     device_status: "1",
-    created_by: "tatthanh@rever.vn",
-    create_time: "07062022",
+    created_by: "",
+    created_time: "",
     updated_by: "",
     updated_time: "",
-    take_over_person_id: "id101",
-    take_over_person_name: "Minh Duy",
-
+    take_over_person_id: "",
+    take_over_person_name: "",
     id: "",
     metadata_info: "",
   };
@@ -284,31 +283,32 @@ export default class AddEquipment extends Vue {
     ).then((response) => {
       console.log(response.data);
       this.equipment = response.data;
+
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
-
       let result = allImage.map((Image: any) => Image.file_url);
       result.forEach((URL, index) => {
         this.allImageCurrentURL[index] = `${URL}`;
       });
+      const temp = parseInt(this.equipment.import_date);
+      var d = new Date(temp);
+      this.equipment.import_date = d.toLocaleDateString();
     });
-    const temp = parseInt(this.equipment.import_date);
-    var d = new Date(temp);
-    this.equipment.import_date = d.toLocaleDateString();
-    this.handleDate();
+
+    //this.handleDate();
   }
   async handleDate() {
     const date = new Date(this.equipment.import_date).toLocaleDateString();
     this.equipment.import_date = date;
-    await this.handleSaveDate();
-  }
-  handleSaveDate() {
-    var date = new Date(this.equipment.import_date); // some mock date
-    var milliseconds = date.getTime();
+    var temp = new Date(this.equipment.import_date); // some mock date
+    var milliseconds = temp.getTime();
     this.saveDate = milliseconds;
   }
   async saveEquipment() {
+    if (this.equipment.import_date != "") {
+      this.equipment.import_date = this.saveDate.toString();
+    }
     const data = {
       id: this.$route.params.id,
       device_id: this.equipment.device_id,
@@ -318,7 +318,7 @@ export default class AddEquipment extends Vue {
       depreciation_period: this.equipment.depreciation_period,
       period_type: this.equipment.period_type,
       depreciated_value: this.equipment.depreciated_value,
-      import_date: this.saveDate,
+      import_date: this.equipment.import_date,
       take_over_status: this.equipment.take_over_status,
       category_id: this.equipment.category_id,
       created_by: this.equipment.created_by,

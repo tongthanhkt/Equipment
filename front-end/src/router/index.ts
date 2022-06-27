@@ -48,18 +48,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "DetailEquipment",
     component: DetailEquipment,
   },
-  
+
   {
     path: "/takeover-history",
     name: "TakeOverHistory",
     component: TakeOverHistory,
   },
-
-  // {
-  //   path: "/upload_image",
-  //   name: "UploadImage",
-  //   component: UploadImage,
-  // },
   {
     path: "/equipments/update/:id",
     name: "update",
