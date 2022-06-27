@@ -6,7 +6,7 @@ export default interface TakeOverRecord {
   status: string;
   verifier: string;
   take_over_person: string;
-  type: string;
+  type_take_over: string;
   message: string;
   cost: string;
   created_by: string;

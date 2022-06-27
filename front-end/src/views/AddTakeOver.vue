@@ -35,13 +35,23 @@
               />
       </div>
       <div class="flex flex-row col-span-2 w-11/12">
-          <input
-                  type="text"
-                  class="mx-1 w-11/12 px-2 py-1.5 border focus:ring-gray-500  hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-                  placeholder=""
-                  v-model="record.take_over_time"
-                />
-         <DatePicker class="ml-1.5 w-min inline-block" v-model="record.take_over_time"/>
+           <Datepicker
+            class="
+              mx-1
+              w-11/12
+              border
+              focus:ring-gray-500
+              hover:border-gray-900
+              lg:text-base
+              sm:text-sm
+              border-gray-300
+              rounded
+              focus:outline-none
+              text-black
+            "
+            v-model="editDate"
+            :format="format"
+          />
       </div>
       
       
@@ -95,7 +105,7 @@
       <div class="col-span-2">
          
           <select
-                v-model="record.type"
+                v-model="record.type_take_over"
                 id="type"
                 name="type"
                 autocomplete="type-name"
@@ -211,43 +221,36 @@
        </div> -->
        <div class="mx-1 mt-2 mb-3">
                 <div class="row">
-                  <div class="col-8">
+                  <div class="col-5">
                     <label class="btn btn-default p-0">
                       <input
-                        type="file"
-                        accept="image/*"
+                        type="file"              
                         ref="file"
-                        @change="selectImage"
+                        @change="selectFiles"
+                        multiple
                       />
                     </label>
                   </div>
+                   
                 </div>
-                <div v-if="currentImage" class="progress">
-                  <div
-                    class="progress-bar progress-bar-info"
-                    role="progressbar"
-                    :aria-valuenow="progress"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    :style="{ width: progress + '%' }"
-                  >
-                    {{ progress }}%
-                  </div>
-                </div>
-
-                <div v-if="message" class="alert alert-secondary" role="alert">
-                  {{ message }}
-                </div>
-                <div class="card mt-3">
-                  <div class="card-header">List of Images</div>
-                  <ul class="list-group list-group-flush">
-                    <div v-for="(image, index) in allImageCurrentURL">
+                <span v-if="msgError" class="text-red-600 pb-2 text-base" role="alert">
+                  *{{msgError }}
+                 </span>
+                
+                
+                <div v-if="allFiles.length!=0" class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
+                  <div class=" border-b-2 border-indigo-300 text-base text-orange-600 font-semibold flex flex-row">
+                    <fa icon="folder" class="px-2 py-1" ></fa>
+                    <div>Selected Files</div></div>
+                  <ul class="list-group list-group-flush flex flex-row flex-wrap">
+                    <div v-for="(file, index) in allFiles" :key="index">
                       <div>
-                        <div class="img-wrap">
-                          <span class="close" @click="deleteImage(index)"
+                        <div class="bg-gray-300 w-fit h-fit border rounded  flex flex-row m-2">
+                          <fa icon="file-arrow-up" class=" px-2 py-2"></fa>
+                          <div class=" py-1">{{file.name}}</div>
+                          <span class="close px-2 py-1" @click="deleteSelectedFile(index)"
                             >&times;</span
                           >
-                          <img class="w-64 preview my-3" :src="image" alt="" />
                         </div>
                       </div>
                     </div>
@@ -264,6 +267,7 @@
           
           <button
             class=" bg-green-500 hover:bg-green-600 m-3.5 transition-colors  text-base w-auto text-white p-2 rounded-md focus:outline-none"
+            @click="insertTakeOverRecord"
           >
             <fa icon="rotate-right"  class="px-1" ></fa>
             Bàn giao
@@ -285,42 +289,36 @@
 </template>
 
 <script lang="ts">
-import DatePicker from "./DatePicker.vue";
+import Datepicker from "@vuepic/vue-datepicker";
 import UploadService from "../services/equipments/UploadFilesService";
 import { Vue, Options,Emit,Ref,Prop } from "vue-property-decorator";
 import TakeOverRecord from "@/types/TakeOverRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
+import TakeOverService from "@/services/takeover/TakeOverService";
 
 @Options({
   components: {
-    DatePicker
+    Datepicker
    
   },
 })
 export default class AddTakeOver extends Vue {
   @Prop(String)  device_id! :string
   @Prop(String)  equipment_name! : string
+  @Prop(String)  equipment_id! :string
   
-  record : TakeOverRecord ={
-  id: "",
+  record   = {
   equipment_id: "",
   username: "",
   take_over_time: "",
-  status: "",
   verifier: "",
   take_over_person: "",
-  type: "",
+  type_take_over: "",
   message: "",
   cost: "",
-  created_by: "",
-  created_time: "",
-  updated_by: "",
-  updated_time: "",
-  metadata_info: "",
-  device_id: "",
-  name: ""
-
+  created_by: "tatthanh",
+  metadata_info: {},
   }
   timeOut: any
   private options: User[] = [];
@@ -332,34 +330,50 @@ export default class AddTakeOver extends Vue {
   changeShow(data:boolean) {
    return data
   }
-  async created(){
-    
+
+  editDate: any = null;
+
+  format(date: Date | null | undefined) {
+    if (date === null || date === undefined) return null;
+    else {
+      return date.toLocaleString();
+      
+    }
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
-  private allImageCurrentURL: String[] = [];
-  private currentImage: File | null | undefined = null;
-  private allImageFile: File[] = [];
-  selectImage(e: InputEvent) {
+  private msgError : string | null | undefined = null;
+  private allFiles: File[] = [];
+  selectFiles(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
-    this.currentImage = value?.files?.item(0);
-    if (this.currentImage != null) {
-      const temp = URL.createObjectURL(this.currentImage);
-      this.allImageFile.push(this.currentImage);
-      this.allImageCurrentURL.push(temp);
+    this.allFiles=[];
+    console.log(value.files)
+    if(value.files != null){
+      console.log(value.files.length)
+      for(let i = 0; i < value.files.length; i++){
+        const currentFile = value.files.item(i)
+        if (currentFile!=null && currentFile?.size > 5000000){
+          this.msgError= "Chọn file <= 5MB"
+           this.allFiles=[];
+          return
+        }
+        if(currentFile!=null)
+          this.allFiles.push(currentFile)
+      }
+      this.msgError=null
     }
   }
-  deleteImage(index: number) {
-    this.allImageCurrentURL.splice(index, 1);
-    this.allImageFile.splice(index, 1);
+  deleteSelectedFile(index: number) {
+    this.allFiles.splice(index, 1);
   }
-  async getImageFile() {
+  async uploadFiles() {
     let obj = {};
-    for (let i = 0; i < this.allImageFile.length; i++) {
-      await UploadService.upload(this.allImageFile[i]).then((response) => {
+    for (let i = 0; i < this.allFiles.length; i++) {
+      await UploadService.uploadFile(this.allFiles[i]).then((response) => {
         obj = Object.assign(response.data, obj);
       });
     }
+    if (obj === null || obj === undefined) return {};
     return obj;
   }
 
@@ -384,6 +398,52 @@ export default class AddTakeOver extends Vue {
       });
       }, 300);
     
+  }
+
+  async insertTakeOverRecord(){
+     if (this.user== null ) {
+      alert("Hãy chọn người nhận thiết bị!");
+      
+    }
+    else if (this.take_over_person == null ) {
+      alert("Hãy chọn người bàn giao!");
+     
+    }
+    else if (this.verifier == null ) {
+      alert("Hãy chọn người xác nhận !");
+      
+    }
+    else if (this.editDate === null || this.editDate === undefined) {
+      alert("Hãy nhập thời gian bàn giao");
+      
+    }
+    else if (this.record.type_take_over == null || this.record.type_take_over == "") {
+      alert("Hãy chọn loại bàn giao");
+      
+    }
+    else {
+      this.record.username=this.user.username
+      this.record.take_over_person=this.take_over_person.username
+      this.record.verifier=this.verifier.username
+      this.record.take_over_time=this.editDate.getTime()
+      this.record.metadata_info = await this.uploadFiles()
+      this.record.equipment_id = this.equipment_id
+      console.log(this.record)
+      TakeOverService.add(this.record)
+      .then(res=>{
+        alert("Thêm thông tin bàn giao cho thiết bị thành công !")
+        this.changeShow(false)
+      })
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        // console.log(errors);
+        // let temp = "";
+        // Object.values(errors).forEach((error) => {
+        //   temp = temp + error + "\n";
+        // });
+        alert(errors);
+      });
+    }
   }
 
 }

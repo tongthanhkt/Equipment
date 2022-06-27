@@ -27,7 +27,7 @@
       <div class="p-1     font-medium text-gray-700">Người bàn giao</div>
       <div class="pl-1 col-span-2  font-medium text-gray-700">Loại bàn giao</div>
        <p class="pl-1 text-slate-500">{{record?.take_over_person}}</p>
-      <p class="pl-1  col-span-2  text-slate-500 ">{{type[record.type]}}</p>
+      <p class="pl-1  col-span-2  text-slate-500 ">{{type[record.type_take_over]}}</p>
        <div class="p-1   font-medium text-gray-700">Người nhận thiết bị</div>
       <div class="p-1   font-medium text-gray-700">Người xác nhận</div>
       <div class="p-1     font-medium text-gray-700">Trạng thái</div>
@@ -44,9 +44,17 @@
       <div class="pl-1 font-medium text-gray-700">Message</div>
       <p class="pl-1 text-slate-500">{{record?.message}}</p>
        <div class="pl-1   font-medium text-gray-700">Tệp đính kèm</div>
-       <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
-
-       </div>
+       <ul class="list-group list-group-flush flex flex-row flex-wrap">
+                    <div v-for="(file, index) in allFiles">
+                      <div>
+                        <div class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2">
+                          <fa icon="file-arrow-up" class=" px-2 py-2"></fa>
+                          <div class=" py-1">{{file.name}}</div>
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
       </div>
       <div class =" px-3 pt-2 bg-indigo-100  w-full  border-t border-gray-300" >
          <!-- <div class="p-1 m-2 text-base  font-medium text-gray-700">Thông tin</div> -->
@@ -110,7 +118,7 @@ export default class DetailTakeOver extends Vue {
   status: "",
   verifier: "",
   take_over_person: "",
-  type: "",
+  type_take_over: "",
   message: "",
   cost: "",
   created_by: "",

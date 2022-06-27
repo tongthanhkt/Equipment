@@ -403,6 +403,7 @@ export default class TakeOverHistory extends Vue {
   }
 
   handleEditTakeOverShow(data: Boolean) {
+    this.retrieveRecords(this.getQueryParams());
     this.isDetailTakeOverShow = false;
     this.isAddTakeOverShow = false;
     this.isEditTakeOverShow = data;
