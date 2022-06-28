@@ -27,7 +27,7 @@
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
       >
-        Chỉnh sửa thông tin bàn giao - {{id}}
+        Chỉnh sửa thông tin bàn giao - {{ id }}
       </h1>
       <button
         class="
@@ -93,7 +93,7 @@
               text-gray-700
             "
           >
-            {{record.name }}
+            {{ record.name }}
           </div>
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
@@ -124,11 +124,10 @@
           />
         </div>
         <div class="flex flex-row col-span-2 w-11/12">
-          
           <Datepicker
-            class=" mx-1
+            class="
+              mx-1
               w-11/12
-             
               border
               focus:ring-gray-500
               hover:border-gray-900
@@ -137,9 +136,9 @@
               border-gray-300
               rounded
               focus:outline-none
-              text-black"
+              text-black
+            "
             v-model="editDate"
-            
             :format="format"
           />
         </div>
@@ -170,28 +169,27 @@
               focus:outline-none
               text-black
             "
-            :options="options"           
+            :options="options"
             v-model="take_over_person"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
-            
-            
           >
             <template #search="{ attributes, events }">
-      <input
-        
-        class="vs__search
-              bg-white
-              lg:text-base
-              sm:text-sm
-              focus:outline-none
-              text-black"
-        v-bind="attributes"
-        v-on="events"
-        @input="retrieveUser"
-      />
-    </template>
-            <template #option="{ username, fullname }" >
+              <input
+                class="
+                  vs__search
+                  bg-white
+                  lg:text-base
+                  sm:text-sm
+                  focus:outline-none
+                  text-black
+                "
+                v-bind="attributes"
+                v-on="events"
+                @input="retrieveUser"
+              />
+            </template>
+            <template #option="{ username, fullname }">
               {{ fullname }}
               <br />
               <cite>{{ username }} </cite>
@@ -200,7 +198,7 @@
         </div>
         <div class="col-span-2">
           <select
-            v-model="record.type"
+            v-model="record.type_take_over"
             id="type"
             name="type"
             autocomplete="type-name"
@@ -220,8 +218,8 @@
               text-black
             "
           >
-            <option value="0">Bàn giao thiết bị mới</option>
-            <option value="1">Bàn giao thiết bị sau khi sửa chữa</option>
+            <option value="1">Bàn giao thiết bị mới</option>
+            <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
           </select>
         </div>
         <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
@@ -230,7 +228,7 @@
         </div>
 
         <div>
-         <v-select
+          <v-select
             class="
               mx-1
               bg-white
@@ -245,28 +243,27 @@
               focus:outline-none
               text-black
             "
-            :options="options"           
+            :options="options"
             v-model="user"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
-            
-            
           >
             <template #search="{ attributes, events }">
-      <input
-        
-        class="vs__search
-              bg-white
-              lg:text-base
-              sm:text-sm
-              focus:outline-none
-              text-black"
-        v-bind="attributes"
-        v-on="events"
-        @input="retrieveUser"
-      />
-    </template>
-            <template #option="{ username, fullname }" >
+              <input
+                class="
+                  vs__search
+                  bg-white
+                  lg:text-base
+                  sm:text-sm
+                  focus:outline-none
+                  text-black
+                "
+                v-bind="attributes"
+                v-on="events"
+                @input="retrieveUser"
+              />
+            </template>
+            <template #option="{ username, fullname }">
               {{ fullname }}
               <br />
               <cite>{{ username }} </cite>
@@ -289,28 +286,27 @@
               focus:outline-none
               text-black
             "
-            :options="options"           
+            :options="options"
             v-model="verifier"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
-            
-            
           >
             <template #search="{ attributes, events }">
-      <input
-        
-        class="vs__search
-              bg-white
-              lg:text-base
-              sm:text-sm
-              focus:outline-none
-              text-black"
-        v-bind="attributes"
-        v-on="events"
-        @input="retrieveUser"
-      />
-    </template>
-            <template #option="{ username, fullname }" >
+              <input
+                class="
+                  vs__search
+                  bg-white
+                  lg:text-base
+                  sm:text-sm
+                  focus:outline-none
+                  text-black
+                "
+                v-bind="attributes"
+                v-on="events"
+                @input="retrieveUser"
+              />
+            </template>
+            <template #option="{ username, fullname }">
               {{ fullname }}
               <br />
               <cite>{{ username }} </cite>
@@ -341,48 +337,84 @@
         >
         </textarea>
         <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
-        <!-- <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
+        <div v-if="currentFileName.length != 0">
+          <ul class="list-group list-group-flush flex flex-row flex-wrap">
+            <div v-for="(file_name, index) in currentFileName" :key="index">
+              <div>
+                <div
+                  class="
+                    bg-gray-300
+                    w-fit
+                    h-fit
+                    border
+                    rounded
+                    flex flex-row
+                    m-2
+                  "
+                >
+                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+                  <div class="py-1">{{ file_name }}</div>
+                  <span class="close px-2 py-1" @click="deleteCurrentFile(index)"
+                    >&times;</span
+                  >
+                </div>
+              </div>
+            </div>
+          </ul>
+        </div>
 
-       </div> -->
         <div class="mx-1 mt-2 mb-3">
           <div class="row">
             <div class="col-8">
-              <label class="btn btn-default p-0">
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref="file"
-                  @change="selectImage"
-                />
-              </label>
-            </div>
-          </div>
-          <div v-if="currentImage" class="progress">
-            <div
-              class="progress-bar progress-bar-info"
-              role="progressbar"
-              :aria-valuenow="progress"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              :style="{ width: progress + '%' }"
-            >
-              {{ progress }}%
-            </div>
-          </div>
+              <label class="px-2">Thêm tệp mới: </label>
 
-          <div v-if="message" class="alert alert-secondary" role="alert">
-            {{ message }}
+              <input type="file" ref="file" @change="selectFiles" multiple />
+            </div>
           </div>
-          <div class="card mt-3">
-            <div class="card-header">List of Images</div>
-            <ul class="list-group list-group-flush">
-              <div v-for="(image, index) in allImageCurrentURL">
+          <span
+            v-if="msgError"
+            class="text-red-600 pb-2 text-base"
+            role="alert"
+          >
+            *{{ msgError }}
+          </span>
+
+          <div
+            v-if="allFiles.length != 0"
+            class="bg-white h-36 overflow-y-auto border-2 border-indigo-300"
+          >
+            <div
+              class="
+                border-b-2 border-indigo-300
+                text-sm text-orange-600
+                font-semibold
+                flex flex-row
+              "
+            >
+              <fa icon="folder" class="px-2 py-1"></fa>
+              <div class="p-1">Selected Files</div>
+            </div>
+            <ul class="list-group list-group-flush flex flex-row flex-wrap">
+              <div v-for="(file, index) in allFiles">
                 <div>
-                  <div class="img-wrap">
-                    <span class="close" @click="deleteImage(index)"
+                  <div
+                    class="
+                      bg-gray-300
+                      w-fit
+                      h-fit
+                      border
+                      rounded
+                      flex flex-row
+                      m-2
+                    "
+                  >
+                    <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+                    <div class="py-1">{{ file.name }}</div>
+                    <span
+                      class="close px-2 py-1"
+                      @click="deleteSelectedFile(index)"
                       >&times;</span
                     >
-                    <img class="w-64 preview my-3" :src="image" alt="" />
                   </div>
                 </div>
               </div>
@@ -407,9 +439,10 @@
             rounded-md
             focus:outline-none
           "
+          @click="updateTakeOverRecord"
         >
           <fa icon="pen-to-square" class="px-1"></fa>
-          Cập nhật
+          Save
         </button>
         <button
           class="
@@ -435,7 +468,7 @@
 
 <script lang="ts">
 import Datepicker from "@vuepic/vue-datepicker";
-import { ref } from 'vue';
+import { ref } from "vue";
 import UploadService from "../services/equipments/UploadFilesService";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeOverRecord from "@/types/TakeOverRecord";
@@ -444,6 +477,7 @@ import "vue-select/dist/vue-select.css";
 import Fuse from "fuse.js";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
+import UploadFilesService from "../services/equipments/UploadFilesService";
 
 @Options({
   components: {
@@ -459,7 +493,7 @@ export default class EditTakeOver extends Vue {
     status: "",
     verifier: "",
     take_over_person: "",
-    type: "",
+    type_take_over: "",
     message: "",
     cost: "",
     created_by: "",
@@ -472,59 +506,64 @@ export default class EditTakeOver extends Vue {
   };
   @Prop() id!: number;
   options: User[] = [];
-  user:User ={
+  user: User = {
     username: this.record.username,
-    fullname: ''
-  }
-  take_over_person:User ={
+    fullname: "",
+  };
+  take_over_person: User = {
     username: this.record.take_over_person,
-    fullname: ''
-  }
-  verifier:User ={
+    fullname: "",
+  };
+  verifier: User = {
     username: this.record.verifier,
-    fullname: ''
-  }
-  timeOut:any
-  editDate:any=null;
-  
+    fullname: "",
+  };
+  timeOut: any;
+  editDate: any = null;
+  currentMetaData: any;
+  currentFileName: string[] = [];
 
   @Emit("changeEditTakeOverShow")
   changeShow(data: boolean) {
     return data;
   }
 
-  format(date:Date|null|undefined) {
-    if(date === null || date === undefined)
-     return null
+  format(date: Date | null | undefined) {
+    if (date === null || date === undefined) return null;
     else {
-    return date.toLocaleString() 
+      return date.toLocaleString();
+      
     }
   }
-            
-        
 
-  
   @Ref("file") inpuFile!: HTMLInputElement;
-  private allImageCurrentURL: String[] = [];
-  private currentImage: File | null | undefined = null;
-  private allImageFile: File[] = [];
-  selectImage(e: InputEvent) {
+  private msgError: string | null | undefined = null;
+  private allFiles: File[] = [];
+  selectFiles(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
-    this.currentImage = value?.files?.item(0);
-    if (this.currentImage != null) {
-      const temp = URL.createObjectURL(this.currentImage);
-      this.allImageFile.push(this.currentImage);
-      this.allImageCurrentURL.push(temp);
+    this.allFiles = [];
+    console.log(value.files);
+    if (value.files != null) {
+      console.log(value.files.length);
+      for (let i = 0; i < value.files.length; i++) {
+        const currentFile = value.files.item(i);
+        if (currentFile != null && currentFile?.size > 5000000) {
+          this.msgError = "Chọn file <= 5MB";
+          this.allFiles = [];
+          return;
+        }
+        if (currentFile != null) this.allFiles.push(currentFile);
+      }
+      this.msgError = null;
     }
   }
-  deleteImage(index: number) {
-    this.allImageCurrentURL.splice(index, 1);
-    this.allImageFile.splice(index, 1);
+  deleteSelectedFile(index: number) {
+    this.allFiles.splice(index, 1);
   }
-  async getImageFile() {
+  async uploadFiles() {
     let obj = {};
-    for (let i = 0; i < this.allImageFile.length; i++) {
-      await UploadService.upload(this.allImageFile[i]).then((response) => {
+    for (let i = 0; i < this.allFiles.length; i++) {
+      await UploadService.uploadFile(this.allFiles[i]).then((response) => {
         obj = Object.assign(response.data, obj);
       });
     }
@@ -532,18 +571,44 @@ export default class EditTakeOver extends Vue {
   }
 
   async created() {
-    
     await this.retrieveRecord();
     this.options.push(this.user);
     this.options.push(this.take_over_person);
     this.options.push(this.verifier);
-    
   }
 
-  dropdownShouldOpen(VueSelect :any) {
-      console.log(this.editDate)
-      return VueSelect.search.length !== 0 
+  async getCurrentMetaData() {
+    await this.deleteOldFile();
+    const newMetaData = await this.uploadFiles();
+    let obj = Object.assign(
+      Object.fromEntries(this.currentMetaData),
+      newMetaData
+    );
+    if (obj === null || obj === undefined) return {};
+    return obj;
+  }
+
+  deleteFiles: string[] = [];
+  deleteCurrentFile(index: number) {
+    this.deleteFiles.push(this.currentFileName[index]);
+    this.currentFileName.splice(index, 1);
+    this.currentMetaData.splice(index, 1);
+  }
+
+  async deleteOldFile() {
+    for (let i = 0; i < this.deleteFiles.length; i++) {
+      await UploadFilesService.deleteFile(this.deleteFiles[i])
+        .then(() => {
+          console.log("Delete done!");
+        })
+        .catch((err) => console.log(err));
     }
+  }
+
+  dropdownShouldOpen(VueSelect: any) {
+    console.log(this.editDate);
+    return VueSelect.search.length !== 0;
+  }
 
   async retrieveRecord() {
     await TakeOverService.getRecordById(this.id)
@@ -553,50 +618,113 @@ export default class EditTakeOver extends Vue {
         // this.record.take_over_time = this.handleDate(
         //   this.record.take_over_time
         // );
-        this.editDate =ref(new Date(Number(this.record.take_over_time)))
-        
+        this.record.cost=parseFloat(this.record.cost).toString()
+        this.editDate = ref(new Date(Number(this.record.take_over_time)));
+        this.currentMetaData = Object.entries(res.data.metadata_info);
+        let result = Object.values(res.data.metadata_info).map(
+          (File: any) => File.file_name
+        );
+        result.forEach((file_name, index) => {
+          this.currentFileName[index] = `${file_name}`;
+        });
         console.log(this.editDate);
-        this.user ={
-    username: this.record.username,
-    fullname: ''
-        }
-        this.take_over_person ={
+        this.user = {
+          username: this.record.username,
+          fullname: "",
+        };
+        this.take_over_person = {
           username: this.record.take_over_person,
-          fullname: ''
-        }
-        this.verifier ={
+          fullname: "",
+        };
+        this.verifier = {
           username: this.record.verifier,
-          fullname: ''
-        }
+          fullname: "",
+        };
       })
       .catch((err) => {
         alert(err.response.data);
       });
   }
-  handleDate(event:Event ) {
-    if ( (event.target as HTMLInputElement).value === undefined || (event.target as HTMLInputElement).value === null) 
-    return "";
+  handleDate(event: Event) {
+    if (
+      (event.target as HTMLInputElement).value === undefined ||
+      (event.target as HTMLInputElement).value === null
+    )
+      return "";
     var d = new Date((event.target as HTMLInputElement).value);
     this.record.take_over_time = d.toLocaleString();
   }
 
-  
+  async updateTakeOverRecord() {
+   
+    if (this.user.username == null || this.user.username == "") {
+      alert("Hãy chọn người nhận thiết bị!");
+      
+    }
+    else if (this.take_over_person == null ) {
+      alert("Hãy chọn người bàn giao!");
+     
+    }
+    else if (this.verifier == null ) {
+      alert("Hãy chọn người xác nhận !");
+      
+    }
+    else if (this.editDate === null || this.editDate === undefined) {
+      alert("Hãy nhập thời gian bàn giao");
+      
+    }
+    else if (this.record.type_take_over == null || this.record.type_take_over == "") {
+      alert("Hãy chọn loại bàn giao");
+      
+    }
+    else {
+       console.log(this.editDate.getTime())
+      const data = {
+        id: this.record.id,
+        equipment_id: this.record.equipment_id,
+        username: this.user?.username,
+        take_over_time: this.editDate.getTime(),
+        verifier: this.verifier?.username,
+        take_over_person: this.take_over_person?.username,
+        type_take_over: this.record.type_take_over,
+        message: this.record.message,
+        cost: this.record.cost,
+        updated_by: "tatthanh",
+        metadata_info: await this.getCurrentMetaData(),
+      };
+      console.log(data)
+      TakeOverService.update(data)
+      .then(res=>{
+        alert("Cập nhật thông tin bàn giao thành công !")
+        this.changeShow(false)
+      })
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        console.log(errors);
+        let temp = "";
+        Object.values(errors).forEach((error) => {
+          temp = temp + error + "\n";
+        });
+        alert(temp);
+      });
 
-  async retrieveUser(event:Event) {
+    }
+  }
+
+  async retrieveUser(event: Event) {
     //console.log(keyword);
     clearTimeout(this.timeOut);
 
-      this.timeOut = setTimeout( () => {
-         UserService.getBySearch( (event.target as HTMLInputElement).value)
-      .then((res) => {
-        this.options = res.data.user_list;
-        console.log(this.options);
-      })
-      .catch((err) => {
-        alert(err.response.data);
-      });
-      }, 300);
-    
+    this.timeOut = setTimeout(() => {
+      UserService.getBySearch((event.target as HTMLInputElement).value)
+        .then((res) => {
+          this.options = res.data.user_list;
+          console.log(this.options);
+        })
+        .catch((err) => {
+          alert(err.response.data);
+        });
+    }, 300);
   }
 }
 </script>

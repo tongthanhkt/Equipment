@@ -5,7 +5,7 @@ class      UserService {
  
   getBySearch(queryParams: String) {
     console.log(queryParams);
-    return http.get(`/take_over/get_user?keyword=${queryParams}`);
+    return http.get(`/user/get_users?keyword=${queryParams}`);
   }
  
   

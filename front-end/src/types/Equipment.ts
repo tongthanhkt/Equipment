@@ -1,22 +1,22 @@
 export default interface Equipment {
   category_id: string;
-  category_name: string;
+  category_name: string | null;
   created_by: String;
-  create_time: String;
+  created_time: String;
   device_id: String | null;
   id: String;
   import_date: string;
-  name: String;
-  price: String;
-  start_status: String;
-  take_over_person_id: String;
-  take_over_person_name: String;
-  take_over_status: String;
-  updated_by: String;
+  name: String | null;
+  price: String | null;
+  start_status: String | null;
+  take_over_person_id: String | null;
+  take_over_person_name: String | null;
+  take_over_status: String | null;
+  updated_by: string;
   updated_time: string;
-  device_status: String;
-  depreciated_value: String;
-  depreciation_period: String;
-  period_type: String;
-  metadata_info: Object;
+  device_status: String | null;
+  depreciated_value: String | null;
+  depreciation_period: String | null;
+  period_type: String | null;
+  metadata_info: Object | null;
 }

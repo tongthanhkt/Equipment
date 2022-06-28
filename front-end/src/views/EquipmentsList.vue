@@ -411,6 +411,12 @@
                 >
               </li>
             </ul>
+            <ul class="flex -space-x-px text-gray-500 m-2 text-sm">
+              Tổng số trang:
+              {{
+                totalPages
+              }}
+            </ul>
           </nav>
         </div>
       </div>
@@ -451,9 +457,11 @@ export default class Dashboard extends Vue {
   public totalPages: number = 0;
   public valueCategory: number = 1;
   public queryParams: any;
+
   async mounted() {
     this.retrieveEquipments(this.getQueryParams());
   }
+
   async retrieveEquipments(queryParams: string) {
     EquipmentDataService.getAllEquipments(queryParams)
       .then((res: any) => {
@@ -461,24 +469,7 @@ export default class Dashboard extends Vue {
         this.totalPages = res.data.n_pages;
         this.equipments = res.data.equipments;
       })
-      .then(() => {
-        for (let i = 0; i < this.equipments.length; i++) {
-          if (this.equipments[i].updated_time != null) {
-            this.equipments[i].updated_time = this.handleImportDate(
-              this.equipments[i].updated_time
-            );
-          }
-          if (this.equipments[i].import_date != null) {
-            this.equipments[i].import_date = this.handleImportDate(
-              this.equipments[i].import_date
-            );
-          }
-
-          this.equipments[i].category_name = this.handleCategoryEquipment(
-            this.equipments[i].category_id
-          );
-        }
-      });
+      .then(() => this.handleFieldEquipment());
     EquipmentDataService.getCountTotal(this.getQueryParams()).then((res) => {
       this.sumOfEquipments = res.data.total_equipments;
       this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
@@ -486,7 +477,24 @@ export default class Dashboard extends Vue {
       this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
     });
   }
+  handleFieldEquipment() {
+    for (let i = 0; i < this.equipments.length; i++) {
+      if (this.equipments[i].updated_time != null) {
+        this.equipments[i].updated_time = this.handleImportDate(
+          this.equipments[i].updated_time
+        );
+      }
+      if (this.equipments[i].import_date != null) {
+        this.equipments[i].import_date = this.handleImportDate(
+          this.equipments[i].import_date
+        );
+      }
 
+      this.equipments[i].category_name = this.handleCategoryEquipment(
+        this.equipments[i].category_id
+      );
+    }
+  }
   getQueryParams() {
     this.queryParams = {
       page: this.currentPage,
