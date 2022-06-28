@@ -253,7 +253,7 @@ export default class AddEquipment extends Vue {
     metadata_info: "",
     category_name: "",
   };
-
+  private importDate: string = "";
   @Ref("file") inpuFile!: HTMLInputElement;
   private allImageCurrentURL: String[] = [];
   private currentImage: File | null | undefined = null;
@@ -311,11 +311,6 @@ export default class AddEquipment extends Vue {
       });
     const a = this.allImageFile.forEach((imageFile) => {});
     await Promise.all([a]).then((values) => console.log(values));
-
-    console.log(data);
-    EquipmentDataService.addData(data)
-      .then((res) => alert("Thêm thiết bị thành công"))
-      .catch((err) => console.log(err));
   }
 }
 </script>

@@ -120,11 +120,11 @@
                   type="text"
                   class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                   placeholder=""
-                  v-model="equipment.import_date"
+                  v-model="importDate"
                 />
                 <Datepicker
                   class="w-3 inline-block"
-                  v-model="equipment.import_date"
+                  v-model="importDate"
                   @update:modelValue="handleDate"
                 ></Datepicker>
               </div>
@@ -269,10 +269,7 @@ export default class AddEquipment extends Vue {
   private allNewImageFile: File[] = [];
   private currentMetadataInfo: any;
   private oldMetadataInfo: any;
-  private date: string = "test";
-
-  private saveDate: number = 0;
-
+  private importDate: string = "";
   async mounted() {
     this.retrieveEquipment();
   }
@@ -283,7 +280,7 @@ export default class AddEquipment extends Vue {
     ).then((response) => {
       console.log(response.data);
       this.equipment = response.data;
-
+      this.importDate = this.handleImportDate(this.equipment.import_date);
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
@@ -291,24 +288,22 @@ export default class AddEquipment extends Vue {
       result.forEach((URL, index) => {
         this.allImageCurrentURL[index] = `${URL}`;
       });
-      const temp = parseInt(this.equipment.import_date);
-      var d = new Date(temp);
-      this.equipment.import_date = d.toLocaleDateString();
     });
 
     //this.handleDate();
   }
-  async handleDate() {
-    const date = new Date(this.equipment.import_date).toLocaleDateString();
-    this.equipment.import_date = date;
-    var temp = new Date(this.equipment.import_date); // some mock date
-    var milliseconds = temp.getTime();
-    this.saveDate = milliseconds;
+  handleImportDate(data: string) {
+    var d = new Date(parseInt(data));
+    return d.toLocaleDateString();
+  }
+  handleDate() {
+    const date = new Date(this.importDate).toLocaleDateString();
+    this.importDate = date;
   }
   async saveEquipment() {
-    if (this.equipment.import_date != "") {
-      this.equipment.import_date = this.saveDate.toString();
-    }
+    var temp = new Date(this.importDate);
+    var milliseconds = temp.getTime();
+    this.equipment.import_date = milliseconds.toString();
     const data = {
       id: this.$route.params.id,
       device_id: this.equipment.device_id,
