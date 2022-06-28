@@ -457,6 +457,7 @@ export default class Dashboard extends Vue {
   public totalPages: number = 0;
   public valueCategory: number = 1;
   public queryParams: any;
+
   async mounted() {
     this.retrieveEquipments(this.getQueryParams());
   }
