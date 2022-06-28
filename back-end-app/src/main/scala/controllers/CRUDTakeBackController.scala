@@ -1,23 +1,23 @@
-package controllers
+package scala.controllers
 
 import com.twitter.finatra.http.Controller
 import com.twitter.util.jackson.JSON
-import models._
-import services.CRUDTakeOverService
+import models.{ConvertString, Page, SearchUserRequest, SearchUserResponse, TakeOver, User}
 
 import java.util
 import javax.inject.Inject
+import scala.models.{DeleteTakeBackRequest, SearchTakeBackByIdEquipmentRequest, SearchTakeBackByIdRequest, SearchTakeBackRequest, SearchTakeBackResponse, TakeBack}
+import scala.services.CRUDTakeBackService
 
-class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
-                                       convertString: ConvertString) extends Controller {
-  prefix("/take_over") {
-    get("/list") { request: SearchTakeOverRequest => {
+class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,convertString:ConvertString) extends Controller{
+  prefix("/take_back") {
+    get("/list") { request: SearchTakeBackRequest => {
       print(request)
       try {
-        val totalTakeOverList = takeOverService.countBySearchTakeOver(request.username, request.takeOverPerson, request.typeTakeOver, request.status, request.equipmentId)
-        var nPages: Int = totalTakeOverList / request.limit;
+        val totalTakeBackList = takeBackService.countBySearchTakeBack(request.username, request.takeBackPerson, request.typeTakeBack, request.status, request.equipmentId)
+        var nPages: Int = totalTakeBackList / request.limit;
         val currentPage = request.page;
-        if (totalTakeOverList % request.limit > 0) {
+        if (totalTakeBackList % request.limit > 0) {
           nPages += 1;
         }
         var pageNumbers = new util.ArrayList[Page]()
@@ -26,8 +26,8 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           pageNumbers.add(Page(i, i == currentPage));
         }
         val offset = (currentPage - 1) * request.limit
-        val result: util.ArrayList[TakeOver] = takeOverService.searchTakeOver(request, offset);
-        response.ok.body(SearchTakeOverResponse(takeOverList = result, empty = result.isEmpty, nPages = nPages,
+        val result: util.ArrayList[TakeBack] = takeBackService.searchTakeBack(request, offset);
+        response.ok.body(SearchTakeBackResponse(takeBackList = result, empty = result.isEmpty, nPages = nPages,
           pageNumbers = pageNumbers, firstPage = +request.page == 1,
           lastPage = +currentPage == nPages, previousPage = +currentPage - 1, nextPage = +currentPage + 1));
       } catch {
@@ -38,14 +38,14 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       }
     }
     }
-    delete("/delete") { request: DeleteTakeOverRequest => {
-      val takeOverId = request.id;
+    delete("/delete") { request: DeleteTakeBackRequest => {
+      val takeBackId = request.id;
       try {
-        val result = takeOverService.deleteById(takeOverId)
+        val result = takeBackService.deleteById(takeBackId)
         if (result == 1) {
-          response.created.body(s"Delete take over with id =$takeOverId successfully .")
+          response.created.body(s"Delete take over with id =$takeBackId successfully .")
         }
-        else response.internalServerError.body("Can not delete take over. Take over id not exist.")
+        else response.internalServerError.body("Can not delete take back. Take back id not exist.")
       } catch {
         case ex: Exception => {
           println(ex)
@@ -54,10 +54,10 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       }
     }
     }
-    get("/:id") { request: SearchTakeOverByIdRequest => {
-      val takeOverId = request.id;
+    get("/:id") { request: SearchTakeBackByIdRequest => {
+      val takeBackId = request.id;
       try {
-        val result = takeOverService.searchTakeOverById(takeOverId)
+        val result = takeBackService.searchTakeBackById(takeBackId)
         if (result == null)
           response.noContent
         else response.ok.body(result)
@@ -69,30 +69,30 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       }
     }
     }
-    post("/add") { request: TakeOver => {
+    post("/add") { request: TakeBack => {
       try {
         print(request)
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
-          if (takeOverService.checkUserExist(request.username) == 0) {
+          if (takeBackService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
-          } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
-            response.internalServerError.jsonError("Take over person not exists.")
-          } else if (takeOverService.checkUserExist(request.verifier) == 0) {
+          } else if (takeBackService.checkUserExist(request.takeBackPerson) == 0) {
+            response.internalServerError.jsonError("Take back person not exists.")
+          } else if (takeBackService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
-          } else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -1) {
+          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -1) {
             response.internalServerError.jsonError("Equipment have been taken over.")
-          } else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
+          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
-          } else if (takeOverService.checkDeviceEquipmentStatusForTakeOver(request.equipmentId) == 0) {
+          } else if (takeBackService.checkDeviceEquipmentStatusForTakeBack(request.equipmentId) == 0) {
             response.internalServerError.jsonError("Equipment status was damaged.")
-          }else if (takeOverService.checkUserExist(request.createdBy) == 0) {
+          }else if (takeBackService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not valid. ")
           }
           else {
-            val result = takeOverService.add(request)
+            val result = takeBackService.add(request)
             if (result == 1) {
-              val takeOverId = takeOverService.getIdTakeOverDESC();
+              val takeOverId = takeBackService.getIdTakeBackDESC();
               response.created.json(
                 s"""|id: $takeOverId
                     |""".stripMargin)
@@ -102,36 +102,35 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         else
           response.badRequest.json(
             s"""{
-               |
                |"errors" : [${JSON.write(check)}]
                |}""".stripMargin)
       }
       catch {
         case ex: Exception => {
           println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
+          response.internalServerError.jsonError("Thiết bị không tồn tại ")
         }
       }
     }
     }
-    put("/update") { request: TakeOver => {
+    put("/update") { request: TakeBack => {
       try{
         println(request)
-        val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get) /// check ID, check status bàn giao
+        val e = takeBackService.searchTakeBackById(convertString.toInt(request.id).get) /// check ID, check status bàn giao
         println(e);
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
-          if (takeOverService.checkUserExist(request.username) == 0) {
+          if (takeBackService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
-          } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
+          } else if (takeBackService.checkUserExist(request.takeBackPerson) == 0) {
             response.internalServerError.jsonError("Take over person not exists.")
-          } else if (takeOverService.checkUserExist(request.verifier) == 0) {
+          } else if (takeBackService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
-          }else if (takeOverService.checkUserExist(request.updatedBy) == 0) {
+          }else if (takeBackService.checkUserExist(request.updatedBy) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
           }
           else{
-            val result = takeOverService.updateById(request)
+            val result = takeBackService.updateById(request)
             if (result == 1)
               response.created.body(s"Update take over successfully !")
             else response.badRequest.json(
@@ -159,24 +158,24 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     }
     }
     get("/equipment/:id") {
-        request: SearchTakeOverByIdEquipmentRequest => {
-          val equipmentId = request.id;
-          try {
-            val result = takeOverService.searchTakeOverByEquipmentId(equipmentId)
-            if (result == null)
-              response.noContent
-            else response.ok.body(result)
-          } catch {
-            case ex: Exception => {
-              println(ex)
-              response.internalServerError.jsonError(ex.getMessage)
-            }
+      request: SearchTakeBackByIdEquipmentRequest => {
+        val equipmentId = request.id;
+        try {
+          val result = takeBackService.searchTakeBackByEquipmentId(equipmentId)
+          if (result == null)
+            response.noContent
+          else response.ok.body(result)
+        } catch {
+          case ex: Exception => {
+            println(ex)
+            response.internalServerError.jsonError(ex.getMessage)
           }
         }
       }
+    }
     get("/get_user"){request:SearchUserRequest=>
       try {
-        val result : util.ArrayList[User] = takeOverService.searchUser(request);
+        val result : util.ArrayList[User] = takeBackService.searchUser(request);
         response.ok.body(SearchUserResponse(userList = result))
       }catch {
         case ex: Exception => {
@@ -188,5 +187,4 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     }
 
   }
-
 }

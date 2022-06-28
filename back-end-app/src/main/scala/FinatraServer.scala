@@ -11,7 +11,7 @@ import controllers.{CRUDEquipmentController, CRUDTakeOverController, FileControl
 import filters.{CORSFilter, CommonExceptionMapping}
 import modules.{CustomJacksonModule, DependencyModule}
 
-import scala.controllers.UserController
+import scala.controllers.{CRUDTakeBackController, UserController}
 
 object FinatraServerMain extends FinatraServer
 
@@ -26,6 +26,7 @@ class FinatraServer extends HttpServer{
       .filter[CORSFilter](beforeRouting = true)
       .add[CRUDEquipmentController]
       .add[CRUDTakeOverController]
+      .add[CRUDTakeBackController]
       .add[FileController]
       .add[UserController]
       .exceptionMapper[CommonExceptionMapping]

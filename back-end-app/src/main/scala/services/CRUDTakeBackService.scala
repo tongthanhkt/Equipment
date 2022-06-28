@@ -1,40 +1,38 @@
-package services
+package scala.services
 
 import com.twitter.util.jackson.JSON
-import models._
+import models.{ConvertString, Equipment, SearchUserRequest, TakeOver, UploadFile, User}
 import net.liftweb.json.{DefaultFormats, parse}
 import utils.DatabaseConnection
 
 import java.sql.SQLException
-import java.util
 import javax.inject.Inject
-
-
-class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString){
-
-  def searchTakeOverByEquipmentId(equipmentId:Int): util.ArrayList[TakeOver] = {
-    val takeOverList = new util.ArrayList[TakeOver]()
+import scala.models.{SearchTakeBackRequest, TakeBack}
+import java.util
+class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString) {
+  def searchTakeBackByEquipmentId(equipmentId:Int): util.ArrayList[TakeBack] = {
+    val takeBackList = new util.ArrayList[TakeBack]()
     val sql = """
-      SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
-          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
-        FROM equipment_management.takeover_equipment_info as tov
+      SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_over_time,tb.status,tb.verifier,tb.take_over_person,tb.metadata_info,tb.type
+          ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time
+        FROM equipment_management.takeover_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
-        on e.id = tov.equipment_id
-        where tov.status!=-1
-      AND  tov.equipment_id = ?;"""
+        on e.id = tb.equipment_id
+        where tb.status!=-1
+      AND  tb.equipment_id = ?;"""
     val con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
     pst.setInt(1, equipmentId)
     val rs = pst.executeQuery
     while(rs.next){
-      val e = TakeOver(id = rs.getString("id"),
+      val e = TakeBack(id = rs.getString("id"),
         equipmentId = rs.getString("equipment_id"),
         username = rs.getString("username"),
-        takeOverTime = rs.getString("take_over_time"),
+        takeBackTime = rs.getString("take_back_time"),
         status = rs.getString("status"),
         verifier = rs.getString("verifier"),
-        takeOverPerson = rs.getString("take_over_person"),
-        typeTakeOver = rs.getString("type"),
+        takeBackPerson = rs.getString("take_back_person"),
+        typeTakeBack = rs.getString("type"),
         message = rs.getString("message"),
         cost = rs.getString("cost"),
         createdBy = rs.getString("created_by"),
@@ -43,10 +41,10 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         updatedTime = rs.getString("updated_time"),
         metadataInfo = toMap(rs.getString("metadata_info")));
 
-      takeOverList.add(e);
+      takeBackList.add(e);
     }
     con.close()
-    return takeOverList;
+    return takeBackList;
   }
   def searchUser(searchUserRequest:SearchUserRequest):util.ArrayList[User]={
     val userList = new util.ArrayList[User]()
@@ -55,76 +53,77 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         |SELECT * from user as us
         |where (? is null or us.username LIKE CONCAT('%',?,'%') or us.fullname LIKE CONCAT('%',?,'%'));
         |""".stripMargin
-        val con = databaseConnection.getConnection()
-        val pst = con.prepareStatement(sql)
-        pst.setString(1,searchUserRequest.keyword);
-        pst.setString(2,searchUserRequest.keyword);
-        pst.setString(3,searchUserRequest.keyword);
-        val rs = pst.executeQuery
-        while(rs.next){
-          val e = User(username=rs.getString("username"),fullname = rs.getString("fullname"))
-          userList.add(e)
-        }
+    val con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setString(1,searchUserRequest.keyword);
+    pst.setString(2,searchUserRequest.keyword);
+    pst.setString(3,searchUserRequest.keyword);
+    val rs = pst.executeQuery
+    while(rs.next){
+      val e = User(username=rs.getString("username"),fullname = rs.getString("fullname"))
+      userList.add(e)
+    }
     con.close()
     return userList;
   }
-  def searchTakeOver(searchTakeOverRequest: SearchTakeOverRequest,offset:Int):util.ArrayList[TakeOver]={
-    val takeOverList = new util.ArrayList[TakeOver]()
+
+  def searchTakeBack(searchTakeBackRequest: SearchTakeBackRequest,offset:Int):util.ArrayList[TakeBack]={
+    val takeBackList = new util.ArrayList[TakeBack]()
     val sql=
       """
-         SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
-          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
-        FROM equipment_management.takeover_equipment_info as tov
+         SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_over_time,tb.status,tb.verifier,tb.take_over_person,tb.metadata_info,tb.type
+          ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time
+        FROM equipment_management.takeback_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
-        on e.id = tov.equipment_id
-        where tov.status!=?
-        and (? is null or tov.username LIKE CONCAT('%',?,'%'))
-        and (? is null or tov.take_over_person LIKE CONCAT('%',?,'%'))
-        and (? is null or tov.type = ?)
-        and (? is null or tov.status= ?)
-        and (? is null or tov.equipment_id= ?)
+        on e.id = tb.equipment_id
+        where tb.status!=?
+        and (? is null or tb.username LIKE CONCAT('%',?,'%'))
+        and (? is null or tb.take_back_person LIKE CONCAT('%',?,'%'))
+        and (? is null or tb.type = ?)
+        and (? is null or tb.status= ?)
+        and (? is null or tb.equipment_id= ?)
         LIMIT ? OFFSET ?
          ;"""
-        val con = databaseConnection.getConnection()
-        val pst= con.prepareStatement(sql)
+    val con = databaseConnection.getConnection()
+    val pst= con.prepareStatement(sql)
     pst.setInt(1,-1);
-    pst.setString(2,searchTakeOverRequest.username);
-    pst.setString(3,searchTakeOverRequest.username);
-    pst.setString(4,searchTakeOverRequest.takeOverPerson);
-    pst.setString(5,searchTakeOverRequest.takeOverPerson);
-    pst.setString(6,searchTakeOverRequest.typeTakeOver);
-    pst.setString(7,searchTakeOverRequest.typeTakeOver);
-    pst.setString(8,searchTakeOverRequest.status);
-    pst.setString(9,searchTakeOverRequest.status);
-    pst.setString(10,searchTakeOverRequest.equipmentId);
-    pst.setString(11,searchTakeOverRequest.equipmentId);
-    pst.setInt(12,searchTakeOverRequest.limit);
+    pst.setString(2,searchTakeBackRequest.username);
+    pst.setString(3,searchTakeBackRequest.username);
+    pst.setString(4,searchTakeBackRequest.takeBackPerson);
+    pst.setString(5,searchTakeBackRequest.takeBackPerson);
+    pst.setString(6,searchTakeBackRequest.typeTakeBack);
+    pst.setString(7,searchTakeBackRequest.typeTakeBack);
+    pst.setString(8,searchTakeBackRequest.status);
+    pst.setString(9,searchTakeBackRequest.status);
+    pst.setString(10,searchTakeBackRequest.equipmentId);
+    pst.setString(11,searchTakeBackRequest.equipmentId);
+    pst.setInt(12,searchTakeBackRequest.limit);
     pst.setInt(13,offset);
 
     val rs = pst.executeQuery
     while(rs.next){
-    val e = TakeOver(id = rs.getString("id"),
-      equipmentId = rs.getString("equipment_id"),
-      deviceId = rs.getString("device_id"),
-      name = rs.getString("name"),
-      username = rs.getString("username"),
-      takeOverTime = rs.getString("take_over_time"),
-      status = rs.getString("status"),
-      verifier = rs.getString("verifier"),
-      takeOverPerson = rs.getString("take_over_person"),
-      typeTakeOver = rs.getString("type"),
-      message = rs.getString("message"),
-      cost = rs.getString("cost"),
-      createdBy = rs.getString("created_by"),
-      createdTime = rs.getString("created_time"),
-      updatedBy = rs.getString("updated_by"),
-      updatedTime = rs.getString("updated_time"),
-      metadataInfo = toMap(rs.getString("metadata_info")));
+      val e = TakeBack(id = rs.getString("id"),
+        equipmentId = rs.getString("equipment_id"),
+        deviceId = rs.getString("device_id"),
+        name = rs.getString("name"),
+        username = rs.getString("username"),
+        takeBackTime = rs.getString("take_back_time"),
+        status = rs.getString("status"),
+        verifier = rs.getString("verifier"),
+        takeBackPerson = rs.getString("take_back_person"),
+        typeTakeBack = rs.getString("type"),
+        message = rs.getString("message"),
+        cost = rs.getString("cost"),
+        createdBy = rs.getString("created_by"),
+        createdTime = rs.getString("created_time"),
+        updatedBy = rs.getString("updated_by"),
+        updatedTime = rs.getString("updated_time"),
+        metadataInfo = toMap(rs.getString("metadata_info")));
 
-      takeOverList.add(e);
+      takeBackList.add(e);
     }
     con.close()
-    return takeOverList;
+    return takeBackList;
   }
   private def toMap (metadata : String): Map[String, UploadFile] ={
     var map : Map[String,UploadFile] = Map()
@@ -139,14 +138,14 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return map
   }
   @throws[SQLException]
-  def countBySearchTakeOver(username:String,takeOverPerson:String,typeTakeOver:String,status:String,equipmentId:String):Int={
+  def countBySearchTakeBack(username:String,takeBackPerson:String,typeTakeBack:String,status:String,equipmentId:String):Int={
     val sql=
       """
         |SELECT count(*) as  total
-        |FROM takeover_equipment_info as temp
+        |FROM takeback_equipment_info as temp
         | WHERE
         |        (? is null or temp.username LIKE CONCAT('%',?,'%'))
-        |        and (? is null or temp.take_over_person LIKE CONCAT('%',?,'%'))
+        |        and (? is null or temp.take_back_person LIKE CONCAT('%',?,'%'))
         |        and (? is null or temp.type = ?)
         |        and (? is null or temp.status= ?)
         |        and (? is null or temp.equipment_id= ?)
@@ -154,14 +153,14 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         |
         |
         |""".stripMargin
-        val con =databaseConnection.getConnection()
-        val pst=con.prepareStatement(sql)
+    val con =databaseConnection.getConnection()
+    val pst=con.prepareStatement(sql)
     pst.setString(1,username);
     pst.setString(2,username);
-    pst.setString(3,takeOverPerson);
-    pst.setString(4,takeOverPerson);
-    pst.setString(5,typeTakeOver);
-    pst.setString(6,typeTakeOver);
+    pst.setString(3,takeBackPerson);
+    pst.setString(4,takeBackPerson);
+    pst.setString(5,typeTakeBack);
+    pst.setString(6,typeTakeBack);
     pst.setString(7,status);
     pst.setString(8,status);
     pst.setString(9,equipmentId);
@@ -174,7 +173,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return total
   }
-  def searchTakeOverById(takeOver:Int): TakeOver = {
+  def searchTakeBackById(takeBack:Int): TakeBack = {
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
       FROM equipment_management.takeover_equipment_info as tov, equipment as e
@@ -183,20 +182,20 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
-    pst.setInt(1, takeOver)
+    pst.setInt(1, takeBack)
     val rs = pst.executeQuery()
-    var result :TakeOver = null
+    var result :TakeBack = null
     while ( rs.next) {
-      result = TakeOver(id = rs.getString("id"),
+      result = TakeBack(id = rs.getString("id"),
         equipmentId = rs.getString("equipment_id"),
         deviceId=rs.getString("device_id"),
         name=rs.getString("name"),
         username = rs.getString("username"),
-        takeOverTime = rs.getString("take_over_time"),
+        takeBackTime = rs.getString("take_back_time"),
         status = rs.getString("status"),
         verifier = rs.getString("verifier"),
-        takeOverPerson = rs.getString("take_over_person"),
-        typeTakeOver = rs.getString("type"),
+        takeBackPerson = rs.getString("take_back_person"),
+        typeTakeBack = rs.getString("type"),
         message = rs.getString("message"),
         cost = rs.getString("cost"),
         createdBy = rs.getString("created_by"),
@@ -210,7 +209,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
 
 
-  def checkDeviceEquipmentStatusForTakeOver(equipmentId: String): Int = {
+  def checkDeviceEquipmentStatusForTakeBack(equipmentId: String): Int = {
     val sql =
       """
         |SELECT * from equipment
@@ -227,7 +226,6 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     if (result.deviceStatus == "1") return 1 // Hop le
     else return 0
   }
-
   @throws[Exception]
   def checkUserExist(username: String): Int = {
     val sql =
@@ -248,9 +246,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     else return 0;
 
   }
-
-
-  def checkequipmentForTakeOver(equipmentId: String): Int = {
+  def checkequipmentForTakeBack(equipmentId: String): Int = {
     val sql =
       """
         |SELECT * from equipment
@@ -267,15 +263,15 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     if (result == null) {
       return 0
     }
-    if (result.takeOverStatus == "1") {
+    if (result.takeOverStatus == "0") {
       return -1
-    } // Da duoc ban giao
+    } // Da duoc thu hoi
 
     return 1
   }
 
   @throws[Exception]
-  def add(e: TakeOver): Int = {
+  def add(e: TakeBack): Int = {
     val sql =
       """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
               take_over_person,metadata_info,type,
@@ -285,60 +281,55 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
     pst.setString(1, e.equipmentId)
-      pst.setString(2, e.username)
-      pst.setString(3,e.takeOverTime )
-      pst.setInt(4, 0)
-      pst.setString(5,e.verifier)
-      pst.setString(6,e.takeOverPerson )
+    pst.setString(2, e.username)
+    pst.setString(3,e.takeBackTime )
+    pst.setInt(4, 0)
+    pst.setString(5,e.verifier)
+    pst.setString(6,e.takeBackPerson )
     pst.setString(7,
       s"""
          |{"files": ${JSON.write(e.metadataInfo)}}
          |""".stripMargin)
-    pst.setString(8, e.typeTakeOver)
+    pst.setString(8, e.typeTakeBack)
     pst.setString(9, e.message)
-      pst.setString(10,e.cost)
-      pst.setString(11, e.createdBy)
-      pst.setLong(12,System.currentTimeMillis())
-      pst.setString(13, e.updatedBy)
-      pst.setString(14,e.updatedTime)
-      val rs = pst.executeUpdate()
-      con.close();
-      return rs
+    pst.setString(10,e.cost)
+    pst.setString(11, e.createdBy)
+    pst.setLong(12,System.currentTimeMillis())
+    pst.setString(13, e.updatedBy)
+    pst.setString(14,e.updatedTime)
+    val rs = pst.executeUpdate()
+    con.close();
+    return rs
 
   }
   @throws[SQLException]
-  def getIdTakeOverDESC():Int = {
+  def getIdTakeBackDESC():Int = {
     val sql = """
       SELECT *
-      FROM equipment_management.takeover_equipment_info e where e.status!= ?
+      FROM equipment_management.takeback_equipment_info e where e.status!= ?
       order by e.id desc limit 1;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
     pst.setInt(1,-1)
-
     val rs = pst.executeQuery()
     var id:Int = -1
     while ( rs.next) {
       id = rs.getInt("id")
     }
-
-
     con.close();
     return id
-
-
   }
-  def deleteById(takeOverId:Int):Int={
-    val sql="UPDATE takeover_equipment_info SET status = -1 WHERE  id = ?;"
+  def deleteById(takeBackId:Int):Int={
+    val sql="UPDATE takeback_equipment_info SET status = -1 WHERE  id = ?;"
     val con = databaseConnection.getConnection()
     val pst=con.prepareStatement(sql)
-    pst.setInt(1,takeOverId)
+    pst.setInt(1,takeBackId)
     val rs=pst.executeUpdate()
     con.close()
     return rs
   }
-  def updateById(e:TakeOver):Int= {
+  def updateById(e:TakeBack):Int= {
     var uploadFile: String = null
     if (e.metadataInfo != null)
       uploadFile =
@@ -347,10 +338,10 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
            |""".stripMargin
 
     val sql =
-      """UPDATE takeover_equipment_info
+      """UPDATE takeback_equipment_info
           SET  username = if(? is not null, ?,username),
-           take_over_time = if(? is not null, ?,take_over_time),status = if(? is not null, ?,status),
-           verifier = if(? is not null, ?,verifier),take_over_person = if(? is not null, ?, take_over_person),
+           take_back_time = if(? is not null, ?,take_back_time),status = if(? is not null, ?,status),
+           verifier = if(? is not null, ?,verifier),take_back_person = if(? is not null, ?, take_back_person),
            type = if(? is not null, ?,type),
            message = if(? is not null,?,message),cost = if(? is not null,?,cost),
            updated_by = ?,updated_time = ?,
@@ -360,16 +351,16 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val pst= con.prepareStatement(sql)
     pst.setString(1, e.username);
     pst.setString(2, e.username);
-    pst.setString(3, e.takeOverTime);
-    pst.setString(4, e.takeOverTime);
+    pst.setString(3, e.takeBackTime);
+    pst.setString(4, e.takeBackPerson);
     pst.setString(5, e.status);
     pst.setString(6, e.status);
     pst.setString(7, e.verifier);
     pst.setString(8, e.verifier);
-    pst.setString(9, e.takeOverPerson);
-    pst.setString(10, e.takeOverPerson);
-    pst.setString(11, e.typeTakeOver);
-    pst.setString(12, e.typeTakeOver);
+    pst.setString(9, e.takeBackPerson);
+    pst.setString(10, e.takeBackPerson);
+    pst.setString(11, e.typeTakeBack);
+    pst.setString(12, e.typeTakeBack);
     pst.setString(13, e.message);
     pst.setString(14, e.message);
     pst.setString(15, e.cost);
@@ -385,7 +376,5 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
 
   }
-
-
 
 }
