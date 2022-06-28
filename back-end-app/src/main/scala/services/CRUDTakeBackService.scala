@@ -1,7 +1,7 @@
 package scala.services
 
 import com.twitter.util.jackson.JSON
-import models.{ConvertString, Equipment, SearchUserRequest, TakeOver, UploadFile, User}
+import models.{ConvertString, Equipment, SearchUserRequest, UploadFile, User}
 import net.liftweb.json.{DefaultFormats, parse}
 import utils.DatabaseConnection
 
@@ -13,9 +13,9 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
   def searchTakeBackByEquipmentId(equipmentId:Int): util.ArrayList[TakeBack] = {
     val takeBackList = new util.ArrayList[TakeBack]()
     val sql = """
-      SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_over_time,tb.status,tb.verifier,tb.take_over_person,tb.metadata_info,tb.type
+      SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_back_time,tb.status,tb.verifier,tb.take_back_person,tb.metadata_info,tb.type
           ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time
-        FROM equipment_management.takeover_equipment_info as tb
+        FROM equipment_management.takeback_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
         on e.id = tb.equipment_id
         where tb.status!=-1
@@ -71,7 +71,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     val takeBackList = new util.ArrayList[TakeBack]()
     val sql=
       """
-         SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_over_time,tb.status,tb.verifier,tb.take_over_person,tb.metadata_info,tb.type
+         SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_back_time,tb.status,tb.verifier,tb.take_back_person,tb.metadata_info,tb.type
           ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time
         FROM equipment_management.takeback_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
@@ -175,8 +175,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   def searchTakeBackById(takeBack:Int): TakeBack = {
     val sql = """
-      SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
-      FROM equipment_management.takeover_equipment_info as tov, equipment as e
+      SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_back_time,tov.take_back_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
+      FROM equipment_management.takeback_equipment_info as tov, equipment as e
       WHERE  tov.id = ? and tov.status != 1 and tov.equipment_id=e.id
 				;"""
 
@@ -273,8 +273,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
   @throws[Exception]
   def add(e: TakeBack): Int = {
     val sql =
-      """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
-              take_over_person,metadata_info,type,
+      """INSERT INTO takeback_equipment_info (equipment_id, username, take_back_time,status,verifier,
+              take_back_person,metadata_info,type,
               message,cost,created_by,created_time,updated_by,updated_time)
               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 

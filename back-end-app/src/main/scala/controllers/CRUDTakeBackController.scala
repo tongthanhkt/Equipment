@@ -70,6 +70,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
     }
     }
     post("/add") { request: TakeBack => {
+      print(request)
       try {
         print(request)
         val check = request.checkDataInsert(convertString);
@@ -96,7 +97,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
               response.created.json(
                 s"""|id: $takeOverId
                     |""".stripMargin)
-            } else response.internalServerError.jsonError("Can not add new takeOver")
+            } else response.internalServerError.jsonError("Can not add new take back")
           }
         }
         else
@@ -108,7 +109,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
       catch {
         case ex: Exception => {
           println(ex)
-          response.internalServerError.jsonError("Thiết bị không tồn tại ")
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }
