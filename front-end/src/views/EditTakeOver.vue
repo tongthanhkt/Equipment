@@ -679,6 +679,7 @@ export default class EditTakeOver extends Vue {
     }
     else {
        console.log(this.editDate.getTime())
+      
       const data = {
         id: this.record.id,
         equipment_id: this.record.equipment_id,
@@ -692,6 +693,8 @@ export default class EditTakeOver extends Vue {
         updated_by: "tatthanh",
         metadata_info: await this.getCurrentMetaData(),
       };
+      if (this.record.cost=='')
+      
       console.log(data)
       TakeOverService.update(data)
       .then(res=>{

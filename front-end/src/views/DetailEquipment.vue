@@ -4,7 +4,16 @@
       <div class="flex-1 container mx-auto px-6 py-8">
         <div class="p-1 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl">
           <div
-            class="text-center border-b-2 border-indigo-300 w-full block font-semibold text-base self-start text-black"
+            class="
+              text-center
+              border-b-2 border-indigo-300
+              w-full
+              block
+              font-semibold
+              text-base
+              self-start
+              text-black
+            "
           >
             <h1 class="text-2xl leading-relaxed">
               Thông tin chi tiết thiết bị
@@ -16,20 +25,49 @@
               class="gap-px grid grid-cols-1 grid-flow-row place-items-center"
             >
               <div class="gap-0.5 grid grid-rows-1 grid-flow-col">
-                <button @click="handlePreviousImage"
-                  class="sm:h-auto w-fit focus:outline-none transition-colors bg-gray-50 hover:bg-gray-200 text-gray-700"
+                <button
+                  class="
+                    sm:h-auto
+                    w-fit
+                    focus:outline-none
+                    transition-colors
+                    bg-gray-50
+                    hover:bg-gray-200
+                    text-gray-700
+                  "
                 >
                   <fa icon="angle-left" class="h-7 w-7"></fa>
                 </button>
-                <img class="h-72 w-72" :src="allImageCurrentURL[indexImage]" />
-                <button  @click="handleNextImage"
-                  class="sm:h-auto w-fit transition-colors focus:outline-none bg-gray-50 hover:bg-gray-200 text-gray-700"
+                <img class="h-72 w-72" src="../images/19127636.jpg" />
+                <button
+                  class="
+                    sm:h-auto
+                    w-fit
+                    transition-colors
+                    focus:outline-none
+                    bg-gray-50
+                    hover:bg-gray-200
+                    text-gray-700
+                  "
                 >
                   <fa icon="angle-right" class="h-7 w-7"></fa>
                 </button>
               </div>
-              <button 
-                class="sm:h-auto sm:w-auto px-4 py-1 my-1 text-center focus:outline-none transition-colors rounded-md border-b border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700"
+              <button
+                class="
+                  sm:h-auto sm:w-auto
+                  px-4
+                  py-1
+                  my-1
+                  text-center
+                  focus:outline-none
+                  transition-colors
+                  rounded-md
+                  border-b border-gray-300
+                  bg-gray-200
+                  hover:bg-gray-300
+                  text-gray-700
+                "
               >
                 <fa icon="file-circle-plus"></fa>
                 Thêm ảnh mới
@@ -49,23 +87,17 @@
                     Danh mục
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.category_id=='1'">Máy tính</p>
-                    <p v-else-if="equipment?.category_id=='2'">Màn hình</p>
-                    <p v-else="equipment?.category_id=='3'">Phụ kiện</p>
+                    {{ equipment?.category_id }}
                   </p>
-                 
                   <div class="p-1 text-base font-medium text-gray-700">
-                    Giá tiền
+                    Gía tiền
                   </div>
                   <p class="pl-1 text-slate-500">{{ equipment?.price }}</p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Trạng thái bàn giao
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment.take_over_status=='-1'">Bị xóa</p>
-                    <p v-else-if="equipment.take_over_status=='0'">Bị mất</p>
-                    <p v-else-if="equipment.take_over_status=='1'">Sử dụng được</p>
-                    <p v-else-if="equipment.take_over_status=='2'">Bị hư hỏng</p>
+                    {{ equipment?.take_over_status }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người thêm thông tin
@@ -85,16 +117,10 @@
                     Tình trạng khi mới nhập
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.start_status=='1'">New</p>
-                    <p v-else-if="equipment?.start_status=='2'">like new loại S (99,99%)</p>
-                    <p v-else-if="equipment?.start_status=='3'">like new loại A (99%)</p>
-                    <p v-else-if="equipment?.start_status=='4'"> like New Loại B (97-98%)</p>
-                    <p v-else-if="equipment?.start_status=='5'">like New Loại C (Dưới 95%-90%)</p>
-                    <p v-else-if="equipment?.start_status=='6'">Thiết bị cũ (second-hand)</p>
-                    <p v-else-if="equipment?.start_status=='7'">Khác</p>
+                    {{ equipment?.import_date }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
-                    Giá trị khấu hao
+                    Gía trị khấu hao
                   </div>
                   <p class="pl-1 text-slate-500">
                     {{ equipment?.depreciated_value }} %
@@ -123,15 +149,7 @@
                     Trạng thái thiết bị
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.device_status=='0'">
-                    Bị mất
-                    </p>
-                    <p v-else-if="equipment?.device_status=='1'">
-                    Sử dụng được
-                    </p>
-                    <p v-else-if="equipment?.device_status=='2'">
-                    Bị hư hỏng
-                    </p>
+                    {{ equipment?.device_status }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Thời gian nhập thiết bị
@@ -149,7 +167,21 @@
               </span>
               <div class="p-2 mt-4 grid grid-cols-3">
                 <button
-                  class="bg-green-500 hover:bg-green-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
+                  class="
+                    bg-green-500
+                    hover:bg-green-600
+                    m-2
+                    transition-colors
+                    flex
+                    justify-center
+                    w-auto
+                    items-center
+                    text-white
+                    px-1
+                    py-2
+                    rounded-md
+                    focus:outline-none
+                  "
                   v-on:click="handleAddTakeOverShow(true)"
                   v-if="equipment?.take_over_status == '0'"
                 >
@@ -157,20 +189,62 @@
                   Bàn giao
                 </button>
                 <button
-                  class="bg-red-500 hover:bg-red-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
+                  class="
+                    bg-red-500
+                    hover:bg-red-600
+                    m-2
+                    transition-colors
+                    flex
+                    justify-center
+                    w-auto
+                    items-center
+                    text-white
+                    px-1
+                    py-2
+                    rounded-md
+                    focus:outline-none
+                  "
                   v-if="equipment?.take_over_status == '1'"
                 >
                   <fa icon="rotate-left" class="pr-2"></fa>
                   Thu hồi
                 </button>
-                <button @click="editEquipment"
-                  class="bg-sky-500 hover:bg-sky-600 m-2 transition-colors flex justify-center items-center w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none"
+                <button
+                  class="
+                    bg-sky-500
+                    hover:bg-sky-600
+                    m-2
+                    transition-colors
+                    flex
+                    justify-center
+                    items-center
+                    w-auto
+                    text-gray-900
+                    px-1
+                    py-2
+                    rounded-md
+                    focus:outline-none
+                  "
                 >
                   <fa icon="pen-to-square" class="pr-2"></fa>
                   Cập nhật
                 </button>
-                <button @click="deleteEquipment"
-                  class="place-self-end bg-gray-50 hover:bg-gray-200 mt-2 transition-colors flex justify-center items-center w-auto text-red-500 p-2 rounded-md focus:outline-none"
+                <button
+                  class="
+                    place-self-end
+                    bg-gray-50
+                    hover:bg-gray-200
+                    mt-2
+                    transition-colors
+                    flex
+                    justify-center
+                    items-center
+                    w-auto
+                    text-red-500
+                    p-2
+                    rounded-md
+                    focus:outline-none
+                  "
                 >
                   <fa icon="ban" class="pr-2"></fa>
                   Xóa
@@ -183,7 +257,17 @@
           class="p-1 mt-8 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
         >
           <div
-            class="text-center p-2 border-b-2 border-indigo-300 w-full block font-semibold text-base self-start text-black"
+            class="
+              text-center
+              p-2
+              border-b-2 border-indigo-300
+              w-full
+              block
+              font-semibold
+              text-base
+              self-start
+              text-black
+            "
           >
             <h1 class="text-2xl leading-relaxed">Lịch sử bàn giao</h1>
           </div>
@@ -191,7 +275,21 @@
             <div class="p-2 flex place-items-end w-auto">
               <span class="flex justify-start">
                 <div
-                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  class="
+                    px-1
+                    py-2
+                    m-2
+                    text-base
+                    grid grid-rows-1 grid-flow-col
+                    rounded-md
+                    h-fit
+                    w-fit
+                    border-2 border-blue-400
+                    focus:border-blue-600
+                    focus:ring
+                    focus:ring-opacity-40
+                    focus:ring-indigo-500
+                  "
                 >
                   <fa
                     icon="magnifying-glass"
@@ -206,7 +304,21 @@
                   />
                 </div>
                 <div
-                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  class="
+                    px-1
+                    py-2
+                    m-2
+                    text-base
+                    grid grid-rows-1 grid-flow-col
+                    rounded-md
+                    h-fit
+                    w-fit
+                    border-2 border-blue-400
+                    focus:border-blue-600
+                    focus:ring
+                    focus:ring-opacity-40
+                    focus:ring-indigo-500
+                  "
                 >
                   <fa
                     icon="magnifying-glass"
@@ -230,13 +342,10 @@
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option value="null" disabled selected hidden>
+                <option value=null disabled selected hidden >
                   Trạng thái
                 </option>
-                <option
-                  value="-1"
-                  class="bg-white text-black hover:bg-blue-700"
-                >
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">
                   Trạng thái
                 </option>
                 <option value="0" class="bg-white text-black hover:bg-blue-700">
@@ -253,15 +362,10 @@
                 id="takeover_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
-                <option value="null" disabled selected hidden>
-                  Loại bàn giao
+                <option value=null disabled selected hidden >
+                 Loại bàn giao
                 </option>
-                <option
-                  value="-1"
-                  class="bg-white text-black hover:bg-blue-700"
-                >
-                  Loại bàn giao
-                </option>
+                <option value='-1' class="bg-white text-black hover:bg-blue-700">Loại bàn giao</option>
                 <option value="1" class="bg-white text-black hover:bg-blue-700">
                   Bàn giao thiết bị mới
                 </option>
@@ -275,7 +379,14 @@
           <div class="p-1 mx-1 my-2">
             <div class="flex justify-center min-w-full align-middle">
               <table
-                class="hover:border-collapse min -w-full bg-gray-100 rounded-xl place-content-center"
+                class="
+                  hover:border-collapse
+                  min
+                  -w-full
+                  bg-gray-100
+                  rounded-xl
+                  place-content-center
+                "
               >
                 <thead>
                   <tr class="border-b border-gray-500">
@@ -310,7 +421,11 @@
 
                 <tbody>
                   <tr
-                    class="hover:bg-gray-200 transition-colors border-b border-gray-200"
+                    class="
+                      hover:bg-gray-200
+                      transition-colors
+                      border-b border-gray-200
+                    "
                     v-on:click="
                       (recordId = parseInt(recordOfEquipment.id)),
                         handleDetailTakeOverShow(true)
@@ -374,7 +489,22 @@
                       <div class="flex justify-around w-auto">
                         <span class="flex justify-center">
                           <button
-                            class="bg-gray-100 hover:bg-gray-300 m-1 transition-colors flex justify-center items-center w-auto text-blue-500 px-3.5 py-2 rounded-md focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                            class="
+                              bg-gray-100
+                              hover:bg-gray-300
+                              m-1
+                              transition-colors
+                              flex
+                              justify-center
+                              items-center
+                              w-auto
+                              text-blue-500
+                              px-3.5
+                              py-2
+                              rounded-md
+                              focus:outline-none
+                              disabled:cursor-not-allowed disabled:opacity-50
+                            "
                             v-on:click.stop="
                               (recordId = parseInt(recordOfEquipment.id)),
                                 handleEditTakeOverShow(true)
@@ -385,7 +515,22 @@
                           </button>
                           <button
                             :disabled="recordOfEquipment.status == '1'"
-                            class="disabled:cursor-not-allowed disabled:opacity-50 bg-gray-100 hover:bg-gray-300 m-1 transition-colors flex justify-center items-center w-auto text-red-500 px-3.5 py-2 rounded-md focus:outline-none"
+                            class="
+                              disabled:cursor-not-allowed disabled:opacity-50
+                              bg-gray-100
+                              hover:bg-gray-300
+                              m-1
+                              transition-colors
+                              flex
+                              justify-center
+                              items-center
+                              w-auto
+                              text-red-500
+                              px-3.5
+                              py-2
+                              rounded-md
+                              focus:outline-none
+                            "
                             v-on:click.stop="
                               deleteRecord(parseInt(recordOfEquipment.id))
                             "
@@ -405,7 +550,23 @@
               <li>
                 <button
                   @click="onClickFirstPage"
-                  class="py-2 px-3 ml-0 disabled:cursor-not-allowed leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    ml-0
+                    disabled:cursor-not-allowed
+                    leading-tight
+                    text-gray-500
+                    bg-white
+                    rounded-l-lg
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == 1"
                 >
                   First
@@ -414,7 +575,21 @@
               <li>
                 <button
                   @click="onClickPreviousPage"
-                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    disabled:cursor-not-allowed
+                    text-gray-500
+                    bg-white
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == 1"
                 >
                   Preivous
@@ -423,14 +598,38 @@
 
               <li>
                 <a
-                  class="pb-3 leading-tight px-3 mt-4 disable text-white bg-blue-500 border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                  class="
+                    pb-3
+                    leading-tight
+                    px-3
+                    mt-4
+                    disable
+                    text-white
+                    bg-blue-500
+                    border border-gray-300
+                    dark:border-gray-700 dark:bg-gray-700 dark:text-white
+                  "
                   >{{ currentPage }}</a
                 >
               </li>
               <li>
                 <button
                   @click="onClickNextPage"
-                  class="py-2 px-3 leading-tight text-gray-500 disabled:cursor-not-allowed bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    text-gray-500
+                    disabled:cursor-not-allowed
+                    bg-white
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == totalPages"
                 >
                   Next
@@ -440,7 +639,22 @@
               <li>
                 <button
                   @click="onClickLastPage"
-                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    disabled:cursor-not-allowed
+                    text-gray-500
+                    bg-white
+                    rounded-r-lg
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == totalPages"
                 >
                   Last
@@ -497,28 +711,7 @@ import Equipment from "@/types/Equipment";
   },
 })
 export default class DetailEquipment extends Vue {
-  public allImageCurrentURL: string[] = []; 
-  public indexImage = 0;
-  equipment: Equipment= {category_id: "",
-  category_name:"",
-  created_by: "",
-  created_time: "",
-  device_id: "",
-  id: "",
-  import_date: "",
-  name: "",
-  price: "",
-  start_status: "",
-  take_over_person_id: "",
-  take_over_person_name: "",
-  take_over_status: "",
-  updated_by: "",
-  updated_time: "",
-  device_status: "",
-  depreciated_value: "",
-  depreciation_period: "",
-  period_type: "",
-  metadata_info:""};
+  equipment: Equipment | null = null;
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isEditTakeOverShow: Boolean = false;
@@ -535,61 +728,20 @@ export default class DetailEquipment extends Vue {
     1: "Bàn giao thiết bị mới",
     2: "Bàn giao thiết bị sau khi sửa chữa",
   };
-  mounted() {
+  async created() {
     const idParams = this.$route.params.id;
-    this.retrieveDetailEquipment(idParams);
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
-  }
-  handlePreviousImage(){
-    if(this.indexImage==0){
-        return;
-    }else{
-      this.indexImage--;
-    }
-  }
-  handleNextImage(){
-    if(this.indexImage+1==this.allImageCurrentURL.length){
-        return;
-    }else{
-      this.indexImage++;
-    }
+    await this.retrieveDetailEquipment(idParams);
+    await this.retrieveRecordsOfEquipment(this.getQueryParams());
   }
   async retrieveDetailEquipment(id: any) {
     const response = await EquipmentDataService.getEquipmentDetail(id)
       .then((res) => {
         console.log(res.data);
         this.equipment = res.data;
-        const allImage = Object.values(res.data.metadata_info);
-        let result = allImage.map((Image:any)=>Image.file_url);
-        result.forEach((URL,index)=>{
-          this.allImageCurrentURL[index]=URL;
-        })
-
-
-      }).then(()=>this.handleFieldEquipment())
+      })
       .catch((err) => console.log(err));
   }
-   handleImportDate(data: any) {
-    var d = new Date(parseInt(data));
-    return d.toLocaleDateString();
-  }
-  handleFieldEquipment() {
-      if (this.equipment.import_date != null) {
-        this.equipment.import_date = this.handleImportDate(
-          this.equipment.import_date
-        );
-    }
-    if (this.equipment.created_time != null) {
-        this.equipment.created_time = this.handleImportDate(
-          this.equipment.created_time
-        );
-    }
-     if (this.equipment.updated_time != null) {
-        this.equipment.updated_time= this.handleImportDate(
-          this.equipment.updated_time
-        );
-    }
-  }
+
   handleAddTakeOverShow(data: Boolean) {
    
     this.retrieveRecordsOfEquipment(this.getQueryParams());
@@ -629,21 +781,10 @@ export default class DetailEquipment extends Vue {
         this.totalPages = res.data.n_pages;
       })
       .catch((err) => {
-        alert(err.response.data);
+        console.log(err.data.errors[0])
       });
   }
-  editEquipment(){
-    const id:any = this.equipment.id;
-    this.$router.push({name:"update",params:{id:id}});
-  }
-  deleteEquipment() {
-    console.log("test");
-    const id = this.equipment.id;
-    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
-      EquipmentDataService.deleteEquipment(id)
-      this.$router.push({name:"Home"})
-    }
-  }
+
   getQueryParams() {
     const queryParams: any = {
       page: this.currentPage,

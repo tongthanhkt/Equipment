@@ -16,6 +16,7 @@ class CRUDEquipmentService @Inject() (
                                        databaseConnection: DatabaseConnection,
                                        convertString: ConvertString
                                      ) {
+  private[this] var lock = new Object()
   @throws[SQLException]
   def search(searchRequest: SearchRequest,offset : Int): util.ArrayList[Equipment] ={
 
@@ -210,38 +211,41 @@ class CRUDEquipmentService @Inject() (
 
   @throws[Exception]
   def add(e: Equipment): Int={
-      var uploadFiles :  Map[String, UploadFile] = Map()
-      if(e.metadataInfo != null)
-        uploadFiles =e.metadataInfo
 
-      val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
+    this.synchronized {
+       var uploadFiles :  Map[String, UploadFile] = Map()
+       if(e.metadataInfo != null)
+         uploadFiles =e.metadataInfo
+
+       val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
              depreciated_value,depreciation_period,period_type,
              import_date,takeover_status,device_status,created_by,created_time,metadata_info)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
-      var con = databaseConnection.getConnection()
-      val pst = con.prepareStatement(sql)
-      pst.setString(1,e.deviceId)
-      pst.setString(2, e.name)
-      pst.setString(3,e.startStatus )
-      pst.setString(4, e.categoryId)
-      pst.setString(5,e.price)
-      pst.setString(6,e.depreciatedValue )
-      pst.setString(7, e.depreciationPeriod)
-      pst.setString(8, e.periodType)
-      pst.setString(9,e.importDate)
-      pst.setInt(10, 0)
-      pst.setString(11, e.deviceStatus)
-      pst.setString(12,e.createdBy)
-      pst.setLong(13,System.currentTimeMillis())
-      pst.setString(14,
-        s"""
-           |{"files": ${JSON.write(uploadFiles)}}
-           |""".stripMargin)
+       var con = databaseConnection.getConnection()
+       val pst = con.prepareStatement(sql)
+       pst.setString(1,e.deviceId)
+       pst.setString(2, e.name)
+       pst.setString(3,e.startStatus )
+       pst.setString(4, e.categoryId)
+       pst.setString(5,e.price)
+       pst.setString(6,e.depreciatedValue )
+       pst.setString(7, e.depreciationPeriod)
+       pst.setString(8, e.periodType)
+       pst.setString(9,e.importDate)
+       pst.setInt(10, 0)
+       pst.setString(11, e.deviceStatus)
+       pst.setString(12,e.createdBy)
+       pst.setLong(13,System.currentTimeMillis())
+       pst.setString(14,
+         s"""
+            |{"files": ${JSON.write(uploadFiles)}}
+            |""".stripMargin)
 
-      val rs = pst.executeUpdate()
-      con.close();
-      return rs
+       val rs = pst.executeUpdate()
+       con.close();
+       return rs
+     }
   }
 
   @throws[SQLException]

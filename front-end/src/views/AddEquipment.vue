@@ -299,7 +299,7 @@ export default class AddEquipment extends Vue {
     };
 
     EquipmentDataService.addData(data)
-      .then(() => alert("Thêm thiết bị thành công !!"))
+      .then(() => console.log(data.device_id))
       .catch((err) => {
         const errors = err.response.data.errors[0];
         console.log(errors);
@@ -312,10 +312,20 @@ export default class AddEquipment extends Vue {
     const a = this.allImageFile.forEach((imageFile) => {});
     await Promise.all([a]).then((values) => console.log(values));
 
-    console.log(data);
+    
     EquipmentDataService.addData(data)
-      .then((res) => alert("Thêm thiết bị thành công"))
+      .then((res) => console.log(data.device_id))
       .catch((err) => console.log(err));
+    
+    EquipmentDataService.addData(data)
+      .then((res) => console.log(data.device_id))
+      .catch((err) => console.log(err));
+    
+    EquipmentDataService.addData(data)
+      .then((res) => console.log(data.device_id))
+      .catch((err) => console.log(err));
+    
+    
   }
 }
 </script>
