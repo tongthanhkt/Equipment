@@ -238,7 +238,7 @@
                  </span>
                 
                 
-                <div v-if="allFiles.length!=0" class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
+                <div  class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
                   <div class=" border-b-2 border-indigo-300 text-base text-orange-600 font-semibold flex flex-row">
                     <fa icon="folder" class="px-2 py-1" ></fa>
                     <div>Selected Files</div></div>
@@ -424,6 +424,9 @@ export default class AddTakeOver extends Vue {
       alert("Hãy chọn loại bàn giao");
       
     }
+    // else if (this.msgError!=null){
+    //   alert("Chọn file <= 5MB");
+    // }
     else {
       this.record.username=this.user.username
       this.record.take_over_person=this.take_over_person.username

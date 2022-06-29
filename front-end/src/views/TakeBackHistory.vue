@@ -18,7 +18,7 @@
               text-black
             "
           >
-            <h1 class="text-2xl leading-relaxed">Lịch sử bàn giao</h1>
+            <h1 class="text-2xl leading-relaxed">Lịch sử thu hồi</h1>
           </div>
           <div class="grid grid-flow-col grid-rows-1">
             <div class="p-2 flex place-items-end w-auto">
@@ -77,7 +77,7 @@
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
                     placeholder="Tên người bàn giao"
-                    v-model="keyTakeOverPerson"
+                    v-model="keyTakeBackPerson"
                     @input="retrieveRecordsBySearch"
                   />
                 </div>
@@ -85,10 +85,10 @@
             </div>
             <div class="p-2 flex justify-end w-auto">
               <select
-                v-model="currentTakeOverStatus"
+                v-model="currentTakeBackStatus"
                 @change="retrieveRecordsBySearch"
-                name="takeover_status"
-                id="takeover_status"
+                name="takeback_status"
+                id="takeback_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
                 <option value=null disabled selected hidden >
@@ -105,21 +105,27 @@
                 </option>
               </select>
               <select
-                v-model="currentTakeOverType"
+                v-model="currentTakeBackType"
                 @change="retrieveRecordsBySearch"
-                name="takeover_status"
-                id="takeover_status"
+                name="takeback_status"
+                id="takeback_status"
                 class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
               >
                 <option value=null disabled selected hidden >
-                 Loại bàn giao
+                 Loại thu hồi
                 </option>
                 <option value='-1' class="bg-white text-black hover:bg-blue-700">Loại bàn giao</option>
                 <option value="1" class="bg-white text-black hover:bg-blue-700">
-                  Bàn giao thiết bị mới
+                  Hoàn trả thiết bị khi nghỉ việc
                 </option>
                 <option value="2" class="bg-white text-black hover:bg-blue-700">
-                  Bàn giao thiết bị sau khi sửa
+                  Thu hồi thiết bị hư hỏng để sửa chữa
+                </option>
+                 <option value="3" class="bg-white text-black hover:bg-blue-700">
+                  Đền bù thiết bị sử dụng bị mất
+                </option>
+                 <option value="4" class="bg-white text-black hover:bg-blue-700">
+                  Nhân viên bù tiền mua thiết bị
                 </option>
               </select>
             </div>
@@ -149,14 +155,14 @@
                       Tên thiết bị
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Người sử dụng
+                      Người trả thiết bị
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Người bàn giao
+                      Người thu hồi
                     </th>
 
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Loại bàn giao
+                      Loại thu hồi
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
                       Trạng thái
@@ -205,12 +211,12 @@
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{record.take_over_person}}
+                        {{record.take_back_person}}
                       </div>
                     </td>
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{type[record.type_take_over]}}
+                        {{type[record.type_take_back]}}
                       </div>
                         
                     </td>
@@ -256,7 +262,7 @@
                             "
                             v-on:click.stop="
                               changeId(record.id),
-                                changeUpdateShow(true)
+                              changeUpdateShow(true)
                             "
                             :disabled="record.status == '1'"
                           >
@@ -349,65 +355,67 @@
         </div>
       </div>
     </div>
-    <!-- <DetailTakeOver
-      v-if="isDetailTakeOverShow"
-      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-       v-on:deteteTakeOverRecord="deleteRecord"
+    <!-- <DetailTakeBack
+      v-if="isDetailTakeBackShow"
+      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+       v-on:deteteTakeBackRecord="deleteRecord"
       v-bind:id="recordId"
     />
 
-    <UpdateTakeOver
-      v-if="isUpdateTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+    <UpdateTakeBack
+      v-if="isUpdateTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-bind:id="recordId"
     /> -->
   </div>
 </template>
 
 <script lang="ts">
-import DetailTakeOver from "./DetailTakeOver.vue";
-import UpdateTakeOver from "./UpdateTakeOver.vue";
-import TakeOverService from "@/services/takeover/TakeOverService";
-import { Vue, Options,Emit,Prop } from "vue-property-decorator";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import DetailTakeBack from "./DetailTakeBack.vue";
+import UpdateTakeBack from "./UpdateTakeBack.vue";
+import TakeBackService from "@/services/takeback/TakeBackService";
+import { Vue, Options ,Emit } from "vue-property-decorator";
+import TakeBackRecord from "@/types/TakeBackRecord";
 
 // @Options({
 //   components: {
-//     DetailTakeOver,
-//     UpdateTakeOver,
+//     DetailTakeBack,
+//     UpdateTakeBack,
 //   },
 // })
-export default class TakeOverHistory extends Vue {
+export default class TakeBackHistory extends Vue {
  
-  // isDetailTakeOverShow: Boolean = false;
-  // isAddTakeOverShow: Boolean = false;
-  // isUpdateTakeOverShow: Boolean = false;
-  public records: TakeOverRecord[] = [];
+  // isDetailTakeBackShow: Boolean = false;
+  // isAddTakeBackShow: Boolean = false;
+  // isUpdateTakeBackShow: Boolean = false;
+  public records: TakeBackRecord[] = [];
   public  currentPage: number = 1;
   public currentLimit: number = 10;
-  public currentTakeOverStatus: string | null = null;
-  public currentTakeOverType: string | null = null;
+  public currentTakeBackStatus: string | null = null;
+  public currentTakeBackType: string | null = null;
   public keyUser: string | null = null;
-  keyTakeOverPerson: string | null = null;
+  keyTakeBackPerson: string | null = null;
   totalPages: number = 0;
   public recordId :number = 0;
-  type:any = {
-    1 : 'Bàn giao thiết bị mới',
-    2 : 'Bàn giao thiết bị sau khi sửa chữa'
-  }
+  type: any = {
+    1: "Hoàn trả thiết bị khi nghỉ việc",
+    2: "Thu hồi thiết bị hư hỏng để sửa chữa",
+    3: "Đền bù thiết bị sử dụng bị mất",
+    4:"Nhân viên bù tiền mua thiết bị"
+  };
 
-  // handleDetailTakeOverShow(data: Boolean) {
-  //   this.isDetailTakeOverShow = data;
-  //   this.isAddTakeOverShow = false;
-  //   this.isUpdateTakeOverShow = false;
+  // handleDetailTakeBackShow(data: Boolean) {
+  //   this.isDetailTakeBackShow = data;
+  //   this.isAddTakeBackShow = false;
+  //   this.isUpdateTakeBackShow = false;
   // }
 
-  // handleUpdateTakeOverShow(data: Boolean) {
+  // handleUpdateTakeBackShow(data: Boolean) {
   //   this.retrieveRecords(this.getQueryParams());
-  //   this.isDetailTakeOverShow = false;
-  //   this.isAddTakeOverShow = false;
-  //   this.isUpdateTakeOverShow = data;
+  //   this.isDetailTakeBackShow = false;
+  //   this.isAddTakeBackShow = false;
+  //   this.isUpdateTakeBackShow = data;
   // }
   async created(){
     this.retrieveRecords(this.getQueryParams())
@@ -415,10 +423,10 @@ export default class TakeOverHistory extends Vue {
   
 
   async retrieveRecords(params:String){
-      await TakeOverService.getRecordsBySearch(params)
+      await TakeBackService.getRecordsBySearch(params)
       .then(res=>{
         console.log(res.data);
-        this.records = res.data.take_over_list
+        this.records = res.data.take_back_list
         this.totalPages = res.data.n_pages
 
       })
@@ -428,9 +436,9 @@ export default class TakeOverHistory extends Vue {
   } 
 
   retrieveRecordsBySearch() {
-    if (this.currentTakeOverStatus == "-1") this.currentTakeOverStatus = null;
-    if (this.currentTakeOverType == "-1") this.currentTakeOverType = null;
-    if (this.keyTakeOverPerson == "") this.keyTakeOverPerson = null;
+    if (this.currentTakeBackStatus == "-1") this.currentTakeBackStatus = null;
+    if (this.currentTakeBackType == "-1") this.currentTakeBackType = null;
+    if (this.keyTakeBackPerson == "") this.keyTakeBackPerson = null;
     if (this.keyUser == "0") this.keyUser = null;
     this.currentPage = 1;
     this.retrieveRecords(this.getQueryParams());
@@ -441,10 +449,11 @@ export default class TakeOverHistory extends Vue {
       page: this.currentPage,
       limit: this.currentLimit,
       username: this.keyUser,
-      take_over_person: this.keyTakeOverPerson,
-      type_take_over: this.currentTakeOverType,
-      status: this.currentTakeOverStatus,
+      take_back_person: this.keyTakeBackPerson,
+      type_take_back: this.currentTakeBackType,
+      status: this.currentTakeBackStatus,
       equipment_id: this.$route.params.id
+      
     }
     Object.keys(queryParams).forEach((key) => {
       if (
@@ -454,7 +463,7 @@ export default class TakeOverHistory extends Vue {
         delete queryParams[key];
       }
     });
-    //this.$router.push({ name: "TakeOverHistory", query: queryParams });
+    //this.$router.push({ name: "TakeBackHistory", query: queryParams });
     let params = "";
     const temp = Object.entries(queryParams);
     for (let i = 0; i < temp.length; i++) {
@@ -472,6 +481,15 @@ export default class TakeOverHistory extends Vue {
     var d = new Date(Number(data));
     return d.toLocaleString()
   }
+  // async deleteRecord(id: number) {
+   
+  //   if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
+  //    await TakeBackService.deleteById(id)
+  //       .then((res) => alert("Delete Successfully !!"))
+  //       .then(() => this.retrieveRecords(this.getQueryParams()))
+  //       .catch((err) => alert(err.response.data));
+  //   }
+  // }
 
   @Emit('deleteRecord')
   deleteRecordReq(id: number) {
@@ -479,21 +497,20 @@ export default class TakeOverHistory extends Vue {
   
   }
 
-   @Emit('changeRecordTakeOverId')
+   @Emit('changeRecordTakeBackId')
   changeId(id:string){
     return parseInt(id)
   }
 
-  @Emit('changeDetailTakeOverShow')
+  @Emit('changeDetailTakeBackShow')
   changeDetailShow(data:boolean){
     return data
   }
 
-  @Emit('changeUpdateTakeOverShow')
+  @Emit('changeUpdateTakeBackShow')
   changeUpdateShow(data:boolean){
     return data
   }
-
   async onClickFirstPage() {
     this.currentPage = 1;
     this.retrieveRecords(this.getQueryParams());

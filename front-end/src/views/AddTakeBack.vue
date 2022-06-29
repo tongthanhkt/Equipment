@@ -55,7 +55,7 @@
       </div>
       
       
-      <div class="p-1     font-medium text-gray-700">Người thu hồi</div>
+      <div class="p-1     font-medium text-gray-700">Người trả thiết bị</div>
       <div class="pl-1 col-span-2  font-medium text-gray-700">Loại thu hồi</div>
        <div>
          <v-select
@@ -74,7 +74,7 @@
               text-black
             "
             :options="options"           
-            v-model="take_back_person"
+            v-model="user"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
             
@@ -114,10 +114,10 @@
                <option value="1">Hoàn trả thiết bị khi nghỉ việc</option>
                 <option value="2">Thu hồi thiết bị hư hỏng để sửa chữa</option>
                 <option value="3">Đền bù thiết bị sử dụng bị mất</option>
-                <option value="4">Nhân viên bù tiền mua lại thiết bị</option>
+                <option value="4">Nhân viên bù tiền mua thiết bị</option>
               </select>
       </div>
-       <div class="p-1   font-medium text-gray-700">Người trả thiết bị</div>
+       <div class="p-1   font-medium text-gray-700">Người thu hồi</div>
       <div class="p-1  col-span-2 font-medium text-gray-700">Người xác nhận</div>
       
       <div>
@@ -137,10 +137,10 @@
               text-black
             "
             :options="options"           
-            v-model="user"
+            v-model="take_back_person"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
-            
+            @change="changeTakeBackPerson"
             
           >
             <template #search="{ attributes, events }">
@@ -378,8 +378,8 @@ export default class AddTakeBack extends Vue {
     if (obj === null || obj === undefined) return {};
     return obj;
   }
-  changeUser(){
-    this.verifier=this.user
+  changeTakeBackPerson(){
+    this.verifier=this.take_back_person
   }
 
   dropdownShouldOpen(VueSelect :any) {

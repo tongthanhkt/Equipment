@@ -16,7 +16,7 @@
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
       >
-        Xem thông tin chi tiết bàn giao - {{ record?.id }}
+        Xem thông tin chi tiết thu hồi - {{ record?.id }}
       </h1>
       <button
         class="
@@ -45,26 +45,26 @@
         <p class="pl-1 col-span-2 text-slate-500">{{ record?.name }}</p>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
         <div class="p-1 col-span-2 font-medium text-gray-700">
-          Thời gian bàn giao
+          Thời gian thu hồi
         </div>
 
         <p class="pl-1 text-slate-500">{{ record?.cost }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ handleDate(record?.take_over_time) }}
+          {{ handleDate(record?.take_back_time) }}
         </p>
 
-        <div class="p-1 font-medium text-gray-700">Người bàn giao</div>
+        <div class="p-1 font-medium text-gray-700">Người trả thiết bị</div>
         <div class="pl-1 col-span-2 font-medium text-gray-700">
-          Loại bàn giao
+          Loại thu hồi
         </div>
-        <p class="pl-1 text-slate-500">{{ record?.take_over_person }}</p>
+        <p class="pl-1 text-slate-500">{{ record?.username }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ type[record.type_take_over] }}
+          {{ type[record.type_take_back] }}
         </p>
-        <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
+        <div class="p-1 font-medium text-gray-700">Người thu hồi</div>
         <div class="p-1 font-medium text-gray-700">Người xác nhận</div>
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
-        <p class="pl-1 pb-2 text-slate-500">{{ record?.username }}</p>
+        <p class="pl-1 pb-2 text-slate-500">{{ record?.take_back_person }}</p>
         <p class="pl-1 pb-2 text-slate-500">{{ record?.verifier }}</p>
 
         <div class="pl-1 pb-2 text-slate-500">
@@ -165,7 +165,7 @@
             rounded-md
             focus:outline-none
           "
-          v-on:click="showUpdateTakeOver"
+          v-on:click="showUpdateTakeBack"
         >
           <fa icon="pen-to-square" class="px-2"></fa>
           Cập nhật
@@ -198,20 +198,20 @@
 
 <script lang="ts">
 import UploadFilesService from "@/services/equipments/UploadFilesService";
-import TakeOverService from "@/services/takeover/TakeOverService";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import TakeBackService from "@/services/takeback/TakeBackService";
+import TakeBackRecord from "@/types/TakeBackRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 
-export default class DetailTakeOver extends Vue {
-  record: TakeOverRecord = {
+export default class DetailTakeBack extends Vue {
+  record: TakeBackRecord = {
     id: "",
     equipment_id: "",
     username: "",
-    take_over_time: "",
+    take_back_time: "",
     status: "",
     verifier: "",
-    take_over_person: "",
-    type_take_over: "",
+    take_back_person: "",
+    type_take_back: "",
     message: "",
     cost: "",
     created_by: "",
@@ -223,8 +223,10 @@ export default class DetailTakeOver extends Vue {
     name: "",
   };
   type: any = {
-    1: "Bàn giao thiết bị mới",
-    2: "Bàn giao thiết bị sau khi sửa chữa",
+    1: "Hoàn trả thiết bị khi nghỉ việc",
+    2: "Thu hồi thiết bị hư hỏng để sửa chữa",
+    3: "Đền bù thiết bị sử dụng bị mất",
+    4:"Nhân viên bù tiền mua thiết bị"
   };
 
   currentMetaData: any;
@@ -232,13 +234,13 @@ export default class DetailTakeOver extends Vue {
 
   @Prop() id!: number;
 
-  @Emit("changeDetailTakeOverShow")
+  @Emit("changeDetailTakeBackShow")
   changeShow(data: boolean) {
     return data;
   }
 
-  @Emit("changeUpdateTakeOverShow")
-  showUpdateTakeOver() {
+  @Emit("changeUpdateTakeBackShow")
+  showUpdateTakeBack() {
     return true;
   }
 
@@ -248,7 +250,7 @@ export default class DetailTakeOver extends Vue {
   }
 
   async retrieveRecord() {
-    await TakeOverService.getRecordById(this.id)
+    await TakeBackService.getRecordById(this.id)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;
@@ -273,7 +275,7 @@ export default class DetailTakeOver extends Vue {
   }
   @Emit("deleteRecord")
   deleteDetailRecord(id: number) {
-    console.log("event1");
+    
     return id;
   }
 

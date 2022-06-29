@@ -159,6 +159,7 @@
                 <button
                   class="bg-red-500 hover:bg-red-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
                   v-if="equipment?.take_over_status == '1'"
+                  v-on:click="handleAddTakeBackShow(true)"
                 >
                   <fa icon="rotate-left" class="pr-2"></fa>
                   Thu hồi
@@ -179,7 +180,7 @@
             </div>
           </div>
         </div>
-        <div
+        <!-- <div
           class="p-1 mt-8 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
         >
           <div
@@ -454,12 +455,50 @@
               }}
             </ul>
           </nav>
-        </div>
+        </div> -->
       
         <!-- <TakeOverHistory  v-bind:equipment_id="$route.params.id"/> -->
+    <TakeOverHistory 
+        v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+       v-on:deleteRecord="deleteTakeOverRecord"
+       v-on:changeRecordTakeOverId="handleRecordTakeOverId"
+       :key="keyTakeOver"/>
+    <TakeBackHistory
+    v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+       v-on:deleteRecord="deleteTakeBackRecord"
+       v-on:changeRecordTakeBackId="handleRecordTakeBackId"
+       :key="keyTakeBack"/>
     
       </div>
     </div>
+    <DetailTakeBack
+      v-if="isDetailTakeBackShow"
+      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+       v-on:deleteRecord="deleteTakeBackRecord"
+      v-bind:id="recordTakeBackId"
+    />
+
+    <UpdateTakeBack
+      v-if="isUpdateTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+      v-bind:id="recordTakeBackId"
+    />
+    <DetailTakeOver
+      v-if="isDetailTakeOverShow"
+      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+       v-on:deleteRecord="deleteTakeOverRecord"
+      v-bind:id="recordTakeOverId"
+    />
+
+    <UpdateTakeOver
+      v-if="isUpdateTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+      v-bind:id="recordTakeOverId"
+    />
     <AddTakeOver
       v-if="isAddTakeOverShow"
       v-on:changeAddTakeOverShow="handleAddTakeOverShow"
@@ -467,7 +506,14 @@
       v-bind:equipment_name="equipment?.name"
        v-bind:equipment_id="equipment?.id"
     />
-    <DetailTakeOver
+    <AddTakeBack
+      v-if="isAddTakeBackShow"
+      v-on:changeAddTakeBackShow="handleAddTakeBackShow"
+      v-bind:device_id="equipment?.device_id"
+      v-bind:equipment_name="equipment?.name"
+       v-bind:equipment_id="equipment?.id"
+    />
+    <!-- <DetailTakeOver
       v-if="isDetailTakeOverShow"
       v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
@@ -479,26 +525,38 @@
       v-if="isUpdateTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
       v-bind:id="recordId"
-    />
+    /> -->
   </div>
 </template>
 
 <script lang="ts">
 import DetailTakeOver from "./DetailTakeOver.vue";
-import AddTakeOver from "./AddTakeOver.vue";
 import UpdateTakeOver from "./UpdateTakeOver.vue";
+import TakeBackHistory from "./TakeBackHistory.vue";
+import TakeOverHistory from "./TakeOverHistory.vue";
+import DetailTakeBack from "./DetailTakeBack.vue";
+import UpdateTakeBack from "./UpdateTakeBack.vue";
+import AddTakeOver from "./AddTakeOver.vue";
+import AddTakeBack from "./AddTakeBack.vue";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeOverRecord from "@/types/TakeOverRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import Equipment from "@/types/Equipment";
+import TakeBackRecord from "@/types/TakeBackRecord";
+import TakeBackService from "@/services/takeback/TakeBackService";
 
 
 @Options({
   components: {
+    DetailTakeBack,
     DetailTakeOver,
+    UpdateTakeBack,
+    UpdateTakeOver,
+    TakeBackHistory,
+    TakeOverHistory,
     AddTakeOver,
-    UpdateTakeOver
+    AddTakeBack
 
   },
 })
@@ -528,6 +586,9 @@ export default class DetailEquipment extends Vue {
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isUpdateTakeOverShow: Boolean = false;
+  isDetailTakeBackShow: Boolean = false;
+  isUpdateTakeBackShow: Boolean = false;
+  isAddTakeBackShow: Boolean = false;
   recordsOfEquipment: TakeOverRecord[] = [];
   currentPage: number = 1;
   currentLimit: number = 5;
@@ -536,15 +597,18 @@ export default class DetailEquipment extends Vue {
   keyUser: string | null = null;
   keyTakeOverPerson: string | null = null;
   totalPages: number = 0;
-  public recordId: number = 0;
-  type: any = {
-    1: "Bàn giao thiết bị mới",
-    2: "Bàn giao thiết bị sau khi sửa chữa",
-  };
+  public recordTakeBackId :number = 0;
+  public recordTakeOverId :number = 0;
+  keyTakeBack :number =0;
+  keyTakeOver :number=0;
+  // type: any = {
+  //   1: "Bàn giao thiết bị mới",
+  //   2: "Bàn giao thiết bị sau khi sửa chữa",
+  // };
   async created() {
     const idParams = this.$route.params.id;
     this.retrieveDetailEquipment(idParams);
-     this.retrieveRecordsOfEquipment(this.getQueryParams());
+    
   }
   handlePreviousImage(){
     if(this.indexImage==0){
@@ -597,33 +661,76 @@ export default class DetailEquipment extends Vue {
     }
   }
   handleAddTakeOverShow(data: Boolean) {
-   
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
-     this.isAddTakeOverShow = data;
-    this.isDetailTakeOverShow = false;
-    this.isUpdateTakeOverShow = false;
+   if (data ==false)
+     this.keyTakeOver+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
+    this.isAddTakeOverShow = data;
+    // this.isDetailTakeOverShow = false;
+    // this.isUpdateTakeOverShow = false;
+  }
+  handleAddTakeBackShow(data: Boolean) {
+   if (data ==false)
+     this.keyTakeBack+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
+    this.isAddTakeBackShow = data;
+    // this.isDetailTakeOverShow = false;
+    // this.isUpdateTakeOverShow = false;
   }
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
-    this.isAddTakeOverShow = false;
-    this.isUpdateTakeOverShow = false;
+    // this.isAddTakeOverShow = false;
+    // this.isUpdateTakeOverShow = false;
   }
 
   handleUpdateTakeOverShow(data: Boolean) {
+    if (data ==false)
+     this.keyTakeOver+=1
     
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
-    this.isDetailTakeOverShow = false;
-    this.isAddTakeOverShow = false;
+    // this.isDetailTakeOverShow = false;
+    // this.isAddTakeOverShow = false;
     this.isUpdateTakeOverShow = data;
   }
 
-  retrieveRecordsOfEquipmentBySearch() {
-    if (this.currentTakeOverStatus == "-1") this.currentTakeOverStatus = null;
-    if (this.currentTakeOverType == "-1") this.currentTakeOverType = null;
-    if (this.keyTakeOverPerson == "") this.keyTakeOverPerson = null;
-    if (this.keyUser == "0") this.keyUser = null;
-    this.currentPage = 1;
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
+  handleDetailTakeBackShow(data: Boolean) {
+    this.isDetailTakeBackShow = data;
+    //this.isUpdateTakeBackShow = false;
+  }
+
+  handleUpdateTakeBackShow(data: Boolean) {
+    if (data ==false)
+     this.keyTakeBack+=1
+    //this.isDetailTakeBackShow = false;
+    this.isUpdateTakeBackShow = data;
+  }
+
+  handleRecordTakeOverId(id:number){
+        this.recordTakeOverId=id
+    }
+    handleRecordTakeBackId(id:number){
+        this.recordTakeBackId=id
+    }
+
+ deleteTakeBackRecord(id: number) {
+   
+    if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
+    TakeBackService.deleteById(id)
+        .then((res) => alert("Delete Successfully !!"))
+        .then(() => this.keyTakeBack+=1)
+        .catch((err) => alert(err.response.data));
+    }
+  }
+   
+    deleteTakeOverRecord(id: number) {
+   
+    if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
+     TakeOverService.deleteById(id)
+        .then((res) => {
+            this.keyTakeOver+=1
+            alert("Delete Successfully !!")
+        })
+        
+        .catch((err) => alert(err.response.data));
+    }
   }
 
   async retrieveRecordsOfEquipment(params: String) {
@@ -650,69 +757,14 @@ export default class DetailEquipment extends Vue {
       this.$router.push({name:"Home"})
     }
   }
-  getQueryParams() {
-    const queryParams: any = {
-      page: this.currentPage,
-      limit: this.currentLimit,
-      username: this.keyUser,
-      take_over_person: this.keyTakeOverPerson,
-      type_take_over: this.currentTakeOverType,
-      status: this.currentTakeOverStatus,
-      equipment_id: this.$route.params.id,
-    };
-    Object.keys(queryParams).forEach((key) => {
-      if (queryParams[key] === null || queryParams[key] === undefined) {
-        delete queryParams[key];
-      }
-    });
-    //this.$router.push({ name: "DetailEquipment", query: queryParams });
-    let params = "";
-    const temp = Object.entries(queryParams);
-    for (let i = 0; i < temp.length; i++) {
-      if (i < temp.length - 1) {
-        let param = temp[i][0] + "=" + temp[i][1] + "&";
-        params += param;
-      } else {
-        let param = temp[i][0] + "=" + temp[i][1];
-        params += param;
-      }
-    }
-    return params;
-  }
+  
   handleDate(data: string) {
     var d = new Date(Number(data));
     return d.toLocaleString();
   }
-  deleteRecord(id: number) {
-    console.log("handle event1");
-    if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
-      TakeOverService.deleteById(id)
-        .then((res) => alert("Delete Successfully !!"))
-        .then(() => this.retrieveRecordsOfEquipment(this.getQueryParams()))
-        .catch((err) => alert(err.response.data));
-    }
-  }
+  
 
-  async onClickFirstPage() {
-    this.currentPage = 1;
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
-  }
-  onClickNextPage() {
-    if (this.currentPage != this.totalPages) {
-      this.currentPage++;
-      this.retrieveRecordsOfEquipment(this.getQueryParams());
-    }
-  }
-  onClickPreviousPage() {
-    if (this.currentPage != 1) {
-      this.currentPage--;
-      this.retrieveRecordsOfEquipment(this.getQueryParams());
-    }
-  }
-  onClickLastPage() {
-    this.currentPage = this.totalPages;
-    this.retrieveRecordsOfEquipment(this.getQueryParams());
-  }
+  
 }
 </script>
 

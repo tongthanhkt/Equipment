@@ -381,7 +381,7 @@
           </span>
 
           <div
-            v-if="allFiles.length != 0"
+           
             class="bg-white h-36 overflow-y-auto border-2 border-indigo-300"
           >
             <div
@@ -538,8 +538,8 @@ export default class UpdateTakeOver extends Vue {
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
-  private msgError: string | null | undefined = null;
-  private allFiles: File[] = [];
+  msgError: string | null | undefined = null;
+  allFiles: File[] = [];
   selectFiles(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.allFiles = [];
@@ -551,6 +551,7 @@ export default class UpdateTakeOver extends Vue {
         if (currentFile != null && currentFile?.size > 5000000) {
           this.msgError = "Chọn file <= 5MB";
           this.allFiles = [];
+          
           return;
         }
         if (currentFile != null) this.allFiles.push(currentFile);
@@ -682,6 +683,9 @@ export default class UpdateTakeOver extends Vue {
       alert("Hãy chọn loại bàn giao");
       
     }
+    // else if (this.msgError!=null){
+    //   alert("Chọn file <= 5MB");
+    // }
     else {
        console.log(this.editDate.getTime())
       

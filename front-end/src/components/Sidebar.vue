@@ -62,9 +62,9 @@
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[
-            $route.name === 'TakeOverHistory' ? activeClass : inactiveClass,
+            $route.name === 'History' ? activeClass : inactiveClass,
           ]"
-          to="/takeover-history"
+          to="/history"
         >
           <svg
             class="w-5 h-5"
@@ -89,15 +89,15 @@
               fill="currentColor"
             />
           </svg>
-          <span class="mx-4">Lịch sử bàn giao</span>
+          <span class="mx-4">Lịch sử bàn giao & thu hồi</span>
         </router-link>
 
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[
-            $route.name === 'EditTakeOver' ? activeClass : inactiveClass,
+            $route.name === 'TakeBackHistory' ? activeClass : inactiveClass,
           ]"
-          to="/edit-takeover"
+          to="/takeback-history"
         >
           <svg
             class="w-5 h-5"
@@ -119,7 +119,7 @@
             />
           </svg>
 
-          <span class="mx-4">Thu hồi thiết bị</span>
+          <span class="mx-4">Lịch sử thu hồi</span>
         </router-link>
 
         <router-link
