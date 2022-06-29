@@ -1,7 +1,7 @@
 package scala.services
 
 import com.twitter.util.jackson.JSON
-import models.{ConvertString, Equipment, SearchUserRequest, UploadFile, User}
+import models.{ConvertString, Equipment, SearchUserRequest, TakeOver, UploadFile, User}
 import net.liftweb.json.{DefaultFormats, parse}
 import utils.DatabaseConnection
 
@@ -72,7 +72,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql=
       """
          SELECT tb.id,tb.equipment_id,e.device_id,e.name,tb.username,tb.take_back_time,tb.status,tb.verifier,tb.take_back_person,tb.metadata_info,tb.type
-          ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time
+          ,tb.message,tb.cost,tb.created_by,tb.created_time,tb.updated_by,tb.updated_time,tb.takeover_id
         FROM equipment_management.takeback_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
         on e.id = tb.equipment_id
@@ -105,6 +105,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       val e = TakeBack(id = rs.getString("id"),
         equipmentId = rs.getString("equipment_id"),
         deviceId = rs.getString("device_id"),
+        takeOverId = rs.getString("takeover_id"),
         name = rs.getString("name"),
         username = rs.getString("username"),
         takeBackTime = rs.getString("take_back_time"),
@@ -118,7 +119,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
         createdTime = rs.getString("created_time"),
         updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
-        metadataInfo = toMap(rs.getString("metadata_info")));
+        metadataInfo = toMap(rs.getString("metadata_info"),
+          ));
 
       takeBackList.add(e);
     }
@@ -234,7 +236,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       """
         |SELECT * from equipment as e  LEFT JOIN takeover_equipment_info as tov
         |ON e.id = tov.equipment_id
-        |WHERE e.id = ? and e.takeover_status = 1 and tov.takeback_status = 0;
+        |WHERE e.id = ? and e.takeover_status = 1 and tov.takeback_status = ;
         |""".stripMargin
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -250,22 +252,50 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     return 1
   }
   @throws[Exception]
-  def setTakeOverStatus(equipmentId:String):Int={
+  def getTakeOverIdForTackBack(equipmentId:String):TakeOver={
+    val sql ="SELECT * from takeover_equipment_info as tov WHERE tov.equipment_id = ? and tov.takeback_status = ? ;"
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setString(1, equipmentId)
+    pst.setInt(2, 0)
+    val rs = pst.executeQuery()
+    var result :TakeOver = null
+    while ( rs.next) {
+      result = TakeOver(id = rs.getString("id"),
+        equipmentId = rs.getString("equipment_id"),
+        username = rs.getString("username"),
+        takeOverTime = rs.getString("take_over_time"),
+        status = rs.getString("status"),
+        verifier = rs.getString("verifier"),
+        takeOverPerson = rs.getString("take_over_person"),
+        typeTakeOver = rs.getString("type"),
+        message = rs.getString("message"),
+        cost = rs.getString("cost"),
+        createdBy = rs.getString("created_by"),
+        createdTime = rs.getString("created_time"),
+        updatedBy = rs.getString("updated_by"),
+        updatedTime = rs.getString("updated_time"),
+        metadataInfo = toMap(rs.getString("metadata_info")));
+    }
+    con.close();
+    return result
+  }
+  @throws[Exception]
+  def updateTakeoverForTakeBack(equipment:String):Int={
     val sql =
       """UPDATE takeover_equipment_info as tov
-         SET tov.takeback_status = 1
-         WHERE tov.equipment_id = ?  ;"""
+          SET tov.takeback_status = 1 ;"""
     var con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
-    pst.setString(1,equipmentId);
     val rs = pst.executeUpdate()
     con.close();
     return rs
   }
   @throws[Exception]
   def add(e: TakeBack): Int = {
-    val result = setTakeOverStatus(e.equipmentId);
-    val sql =
+    val result = getTakeOverIdForTackBack(e.equipmentId);
+    val updateStatus = updateTakeoverForTakeBack(result.id);
+      val sql =
         """INSERT INTO takeback_equipment_info (equipment_id, username, take_back_time,status,verifier,
               take_back_person,metadata_info,type,
               message,cost,created_by,created_time,updated_by,updated_time,takeover_id)
@@ -274,26 +304,25 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       val pst = con.prepareStatement(sql)
       pst.setString(1, e.equipmentId)
       pst.setString(2, e.username)
-      pst.setString(3,e.takeBackTime )
+      pst.setString(3, e.takeBackTime)
       pst.setInt(4, 0)
-      pst.setString(5,e.verifier)
-      pst.setString(6,e.takeBackPerson )
+      pst.setString(5, e.verifier)
+      pst.setString(6, e.takeBackPerson)
       pst.setString(7,
         s"""
            |{"files": ${JSON.write(e.metadataInfo)}}
            |""".stripMargin)
       pst.setString(8, e.typeTakeBack)
       pst.setString(9, e.message)
-      pst.setString(10,e.cost)
+      pst.setString(10, e.cost)
       pst.setString(11, e.createdBy)
-      pst.setLong(12,System.currentTimeMillis())
+      pst.setLong(12, System.currentTimeMillis())
       pst.setString(13, e.updatedBy)
-      pst.setString(14,e.updatedTime)
-      pst.setInt(15,1);
+      pst.setString(14, e.updatedTime)
+      pst.setString(15, result.id);
       val rs = pst.executeUpdate()
       con.close();
       return rs
-    
   }
   @throws[SQLException]
   def getIdTakeBackDESC():Int = {

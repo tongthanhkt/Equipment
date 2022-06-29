@@ -70,9 +70,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
     }
     }
     post("/add") { request: TakeBack => {
-      print(request)
       try {
-        print(request)
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
           if (takeBackService.checkUserExist(request.username) == 0) {
@@ -83,10 +81,9 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             response.internalServerError.jsonError("Verifier not exists.")
           } else if (takeBackService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not exists. ")
-          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId)==0){
-            response.internalServerError.jsonError("Request equipment invalid !! ")
           }
           else {
+            print(request);
             val result = takeBackService.add(request)
             if (result == 1) {
               val takeBackId = takeBackService.getIdTakeBackDESC();

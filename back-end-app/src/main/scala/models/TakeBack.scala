@@ -7,7 +7,7 @@ import java.util
 
 case class TakeBack(
                      id: String = null,
-                     takeover_id:String=null,
+                     takeOverId:String=null,
                      equipmentId: String = null,
                      deviceId:String=null,
                      name:String=null,
@@ -23,7 +23,7 @@ case class TakeBack(
                      createdTime: String = null,
                      updatedBy: String = null,
                      updatedTime: String = null,
-                     metadataInfo: Map[String, UploadFile]  = null,
+                     metadataInfo: Map[String, UploadFile]  = null
                    ){
   def checkDataInsert(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()

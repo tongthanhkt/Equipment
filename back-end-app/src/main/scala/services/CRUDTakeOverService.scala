@@ -248,8 +248,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     else return 0;
 
   }
-
-
+  @throws[Exception]
   def checkequipmentForTakeOver(equipmentId: String): Int = {
     val sql =
       """
@@ -273,7 +272,6 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
     return 1
   }
-
   @throws[Exception]
   def add(e: TakeOver): Int = {
     val sql =
@@ -327,9 +325,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
     con.close();
     return id
-
-
   }
+
   def deleteById(takeOverId:Int):Int={
     val sql="UPDATE takeover_equipment_info SET status = -1 WHERE  id = ?;"
     val con = databaseConnection.getConnection()
