@@ -81,21 +81,17 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             response.internalServerError.jsonError("Take back person not exists.")
           } else if (takeBackService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
-          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -1) {
-            response.internalServerError.jsonError("Equipment have been taken over.")
-          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == 0) {
-            response.internalServerError.jsonError("Equipment not exist.")
-          } else if (takeBackService.checkDeviceEquipmentStatusForTakeBack(request.equipmentId) == 0) {
-            response.internalServerError.jsonError("Equipment status was damaged.")
-          }else if (takeBackService.checkUserExist(request.createdBy) == 0) {
-            response.internalServerError.jsonError("Created by not valid. ")
+          } else if (takeBackService.checkUserExist(request.createdBy) == 0) {
+            response.internalServerError.jsonError("Created by not exists. ")
+          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId)==0){
+            response.internalServerError.jsonError("Request equipment invalid !! ")
           }
           else {
             val result = takeBackService.add(request)
             if (result == 1) {
-              val takeOverId = takeBackService.getIdTakeBackDESC();
+              val takeBackId = takeBackService.getIdTakeBackDESC();
               response.created.json(
-                s"""|id: $takeOverId
+                s"""|id: $takeBackId
                     |""".stripMargin)
             } else response.internalServerError.jsonError("Can not add new take back")
           }

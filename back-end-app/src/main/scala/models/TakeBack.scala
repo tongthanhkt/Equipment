@@ -30,7 +30,6 @@ case class TakeBack(
     if(equipmentId==null) check=check + (1->"The field 'equipmentId' cannot be blank . ")
 
     if(username==null) check=check + (2->"The field 'username' cannot be blank . ")
-    if(takeover_id==null) check=check +(2->"The field takeover_id cannot be blank")
     if(takeBackTime==null)
       check=check + (3->"The field 'takeOverTime' cannot be blank . ")
     else if(!convertString.isLong(takeBackTime))

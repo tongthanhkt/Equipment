@@ -277,10 +277,10 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   @throws[Exception]
   def add(e: TakeOver): Int = {
     val sql =
-      """INSERT INTO takeover_equipment_info (equipment_id,takeover_id, username, take_over_time,status,verifier,
+      """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
               take_over_person,metadata_info,type,
-              message,cost,created_by,created_time,updated_by,updated_time)
-              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+              message,cost,created_by,created_time,updated_by,updated_time,takeback_status)
+              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -301,6 +301,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       pst.setLong(12,System.currentTimeMillis())
       pst.setString(13, e.updatedBy)
       pst.setString(14,e.updatedTime)
+    pst.setInt(15,0)
       val rs = pst.executeUpdate()
       con.close();
       return rs
@@ -385,7 +386,4 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
 
   }
-
-
-
 }

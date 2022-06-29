@@ -173,6 +173,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return total
   }
+  @throws[Exception]
   def searchTakeBackById(takeBack:Int): TakeBack = {
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_back_time,tov.take_back_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
@@ -207,25 +208,6 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return result
   }
-
-
-  def checkDeviceEquipmentStatusForTakeBack(equipmentId: String): Int = {
-    val sql =
-      """
-        |SELECT * from equipment
-        |WHERE equipment.id = ?
-        |""".stripMargin
-    var con = databaseConnection.getConnection()
-    val pst = con.prepareStatement(sql)
-    pst.setString(1, equipmentId)
-    val rs = pst.executeQuery()
-    var result: Equipment = null
-    while (rs.next) {
-      result = Equipment(deviceStatus = rs.getString("device_status"));
-    }
-    if (result.deviceStatus == "1") return 1 // Hop le
-    else return 0
-  }
   @throws[Exception]
   def checkUserExist(username: String): Int = {
     val sql =
@@ -246,11 +228,13 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     else return 0;
 
   }
+  @throws[Exception]
   def checkequipmentForTakeBack(equipmentId: String): Int = {
     val sql =
       """
-        |SELECT * from equipment
-        |WHERE equipment.id = ?
+        |SELECT * from equipment as e  LEFT JOIN takeover_equipment_info as tov
+        |ON e.id = tov.equipment_id
+        |WHERE e.id = ? and e.takeover_status = 1 and tov.takeback_status = 0;
         |""".stripMargin
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -261,46 +245,55 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
     }
     if (result == null) {
-      return 0
+      return 0 // thiết bị không tồn tại
     }
-    if (result.takeOverStatus == "0") {
-      return -1
-    } // Da duoc thu hoi
-
     return 1
   }
-
   @throws[Exception]
-  def add(e: TakeBack): Int = {
+  def setTakeOverStatus(equipmentId:String):Int={
     val sql =
-      """INSERT INTO takeback_equipment_info (equipment_id, username, take_back_time,status,verifier,
-              take_back_person,metadata_info,type,
-              message,cost,created_by,created_time,updated_by,updated_time)
-              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
-
+      """UPDATE takeover_equipment_info as tov
+         SET tov.takeback_status = 1
+         WHERE tov.equipment_id = ?  ;"""
     var con = databaseConnection.getConnection()
-    val pst = con.prepareStatement(sql)
-    pst.setString(1, e.equipmentId)
-    pst.setString(2, e.username)
-    pst.setString(3,e.takeBackTime )
-    pst.setInt(4, 0)
-    pst.setString(5,e.verifier)
-    pst.setString(6,e.takeBackPerson )
-    pst.setString(7,
-      s"""
-         |{"files": ${JSON.write(e.metadataInfo)}}
-         |""".stripMargin)
-    pst.setString(8, e.typeTakeBack)
-    pst.setString(9, e.message)
-    pst.setString(10,e.cost)
-    pst.setString(11, e.createdBy)
-    pst.setLong(12,System.currentTimeMillis())
-    pst.setString(13, e.updatedBy)
-    pst.setString(14,e.updatedTime)
+    val pst= con.prepareStatement(sql)
+    pst.setString(1,equipmentId);
     val rs = pst.executeUpdate()
     con.close();
     return rs
-
+  }
+  @throws[Exception]
+  def add(e: TakeBack): Int = {
+    val result = setTakeOverStatus(e.equipmentId);
+    val sql =
+        """INSERT INTO takeback_equipment_info (equipment_id, username, take_back_time,status,verifier,
+              take_back_person,metadata_info,type,
+              message,cost,created_by,created_time,updated_by,updated_time,takeover_id)
+              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+      var con = databaseConnection.getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setString(1, e.equipmentId)
+      pst.setString(2, e.username)
+      pst.setString(3,e.takeBackTime )
+      pst.setInt(4, 0)
+      pst.setString(5,e.verifier)
+      pst.setString(6,e.takeBackPerson )
+      pst.setString(7,
+        s"""
+           |{"files": ${JSON.write(e.metadataInfo)}}
+           |""".stripMargin)
+      pst.setString(8, e.typeTakeBack)
+      pst.setString(9, e.message)
+      pst.setString(10,e.cost)
+      pst.setString(11, e.createdBy)
+      pst.setLong(12,System.currentTimeMillis())
+      pst.setString(13, e.updatedBy)
+      pst.setString(14,e.updatedTime)
+      pst.setInt(15,1);
+      val rs = pst.executeUpdate()
+      con.close();
+      return rs
+    
   }
   @throws[SQLException]
   def getIdTakeBackDESC():Int = {
