@@ -178,7 +178,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
       FROM equipment_management.takeover_equipment_info as tov, equipment as e
-      WHERE  tov.id = ? and tov.status != 1 and tov.equipment_id=e.id
+      WHERE  tov.id = ? and tov.equipment_id=e.id
 				;"""
 
     var con = databaseConnection.getConnection()
@@ -201,7 +201,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         cost = rs.getString("cost"),
         createdBy = rs.getString("created_by"),
         createdTime = rs.getString("created_time"),
-        updatedBy = rs.getString("updated_time"),
+        updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
         metadataInfo = toMap(rs.getString("metadata_info")));
     }
@@ -279,8 +279,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql =
       """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
               take_over_person,metadata_info,type,
-              message,cost,created_by,created_time,updated_by,updated_time)
-              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+              message,cost,created_by,created_time,updated_by,updated_time,takeback_status)
+              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -301,6 +301,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       pst.setLong(12,System.currentTimeMillis())
       pst.setString(13, e.updatedBy)
       pst.setString(14,e.updatedTime)
+    pst.setInt(15,0)
       val rs = pst.executeUpdate()
       con.close();
       return rs
@@ -385,7 +386,4 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
 
   }
-
-
-
 }

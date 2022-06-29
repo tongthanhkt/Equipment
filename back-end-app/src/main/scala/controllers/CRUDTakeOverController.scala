@@ -55,11 +55,12 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     }
     }
     get("/:id") { request: SearchTakeOverByIdRequest => {
+      println(request);
       val takeOverId = request.id;
       try {
         val result = takeOverService.searchTakeOverById(takeOverId)
         if (result == null)
-          response.noContent
+          response.internalServerError.jsonError("Thiết bị không tồn tại !")
         else response.ok.body(result)
       } catch {
         case ex: Exception => {

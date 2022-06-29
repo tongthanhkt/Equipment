@@ -11,6 +11,7 @@ case class TakeOver(
                      name:String=null,
                      username: String = null,
                      takeOverTime: String = null,
+                     takeBackStatus:String=null,
                      status: String = null,
                      verifier: String = null,
                      takeOverPerson: String = null,

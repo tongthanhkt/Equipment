@@ -7,6 +7,7 @@ import java.util
 
 case class TakeBack(
                      id: String = null,
+                     takeover_id:String=null,
                      equipmentId: String = null,
                      deviceId:String=null,
                      name:String=null,
@@ -29,7 +30,6 @@ case class TakeBack(
     if(equipmentId==null) check=check + (1->"The field 'equipmentId' cannot be blank . ")
 
     if(username==null) check=check + (2->"The field 'username' cannot be blank . ")
-
     if(takeBackTime==null)
       check=check + (3->"The field 'takeOverTime' cannot be blank . ")
     else if(!convertString.isLong(takeBackTime))
