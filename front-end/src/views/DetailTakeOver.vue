@@ -165,7 +165,7 @@
             rounded-md
             focus:outline-none
           "
-          v-on:click="showEditTakeOver"
+          v-on:click="showUpdateTakeOver"
         >
           <fa icon="pen-to-square" class="px-2"></fa>
           Cập nhật
@@ -237,8 +237,8 @@ export default class DetailTakeOver extends Vue {
     return data;
   }
 
-  @Emit("changeEditTakeOverShow")
-  showEditTakeOver() {
+  @Emit("changeUpdateTakeOverShow")
+  showUpdateTakeOver() {
     return true;
   }
 
@@ -252,6 +252,7 @@ export default class DetailTakeOver extends Vue {
       .then((res) => {
         console.log(res.data);
         this.record = res.data;
+        if(this.record.cost!=null)
         this.record.cost=parseFloat(this.record.cost).toString()
         this.currentMetaData = Object.entries(res.data.metadata_info);
         let result = Object.values(res.data.metadata_info).map(

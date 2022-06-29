@@ -7,7 +7,7 @@ class   TakeBackService {
   }
   getRecordsBySearch(queryParams: String) {
     console.log(queryParams);
-    return http.get(`/take_back/list?${queryParams}`);
+    return http.get(`/take_back/list?${queryParams}`)
   }
   update(data: Object) {
     return http.put("/take_back/update", data);

@@ -247,6 +247,7 @@
             v-model="user"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
+            @change="changeUser"
           >
             <template #search="{ attributes, events }">
               <input
@@ -484,7 +485,7 @@ import UploadFilesService from "../services/equipments/UploadFilesService";
     Datepicker,
   },
 })
-export default class EditTakeOver extends Vue {
+export default class UpdateTakeOver extends Vue {
   record: TakeOverRecord = {
     id: "",
     equipment_id: "",
@@ -494,8 +495,8 @@ export default class EditTakeOver extends Vue {
     verifier: "",
     take_over_person: "",
     type_take_over: "",
-    message: "",
-    cost: "",
+    message: null,
+    cost: null,
     created_by: "",
     created_time: "",
     updated_by: "",
@@ -523,7 +524,7 @@ export default class EditTakeOver extends Vue {
   currentMetaData: any;
   currentFileName: string[] = [];
 
-  @Emit("changeEditTakeOverShow")
+  @Emit("changeUpdateTakeOverShow")
   changeShow(data: boolean) {
     return data;
   }
@@ -568,6 +569,9 @@ export default class EditTakeOver extends Vue {
       });
     }
     return obj;
+  }
+  changeUser(){
+    this.verifier=this.user
   }
 
   async created() {
@@ -618,6 +622,7 @@ export default class EditTakeOver extends Vue {
         // this.record.take_over_time = this.handleDate(
         //   this.record.take_over_time
         // );
+        if(this.record.cost!=null)
         this.record.cost=parseFloat(this.record.cost).toString()
         this.editDate = ref(new Date(Number(this.record.take_over_time)));
         this.currentMetaData = Object.entries(res.data.metadata_info);
@@ -657,7 +662,7 @@ export default class EditTakeOver extends Vue {
 
   async updateTakeOverRecord() {
    
-    if (this.user.username == null || this.user.username == "") {
+    if (this.user == null ) {
       alert("Hãy chọn người nhận thiết bị!");
       
     }
@@ -694,6 +699,7 @@ export default class EditTakeOver extends Vue {
         metadata_info: await this.getCurrentMetaData(),
       };
       if (this.record.cost=='')
+      data.cost=null
       
       console.log(data)
       TakeOverService.update(data)

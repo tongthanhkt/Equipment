@@ -1,7 +1,7 @@
 <template>
   <div  class=" absolute h-screen top-0 right-0   w-1/2  shadow-2xl border-l-2 border-indigo-300  rounded-none  ">
     <div class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto   font-semibold  text-base self-start text-black bg-indigo-500">
-          <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Bàn giao thiết bị</h1>
+          <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto ">Thu hồi thiết bị</h1>
            <button
             class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors   w-auto text-white  rounded-md focus:outline-none"
              v-on:click="changeShow(false)"
@@ -24,7 +24,7 @@
           {{equipment_name}}</div>
       </div>
        <div class="p-1   font-medium text-gray-700">Chi phí</div>
-      <div class="p-1  col-span-2   font-medium text-gray-700">Thời gian bàn giao</div>
+      <div class="p-1  col-span-2   font-medium text-gray-700">Thời gian thu hồi</div>
       
       <div>
          <input
@@ -55,8 +55,8 @@
       </div>
       
       
-      <div class="p-1     font-medium text-gray-700">Người bàn giao</div>
-      <div class="pl-1 col-span-2  font-medium text-gray-700">Loại bàn giao</div>
+      <div class="p-1     font-medium text-gray-700">Người thu hồi</div>
+      <div class="pl-1 col-span-2  font-medium text-gray-700">Loại thu hồi</div>
        <div>
          <v-select
             class="
@@ -74,7 +74,7 @@
               text-black
             "
             :options="options"           
-            v-model="take_over_person"
+            v-model="take_back_person"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
             
@@ -105,17 +105,19 @@
       <div class="col-span-2">
          
           <select
-                v-model="record.type_take_over"
+                v-model="record.type_take_back"
                 id="type"
                 name="type"
                 autocomplete="type-name"
                  class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
               >
-               <option value="1">Bàn giao thiết bị mới</option>
-                <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
+               <option value="1">Hoàn trả thiết bị khi nghỉ việc</option>
+                <option value="2">Thu hồi thiết bị hư hỏng để sửa chữa</option>
+                <option value="3">Đền bù thiết bị sử dụng bị mất</option>
+                <option value="4">Nhân viên bù tiền mua lại thiết bị</option>
               </select>
       </div>
-       <div class="p-1   font-medium text-gray-700">Người nhận thiết bị</div>
+       <div class="p-1   font-medium text-gray-700">Người trả thiết bị</div>
       <div class="p-1  col-span-2 font-medium text-gray-700">Người xác nhận</div>
       
       <div>
@@ -138,7 +140,7 @@
             v-model="user"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
-            @change="changeUser"
+            
             
           >
             <template #search="{ attributes, events }">
@@ -266,14 +268,14 @@
     
           
           <button
-            class=" bg-green-500 hover:bg-green-600 m-3.5 transition-colors  text-base w-auto text-white p-2 rounded-md focus:outline-none"
-            @click="insertTakeOverRecord"
+            class=" bg-red-500 hover:bg-red-600 m-3.5 transition-colors  text-base w-auto text-white p-2 rounded-md focus:outline-none"
+            @click="insertTakeBackRecord"
           >
             <fa icon="rotate-right"  class="px-1" ></fa>
-            Bàn giao
+            Thu hồi
           </button>
           <button
-            class=" bg-red-500 hover:bg-red-600 m-3.5 transition-colors   w-auto text-white p-2 rounded-md focus:outline-none"
+            class=" bg-gray-800 hover:bg-gray-900 m-3.5 transition-colors   w-auto text-white p-2 rounded-md focus:outline-none"
              v-on:click="changeShow(false)"
           >
             <fa icon="xmark"  class="px-1 " ></fa>
@@ -292,10 +294,10 @@
 import Datepicker from "@vuepic/vue-datepicker";
 import UploadService from "../services/equipments/UploadFilesService";
 import { Vue, Options,Emit,Ref,Prop } from "vue-property-decorator";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import TakeBackRecord from "@/types/TakeBackRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
-import TakeOverService from "@/services/takeover/TakeOverService";
+import TakeBackService from "@/services/takeback/TakeBackService";
 
 @Options({
   components: {
@@ -303,7 +305,7 @@ import TakeOverService from "@/services/takeover/TakeOverService";
    
   },
 })
-export default class AddTakeOver extends Vue {
+export default class AddTakeBack extends Vue {
   @Prop(String)  device_id! :string
   @Prop(String)  equipment_name! : string
   @Prop(String)  equipment_id! :string
@@ -311,10 +313,10 @@ export default class AddTakeOver extends Vue {
   record   = {
   equipment_id: "",
   username: "",
-  take_over_time: "",
+  take_back_time: "",
   verifier: "",
-  take_over_person: "",
-  type_take_over: "",
+  take_back_person: "",
+  type_take_back: "",
   message: null,
   cost: null,
   created_by: "tatthanh",
@@ -323,17 +325,14 @@ export default class AddTakeOver extends Vue {
   timeOut: any
   private options: User[] = [];
   user:User|null =null 
-  take_over_person:User|null =null 
+  take_back_person:User|null =null 
   verifier:User|null =null 
 
-  @Emit('changeAddTakeOverShow')
+  @Emit('changeAddTakeBackShow')
   changeShow(data:boolean) {
    return data
   }
 
-  changeUser(){
-    this.verifier=this.user
-  }
   editDate: any = null;
 
   format(date: Date | null | undefined) {
@@ -379,6 +378,9 @@ export default class AddTakeOver extends Vue {
     if (obj === null || obj === undefined) return {};
     return obj;
   }
+  changeUser(){
+    this.verifier=this.user
+  }
 
   dropdownShouldOpen(VueSelect :any) {
       
@@ -403,13 +405,13 @@ export default class AddTakeOver extends Vue {
     
   }
 
-  async insertTakeOverRecord(){
+  async insertTakeBackRecord(){
      if (this.user== null ) {
-      alert("Hãy chọn người nhận thiết bị!");
+      alert("Hãy chọn người trả thiết bị!");
       
     }
-    else if (this.take_over_person == null ) {
-      alert("Hãy chọn người bàn giao!");
+    else if (this.take_back_person == null ) {
+      alert("Hãy chọn người thu hồi!");
      
     }
     else if (this.verifier == null ) {
@@ -417,24 +419,24 @@ export default class AddTakeOver extends Vue {
       
     }
     else if (this.editDate === null || this.editDate === undefined) {
-      alert("Hãy nhập thời gian bàn giao");
+      alert("Hãy nhập thời gian thu hồi");
       
     }
-    else if (this.record.type_take_over == null || this.record.type_take_over == "") {
-      alert("Hãy chọn loại bàn giao");
+    else if (this.record.type_take_back == null || this.record.type_take_back == "") {
+      alert("Hãy chọn loại thu hồi");
       
     }
     else {
       this.record.username=this.user.username
-      this.record.take_over_person=this.take_over_person.username
+      this.record.take_back_person=this.take_back_person.username
       this.record.verifier=this.verifier.username
-      this.record.take_over_time=this.editDate.getTime()
+      this.record.take_back_time=this.editDate.getTime()
       this.record.metadata_info = await this.uploadFiles()
       this.record.equipment_id = this.equipment_id
       console.log(this.record)
-      TakeOverService.add(this.record)
+      TakeBackService.add(this.record)
       .then(res=>{
-        alert("Thêm thông tin bàn giao cho thiết bị thành công !")
+        alert("Thêm thông tin thu hồi cho thiết bị thành công !")
         this.changeShow(false)
       })
       .catch((err) => {
