@@ -121,7 +121,6 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       try{
         println(request)
         val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get) /// check ID, check status bàn giao
-        println(e);
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
           if (takeOverService.checkUserExist(request.username) == 0) {

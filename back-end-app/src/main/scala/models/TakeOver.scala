@@ -54,25 +54,20 @@ case class TakeOver(
   }
   def checkDataUpdate(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()
-
-    if(username==null) check=check + (14->"The field 'username' cannot be blank . ")
-
-    if(takeOverTime==null) check=check + (15->"The field 'takeOverTime' cannot be blank . ")
+    if(username=="") check=check + (14->"The field 'username' cannot be blank . ")
+    if(takeOverTime=="") check=check + (15->"The field 'takeOverTime' cannot be blank . ")
     else if(!convertString.isLong(takeOverTime))
       check = check + (16 -> "The 'TakeOver Time' field : type mismatch, required : Long. ")
     else if (convertString.isLong(takeOverTime) && (convertString.toLong(takeOverTime).get < 0 ))
       check = check + (17 -> "TakeOver Time of device is incorrect. ")
-
-
-    if(verifier==null) check=check + (19->"The field 'verifier' cannot be blank . ")
-
-
-    if(takeOverPerson==null) check=check + (20->"The field 'takeOverPerson' cannot be blank . ")
-
-    if(typeTakeOver==null) check=check + (21->"The field 'Type' cannot be blank . ")
+    if(status=="") check=check + (19->"The field 'status' cannot be blank . ")
+    if(verifier=="") check=check + (19->"The field 'verifier' cannot be blank . ")
+    if(takeOverPerson=="") check=check + (20->"The field 'takeOverPerson' cannot be blank . ")
+    if(typeTakeOver=="") check=check + (21->"The field 'Type' cannot be blank . ")
     else if (!convertString.isInt(typeTakeOver)) check=check + (3 -> "The 'Start Status' field : type mismatch, required : Int. ")
-
-    if(updatedBy==null) check=check + (23->"The field 'update By' cannot be blank . ")
+    if(updatedBy=="") check=check + (23->"The field 'update By' cannot be blank . ")
+    if(updatedTime=="") check=check + (23->"The field 'update By' cannot be blank . ")
+    if(createdBy=="") check=check + (23->"The field 'created By' cannot be blank . ")
 
     return check
   }

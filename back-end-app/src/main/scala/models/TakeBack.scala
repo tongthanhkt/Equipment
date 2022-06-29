@@ -56,25 +56,24 @@ case class TakeBack(
   def checkDataUpdate(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()
 
-    if(username==null) check=check + (14->"The field 'username' cannot be blank . ")
+    if(username=="") check=check + (14->"The field 'username' cannot be blank . ")
 
-    if(takeBackTime==null) check=check + (15->"The field 'takeOverTime' cannot be blank . ")
+    if(takeBackTime=="") check=check + (15->"The field 'takeOverTime' cannot be blank . ")
     else if(!convertString.isLong(takeBackTime))
       check = check + (16 -> "The 'TakeOver Time' field : type mismatch, required : Long. ")
     else if (convertString.isLong(takeBackTime) && (convertString.toLong(takeBackTime).get < 0 ))
       check = check + (17 -> "TakeOver Time of device is incorrect. ")
 
 
-    if(verifier==null) check=check + (19->"The field 'verifier' cannot be blank . ")
+    if(verifier=="") check=check + (19->"The field 'verifier' cannot be blank . ")
 
 
-    if(takeBackPerson==null) check=check + (20->"The field 'takeOverPerson' cannot be blank . ")
+    if(takeBackPerson=="") check=check + (20->"The field 'takeOverPerson' cannot be blank . ")
 
-    if(typeTakeBack==null) check=check + (21->"The field 'Type' cannot be blank . ")
+    if(typeTakeBack=="") check=check + (21->"The field 'Type' cannot be blank . ")
     else if (!convertString.isInt(typeTakeBack)) check=check + (3 -> "The 'Start Status' field : type mismatch, required : Int. ")
 
     if(updatedBy==null) check=check + (23->"The field 'update By' cannot be blank . ")
-
     return check
   }
 }

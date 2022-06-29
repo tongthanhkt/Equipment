@@ -153,14 +153,14 @@ class CRUDEquipmentController @Inject() (
           if (equipmentService.checkDeviceIdUpdate(request.id,request.deviceId)){
             val e = equipmentService.searchById(convertString.toInt(request.id).get)
             if (e == null) {
-              response.badRequest.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+              response.badRequest.jsonError(s"Cannot find equipment with id = ${request.id}. ")
             }
             val result = equipmentService.updateById(request)
             if (result ==1)
               response.created.body(s"Update equipment successfully. ")
             else response.internalServerError.jsonError("Can not update equipment")
           }
-          response.badRequest.jsonError("Device_id of equipment already exists")
+          else response.badRequest.jsonError("Device_id of equipment already exists")
         }
         else
           response.badRequest.json(
