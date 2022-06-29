@@ -113,14 +113,22 @@ class CRUDEquipmentController @Inject() (
       try {
         val check = request.checkFitInsert(convertString)
         if (check.isEmpty){
-          val result = equipmentService.add(request)
-          if (result ==1) {
-            val equipmentId= equipmentService.getIdEquipmentDESC();
-            response.created.json(
-              s"""|id: $equipmentId
-                |""".stripMargin)
-          }  else
-            response.internalServerError.jsonError("Can not add new equipment")
+          if (equipmentService.checkDeviceIdInsert(request.deviceId)){
+            val result = equipmentService.add(request)
+            if (result >0) {
+
+              response.created.json(
+                s"""|id: $result
+                    |""".stripMargin)
+            }
+            else if (result == -1) {
+              response.badRequest.jsonError("Device_id of equipment already exists")
+            }
+            else
+              response.internalServerError.jsonError("Can not add new equipment")
+          }
+          else
+            response.badRequest.jsonError("Device_id of equipment already exists")
         }
         else
           response.badRequest.json(
@@ -129,7 +137,7 @@ class CRUDEquipmentController @Inject() (
                |}""".stripMargin)
       } catch {
         case ex: Exception =>{
-          println(ex)
+          //println(ex)
           response.internalServerError.jsonError(ex.getMessage)
         }
       }
@@ -142,14 +150,17 @@ class CRUDEquipmentController @Inject() (
 
         println(check)
         if (check.isEmpty){
-          val e = equipmentService.searchById(convertString.toInt(request.id).get)
-          if (e == null) {
-            response.badRequest.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+          if (equipmentService.checkDeviceIdUpdate(request.id,request.deviceId)){
+            val e = equipmentService.searchById(convertString.toInt(request.id).get)
+            if (e == null) {
+              response.badRequest.jsonError(s"Cannot find equipment with id = ${e.id}. ")
+            }
+            val result = equipmentService.updateById(request)
+            if (result ==1)
+              response.created.body(s"Update equipment successfully. ")
+            else response.internalServerError.jsonError("Can not update equipment")
           }
-          val result = equipmentService.updateById(request)
-          if (result ==1)
-            response.created.body(s"Update equipment successfully. ")
-          else response.internalServerError.jsonError("Can not update equipment")
+          response.badRequest.jsonError("Device_id of equipment already exists")
         }
         else
           response.badRequest.json(

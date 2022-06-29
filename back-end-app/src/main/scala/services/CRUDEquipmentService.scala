@@ -6,6 +6,7 @@ import models.{ConvertString, Equipment, SearchRequest, UploadFile}
 import net.liftweb.json.{DefaultFormats, parse}
 import utils.DatabaseConnection
 
+import java.lang.Thread.sleep
 import java.sql.SQLException
 import java.util
 import javax.inject.Inject
@@ -16,7 +17,7 @@ class CRUDEquipmentService @Inject() (
                                        databaseConnection: DatabaseConnection,
                                        convertString: ConvertString
                                      ) {
-  private[this] var lock = new Object()
+  private[this] var mPutDevice = new util.HashMap[String,Object]()
   @throws[SQLException]
   def search(searchRequest: SearchRequest,offset : Int): util.ArrayList[Equipment] ={
 
@@ -211,53 +212,134 @@ class CRUDEquipmentService @Inject() (
 
   @throws[Exception]
   def add(e: Equipment): Int={
+    var lockObj = mPutDevice.get(e.deviceId)
+    if(lockObj == null) {
+      lockObj = new Object()
+      mPutDevice.put(e.deviceId,lockObj)
 
-    this.synchronized {
-       var uploadFiles :  Map[String, UploadFile] = Map()
-       if(e.metadataInfo != null)
-         uploadFiles =e.metadataInfo
+    }
+    else{
+      return -1
+    }
 
-       val sql = """INSERT INTO equipment (device_id, name, start_status,category_id,price,
-             depreciated_value,depreciation_period,period_type,
-             import_date,takeover_status,device_status,created_by,created_time,metadata_info)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
-       var con = databaseConnection.getConnection()
-       val pst = con.prepareStatement(sql)
-       pst.setString(1,e.deviceId)
-       pst.setString(2, e.name)
-       pst.setString(3,e.startStatus )
-       pst.setString(4, e.categoryId)
-       pst.setString(5,e.price)
-       pst.setString(6,e.depreciatedValue )
-       pst.setString(7, e.depreciationPeriod)
-       pst.setString(8, e.periodType)
-       pst.setString(9,e.importDate)
-       pst.setInt(10, 0)
-       pst.setString(11, e.deviceStatus)
-       pst.setString(12,e.createdBy)
-       pst.setLong(13,System.currentTimeMillis())
-       pst.setString(14,
-         s"""
-            |{"files": ${JSON.write(uploadFiles)}}
-            |""".stripMargin)
+//      if(e.deviceId=="tesst1") {
+//        println("start sleep "+e.deviceId)
+//        sleep(20000000)
+//        println("stop sleep "+e.deviceId)
+//      }
+ //   lockObj.synchronized{
+      try{
+        var uploadFiles :  Map[String, UploadFile] = Map()
+        if(e.metadataInfo != null)
+          uploadFiles =e.metadataInfo
 
-       val rs = pst.executeUpdate()
-       con.close();
-       return rs
-     }
+        val sql = """CALL insert_equipment (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+
+        var con = databaseConnection.getConnection()
+        val pst = con.prepareStatement(sql)
+        pst.setString(1,e.deviceId)
+        pst.setString(2, e.name)
+        pst.setString(3,e.startStatus )
+        pst.setString(4, e.categoryId)
+        pst.setString(5,e.price)
+        pst.setString(6,e.depreciatedValue )
+        pst.setString(7, e.depreciationPeriod)
+        pst.setString(8, e.periodType)
+        pst.setString(9,e.importDate)
+        pst.setInt(10, 0)
+        pst.setString(11, e.deviceStatus)
+        pst.setString(12,e.createdBy)
+        pst.setLong(13,System.currentTimeMillis())
+        pst.setString(14,
+          s"""
+             |{"files": ${JSON.write(uploadFiles)}}
+             |""".stripMargin)
+
+        val rs = pst.executeQuery()
+
+        var id =0
+        while ( rs.next) {
+          id = rs.getInt("id")
+        }
+        con.close();
+        id
+      }catch {
+        case e: Exception => throw e
+      } finally {
+        mPutDevice.remove(e.deviceId)
+      }
+    //}
+
+  }
+
+  @throws[Exception]
+  def checkDeviceIdInsert(deviceId:String): Boolean ={
+    val sql = """
+      select count(*) as isExists
+      from equipment e
+      where  e.device_status != ? and e.device_id = ?;
+      """
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setInt(1,-1)
+    pst.setString(2, deviceId)
+    val rs = pst.executeQuery
+    var isExists =0
+    while ( rs.next) {
+      isExists = rs.getInt("isExists")
+    }
+    con.close();
+    if (isExists == 0)
+      true
+    else
+      false
+  }
+
+  @throws[Exception]
+  def checkDeviceIdUpdate( equipmentId:String,deviceId:String): Boolean ={
+    val sql = """
+      select count(*) as isExists
+      from equipment e
+      where  e.device_status != ? and e.id != ? and e.device_id = ?;
+      """
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setInt(1,-1)
+    pst.setString(2, equipmentId)
+    pst.setString(3, deviceId)
+    val rs = pst.executeQuery
+    var isExists =0
+    while ( rs.next) {
+      isExists = rs.getInt("isExists")
+    }
+    con.close();
+    if (isExists == 0)
+      true
+    else
+      false
   }
 
   @throws[SQLException]
   def updateById(e: Equipment): Int={
+    var lockObj = mPutDevice.get(e.deviceId)
+    if(lockObj == null) {
+      lockObj = new Object()
+      mPutDevice.put(e.deviceId,lockObj)
 
-    var uploadFile :String =null
-    if(e.metadataInfo != null)
-      uploadFile = s"""
-                      |{"files": ${JSON.write(e.metadataInfo)}}
-                      |""".stripMargin
+    }
+    else{
+      return -1
+    }
+    try {
+      var uploadFile: String = null
+      if (e.metadataInfo != null)
+        uploadFile =
+          s"""
+             |{"files": ${JSON.write(e.metadataInfo)}}
+             |""".stripMargin
 
-    val sql =
+      val sql =
         """UPDATE equipment
           SET  device_id = if(? is not null, ?,device_id) , name = if(? is not null, ?,name),
            start_status = if(? is not null, ?,start_status),category_id = if(? is not null, ?,category_id),
@@ -270,37 +352,43 @@ class CRUDEquipmentService @Inject() (
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
-    pst.setString(1,e.deviceId)
-    pst.setString(2,e.deviceId)
-    pst.setString(3, e.name)
-    pst.setString(4, e.name)
-    pst.setString(5,e.startStatus )
-    pst.setString(6,e.startStatus )
-    pst.setString(7, e.categoryId)
-    pst.setString(8, e.categoryId)
-    pst.setString(9,e.price)
-    pst.setString(10,e.price)
-    pst.setString(11,e.depreciatedValue )
-    pst.setString(12,e.depreciatedValue )
-    pst.setString(13, e.depreciationPeriod)
-    pst.setString(14, e.depreciationPeriod)
-    pst.setString(15, e.periodType)
-    pst.setString(16, e.periodType)
-    pst.setString(17,uploadFile)
-    pst.setString(18,uploadFile)
-    pst.setString(19,e.importDate)
-    pst.setString(20,e.importDate)
+      pst.setString(1, e.deviceId)
+      pst.setString(2, e.deviceId)
+      pst.setString(3, e.name)
+      pst.setString(4, e.name)
+      pst.setString(5, e.startStatus)
+      pst.setString(6, e.startStatus)
+      pst.setString(7, e.categoryId)
+      pst.setString(8, e.categoryId)
+      pst.setString(9, e.price)
+      pst.setString(10, e.price)
+      pst.setString(11, e.depreciatedValue)
+      pst.setString(12, e.depreciatedValue)
+      pst.setString(13, e.depreciationPeriod)
+      pst.setString(14, e.depreciationPeriod)
+      pst.setString(15, e.periodType)
+      pst.setString(16, e.periodType)
+      pst.setString(17, uploadFile)
+      pst.setString(18, uploadFile)
+      pst.setString(19, e.importDate)
+      pst.setString(20, e.importDate)
 
-    pst.setString(21, e.deviceStatus)
-    pst.setString(22, e.deviceStatus)
-    pst.setString(23,e.updatedBy)
+      pst.setString(21, e.deviceStatus)
+      pst.setString(22, e.deviceStatus)
+      pst.setString(23, e.updatedBy)
 
-      pst.setLong(24,System.currentTimeMillis())
-      pst.setInt(25,-1)
-      pst.setString(26,e.id)
+      pst.setLong(24, System.currentTimeMillis())
+      pst.setInt(25, -1)
+      pst.setString(26, e.id)
       val rs = pst.executeUpdate()
       con.close();
       return rs
+    }
+    catch {
+      case e: Exception => throw e
+    } finally {
+      mPutDevice.remove(e.deviceId)
+    }
   }
 
   private def toMap (metadata : String): Map[String, UploadFile] ={
