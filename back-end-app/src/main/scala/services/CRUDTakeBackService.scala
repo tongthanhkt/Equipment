@@ -66,7 +66,6 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return userList;
   }
-
   def searchTakeBack(searchTakeBackRequest: SearchTakeBackRequest,offset:Int):util.ArrayList[TakeBack]={
     val takeBackList = new util.ArrayList[TakeBack]()
     val sql=
@@ -234,9 +233,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
   def checkequipmentForTakeBack(equipmentId: String): Int = {
     val sql =
       """
-        |SELECT * from equipment as e  LEFT JOIN takeover_equipment_info as tov
-        |ON e.id = tov.equipment_id
-        |WHERE e.id = ? and e.takeover_status = 1 and tov.takeback_status = ;
+        |SELECT * from equipment
+        |WHERE equipment.id = ?
         |""".stripMargin
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -247,8 +245,17 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
     }
     if (result == null) {
-      return 0 // thiết bị không tồn tại
+      return 0 // khong ton tai thiet bi
     }
+    if (result.takeOverStatus == "0") {
+      return -1
+    } // Da duoc thu hoi
+    if (result.deviceStatus == "0") {
+      return -2
+    } // Da bi mat
+    if (result.deviceStatus == "2") {
+      return -3
+    } // Da hu hong
     return 1
   }
   @throws[Exception]

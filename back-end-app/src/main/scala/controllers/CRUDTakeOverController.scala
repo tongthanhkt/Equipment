@@ -81,14 +81,16 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
             response.internalServerError.jsonError("Take over person not exists.")
           } else if (takeOverService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
-          } else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -1) {
-            response.internalServerError.jsonError("Equipment have been taken over.")
-          } else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
-            response.internalServerError.jsonError("Equipment not exist.")
-          } else if (takeOverService.checkDeviceEquipmentStatusForTakeOver(request.equipmentId) == 0) {
-            response.internalServerError.jsonError("Equipment status was damaged.")
-          }else if (takeOverService.checkUserExist(request.createdBy) == 0) {
+          }  else if (takeOverService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not valid. ")
+          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -1) {
+            response.internalServerError.jsonError("Equipment have been taken over.")
+          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
+            response.internalServerError.jsonError("Equipment not exist.")
+          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -2) {
+            response.internalServerError.jsonError("Equipment was lót.")
+          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -3) {
+            response.internalServerError.jsonError("Equipment was damaged.")
           }
           else {
             val result = takeOverService.add(request)

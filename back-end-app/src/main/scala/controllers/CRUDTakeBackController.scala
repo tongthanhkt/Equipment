@@ -55,11 +55,12 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
     }
     }
     get("/:id") { request: SearchTakeBackByIdRequest => {
+      println(request)
       val takeBackId = request.id;
       try {
         val result = takeBackService.searchTakeBackById(takeBackId)
         if (result == null)
-          response.noContent
+          response.internalServerError.jsonError("Không tồn tại thu hồi")
         else response.ok.body(result)
       } catch {
         case ex: Exception => {
@@ -81,6 +82,14 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             response.internalServerError.jsonError("Verifier not exists.")
           } else if (takeBackService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not exists. ")
+          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -1) {
+            response.internalServerError.jsonError("Equipment have been take back or inventory")
+          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == 0) {
+            response.internalServerError.jsonError("Equipment not exist.")
+          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -2) {
+            response.internalServerError.jsonError("Equipment was lót.")
+          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -3) {
+            response.internalServerError.jsonError("Equipment was damaged.")
           }
           else {
             print(request);

@@ -174,6 +174,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return total
   }
+  @throws[SQLException]
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
@@ -207,25 +208,6 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     }
     con.close();
     return result
-  }
-
-
-  def checkDeviceEquipmentStatusForTakeOver(equipmentId: String): Int = {
-    val sql =
-      """
-        |SELECT * from equipment
-        |WHERE equipment.id = ?
-        |""".stripMargin
-    var con = databaseConnection.getConnection()
-    val pst = con.prepareStatement(sql)
-    pst.setString(1, equipmentId)
-    val rs = pst.executeQuery()
-    var result: Equipment = null
-    while (rs.next) {
-      result = Equipment(deviceStatus = rs.getString("device_status"));
-    }
-    if (result.deviceStatus == "1") return 1 // Hop le
-    else return 0
   }
 
   @throws[Exception]
@@ -269,7 +251,12 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     if (result.takeOverStatus == "1") {
       return -1
     } // Da duoc ban giao
-
+    if (result.deviceStatus == "0") {
+      return -2
+    } // Da bi mat
+    if (result.deviceStatus == "2") {
+      return -3
+    } // Da hu hong
     return 1
   }
   @throws[Exception]
@@ -326,7 +313,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return id
   }
-
+  @throws[SQLException]
   def deleteById(takeOverId:Int):Int={
     val sql="UPDATE takeover_equipment_info SET status = -1 WHERE  id = ?;"
     val con = databaseConnection.getConnection()
@@ -336,6 +323,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return rs
   }
+  @throws[SQLException]
   def updateById(e:TakeOver):Int= {
     var uploadFile: String = null
     if (e.metadataInfo != null)
