@@ -249,7 +249,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       return 0 // takeover khong ton tai
     }else if(result.status=="-1") return -1 ; //take over da bi xoa
     else if(result.takeBackStatus=="1") return 1; //take over da duoc ban giao
-    else return null;
+    else return 100;
   }
   @throws[Exception]
   def checkequipmentForTakeOver(equipmentId: String): Int = {

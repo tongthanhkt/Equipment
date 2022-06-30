@@ -1,7 +1,7 @@
 package scala.models
 
 import com.twitter.finatra.http.annotations.{QueryParam, RouteParam}
-import models.{ConvertString, Page, TakeOver, UploadFile, User}
+import models.{ConvertString, Page, UploadFile, User}
 
 import java.util
 
@@ -29,20 +29,20 @@ case class TakeBack(
     var check:Map[Int,String] = Map()
     if(equipmentId==null||equipmentId=="") check=check + (1->"The field 'equipmentId' cannot be blank . ")
     if(username==null||username=="")       check=check + (2->"The field 'username' cannot be blank . ")
-    if(takeBackPerson==null||takeBackPerson=="")
-      check=check + (3->"The field 'takeOverTime' cannot be blank . ")
-    else if(!convertString.isLong(takeBackPerson))
-      check = check + (4 -> "The 'TakeOver Time' field : type mismatch, required : Long. ")
+    if(takeBackTime==null||takeBackTime=="")
+      check=check + (3->"The field 'takeBackTime' cannot be blank . ")
+    else if(!convertString.isLong(takeBackTime))
+      check = check + (4 -> "The 'takeBackTime' field : type mismatch, required : Long. ")
     else if (convertString.isLong(takeBackPerson) && (convertString.toLong(takeBackPerson).get < 0 ))
-      check = check + (5 -> "TakeOver Time of device is incorrect. ")
+      check = check + (5 -> "takeBackTime of device is incorrect. ")
     if(verifier==null||verifier=="") check=check + (6->"The field 'verifier' cannot be blank . ")
-    if(takeBackPerson==null||takeBackPerson=="") check=check + (7->"The field 'takeOverPerson' cannot be blank . ")
+    if(takeBackPerson==null||takeBackPerson=="") check=check + (7->"The field 'takeBackPerson' cannot be blank . ")
     if(createdBy==null||createdBy=="") check=check + (8->"The field 'createdBy' cannot be blank . ")
 
-    if(typeTakeBack==null||typeTakeBack=="") check=check + (9->"The field 'Type' cannot be blank . ")
-    else if (!convertString.isInt(typeTakeBack)) check = check + (10 -> "The 'TakeOver Time' field : type mismatch, required : Int. ")
+    if(typeTakeBack==null||typeTakeBack=="") check=check + (9->"The field 'typeTakeBack' cannot be blank . ")
+    else if (!convertString.isInt(typeTakeBack)) check = check + (10 -> "The 'typeTakeBack' field : type mismatch, required : Int. ")
     else if (convertString.isInt(typeTakeBack)&&(convertString.toInt(typeTakeBack).get>4)||convertString.toInt(typeTakeBack).get<1)
-      check=check + (11 -> "The typeTakeOver is incorrect ! ")
+      check=check + (11 -> "The typeTakeBack is incorrect ! ")
 
     if(status==null||status=="") (12->"The field 'status' cannot be blank . ")
     else if (!convertString.isInt(status)) check = check + (13 -> "The 'status' field : type mismatch, required : Int. ")
@@ -61,20 +61,20 @@ case class TakeBack(
     if(username=="") check=check + (2->"The field 'username' cannot be blank . ")
 
     if(takeBackTime=="")
-      check=check + (3->"The field 'takeOverTime' cannot be blank . ")
+      check=check + (3->"The field 'takeBackTime' cannot be blank . ")
     else if(!convertString.isLong(takeBackTime))
-      check = check + (4 -> "The 'TakeOver Time' field : type mismatch, required : Long. ")
+      check = check + (4 -> "The 'takeBackTime Time' field : type mismatch, required : Long. ")
     else if (convertString.isLong(takeBackTime) && (convertString.toLong(takeBackTime).get < 0 ))
-      check = check + (5 -> "TakeOver Time of device is incorrect. ")
+      check = check + (5 -> "takeBackTime of device is incorrect. ")
 
     if(verifier=="") check=check + (6->"The field 'verifier' cannot be blank . ")
-    if(takeBackPerson=="") check=check + (7->"The field 'takeOverPerson' cannot be blank . ")
+    if(takeBackPerson=="") check=check + (7->"The field 'takeBackPerson' cannot be blank . ")
     if(updatedBy=="") check=check + (8->"The field 'update By' cannot be blank . ")
 
-    if(typeTakeBack=="") check=check + (9->"The field 'Type' cannot be blank . ")
-    else if (!convertString.isInt(typeTakeBack)) check = check + (10 -> "The 'TakeOver Time' field : type mismatch, required : Int. ")
+    if(typeTakeBack=="") check=check + (9->"The field 'typeTakeBack' cannot be blank . ")
+    else if (!convertString.isInt(typeTakeBack)) check = check + (10 -> "typeTakeBack' field : type mismatch, required : Int. ")
     else if (convertString.isInt(typeTakeBack)&&(convertString.toInt(typeTakeBack).get>4)||convertString.toInt(typeTakeBack).get<1)
-      check=check + (11 -> "The typeTakeOver is incorrect ! ")
+      check=check + (11 -> "The typeTakeBack is incorrect ! ")
 
     if(status=="") (12->"The field 'status' cannot be blank . ")
     else if (!convertString.isInt(status)) check = check + (13 -> "The 'status' field : type mismatch, required : Int. ")

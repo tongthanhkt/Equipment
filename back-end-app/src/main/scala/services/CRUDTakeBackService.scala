@@ -288,7 +288,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     return result
   }
   @throws[Exception]
-  def updateTakeoverForTakeBack(equipment:String):Int={
+  def updateTakeover(equipment:String):Int={
     val sql =
       """UPDATE takeover_equipment_info as tov
           SET tov.takeback_status = 1 ;"""
@@ -299,9 +299,26 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
   }
   @throws[Exception]
+  def updateEquipment(typeTakeBack:String):Int={
+    var result:String="1";
+    if(typeTakeBack=="2") result="2";
+    else if(typeTakeBack=="3") result="0";
+    else if(typeTakeBack=="4") result="3";
+    val sql =
+      """
+        |UPDATE equipment as e
+        |SET e.device_status = 3;
+        |""".stripMargin
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+
+    val rs = pst.executeUpdate()
+    con.close()
+    return rs;
+  }
+  @throws[Exception]
   def add(e: TakeBack): Int = {
     val result = getTakeOverIdForTackBack(e.equipmentId);
-    val updateStatus = updateTakeoverForTakeBack(result.id);
       val sql =
         """INSERT INTO takeback_equipment_info (equipment_id, username, take_back_time,status,verifier,
               take_back_person,metadata_info,type,

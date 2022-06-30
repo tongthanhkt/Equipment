@@ -123,7 +123,6 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     put("/update") { request: TakeOver => {
       try{
         println(request)
-        //val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get)
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
           if (takeOverService.checkUserExist(request.username) == 0) {
