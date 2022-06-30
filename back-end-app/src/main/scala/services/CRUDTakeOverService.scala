@@ -264,7 +264,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val rs = pst.executeQuery()
     var result: Equipment = null
     while (rs.next()) {
-      result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
+      result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"),deviceStatus = rs.getString("device_status"))
     }
     if (result == null) {
       return 0
