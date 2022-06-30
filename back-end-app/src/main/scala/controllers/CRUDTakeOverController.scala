@@ -41,6 +41,9 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     delete("/delete") { request: DeleteTakeOverRequest => {
       val takeOverId = request.id;
       try {
+        val checkTakeOver = takeOverService.checkDeleteTakeOver(request.id);
+        if(checkTakeOver==0) response.internalServerError.body(" Take over id not exist.")
+        else if (checkTakeOver== -1) response.internalServerError.body(" Take over have been deleleted.")
         val result = takeOverService.deleteById(takeOverId)
         if (result == 1) {
           response.created.body(s"Delete take over with id =$takeOverId successfully .")
@@ -88,7 +91,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
           }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -2) {
-            response.internalServerError.jsonError("Equipment was lót.")
+            response.internalServerError.jsonError("Equipment was lost.")
           }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -3) {
             response.internalServerError.jsonError("Equipment was damaged.")
           }
@@ -120,7 +123,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     put("/update") { request: TakeOver => {
       try{
         println(request)
-        val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get) /// check ID, check status bàn giao
+        //val e = takeOverService.searchTakeOverById(convertString.toInt(request.id).get)
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
           if (takeOverService.checkUserExist(request.username) == 0) {
@@ -155,7 +158,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       catch{
         case ex: Exception => {
           println(ex)
-          response.internalServerError.jsonError("Bàn giao không tồn tại hoặc không thể chỉnh sửa vì trạng thái đã xác thực ")
+          response.internalServerError.jsonError(ex.getMessage)
         }
       }
     }

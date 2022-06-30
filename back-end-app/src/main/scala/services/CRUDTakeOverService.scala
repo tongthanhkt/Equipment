@@ -231,6 +231,27 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
   }
   @throws[Exception]
+  def checkDeleteTakeOver(takeOverId:Int):Int={
+    val sql =
+      """
+        |SELECT * from takeover_euqipment_info as tov
+        |WHERE tov.id = ?
+        |""".stripMargin
+        var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setInt(1,takeOverId);
+    val rs = pst.executeQuery()
+    var result : TakeOver=null
+    while(rs.next()){
+      result = TakeOver(id=rs.getString("id"),status = rs.getString("status"),takeBackStatus = rs.getString("takeback_status"))
+    }
+    if(result==null){
+      return 0 // takeover khong ton tai
+    }else if(result.status=="-1") return -1 ; //take over da bi xoa
+    else if(result.takeBackStatus=="1") return 1; //take over da duoc ban giao
+    else return null;
+  }
+  @throws[Exception]
   def checkequipmentForTakeOver(equipmentId: String): Int = {
     val sql =
       """
@@ -315,7 +336,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   @throws[SQLException]
   def deleteById(takeOverId:Int):Int={
-    val sql="UPDATE takeover_equipment_info SET status = -1 WHERE  id = ?;"
+    val sql="UPDATE takeover_equipment_info SET status = -1 WHERE  id = ? and tackback_status=0;"
     val con = databaseConnection.getConnection()
     val pst=con.prepareStatement(sql)
     pst.setInt(1,takeOverId)
