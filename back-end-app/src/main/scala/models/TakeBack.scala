@@ -27,8 +27,7 @@ case class TakeBack(
                    ){
   def checkDataInsert(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()
-    if(equipmentId==null||equipmentId=="") check=check + (1->"The field 'equipmentId' cannot be blank . ")
-    if(username==null||username=="")       check=check + (2->"The field 'username' cannot be blank . ")
+
     if(takeBackTime==null||takeBackTime=="")
       check=check + (3->"The field 'takeBackTime' cannot be blank . ")
     else if(!convertString.isLong(takeBackTime))
@@ -57,7 +56,6 @@ case class TakeBack(
   }
   def checkDataUpdate(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()
-    if(equipmentId==null||equipmentId=="") check=check + (1->"The field 'equipmentId' cannot be blank . ")
     if(username=="") check=check + (2->"The field 'username' cannot be blank . ")
 
     if(takeBackTime=="")

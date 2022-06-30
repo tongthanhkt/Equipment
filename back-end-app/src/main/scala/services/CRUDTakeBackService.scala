@@ -299,7 +299,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     return rs
   }
   @throws[Exception]
-  def updateEquipment(typeTakeBack:String):Int={
+  def updateEquipment(equipmentId:String,typeTakeBack:String):Int={
     var result:String="1";
     if(typeTakeBack=="2") result="2";
     else if(typeTakeBack=="3") result="0";
@@ -307,11 +307,13 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql =
       """
         |UPDATE equipment as e
-        |SET e.device_status = 3;
+        |SET e.device_status = ?
+        |WHERE e.id = ?;
         |""".stripMargin
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
-
+    pst.setString(1,result);
+    pst.setString(2,equipmentId);
     val rs = pst.executeUpdate()
     con.close()
     return rs;
@@ -398,7 +400,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     pst.setString(1, e.username);
     pst.setString(2, e.username);
     pst.setString(3, e.takeBackTime);
-    pst.setString(4, e.takeBackPerson);
+    pst.setString(4, e.takeBackTime);
     pst.setString(5, e.status);
     pst.setString(6, e.status);
     pst.setString(7, e.verifier);
