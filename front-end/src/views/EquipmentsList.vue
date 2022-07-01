@@ -197,16 +197,9 @@
                     <div class="flex items-center">
                       <div class="ml-4">
                         <div class="text-sm leading-5 text-gray-500">
-                          <div v-if="equipment.device_status == '0'">
-                            Bị mất
+                          <div>
+                            {{ this.deviceStatus[equipment.device_status] }}
                           </div>
-                          <div v-else-if="equipment.device_status == '1'">
-                            Sử dụng được
-                          </div>
-                          <div v-else-if="equipment.device_status == '2'">
-                            Bị hỏng
-                          </div>
-                          <div v-else>Not A/B/C</div>
                         </div>
                       </div>
                     </div>
@@ -338,16 +331,22 @@ export default class Dashboard extends Vue {
     { value: 2, name: "Màn hình" },
     { value: 3, name: "Phụ kiện" },
   ];
-  public deviceStatus = [{ value: 1 }];
+  public deviceStatus = {
+    0: "Bị Mất",
+    1: "Sử dụng được",
+    2: "Bị hư hỏng",
+    3: "Đã bán cho nhân viên",
+  };
 
   public equipments: Equipment[] = [];
-  public sumOfTakeOverEquipment: number | undefined;
+
+  public sumOfTakeOverEquipment: number = 0;
   public sumOfEquipments: number = 0;
   public sumOfInventoryEquipment: number = 0;
   public sumOfDamagedEquipment: number = 0;
 
   public currentPage: number = 1;
-  public currentLimit: number = 5;
+  public currentLimit: number = 10;
   public currentCategoryId: number | null = null;
   public keyword: string | null = null;
   public takeOverPerson: string | null = null;
@@ -445,15 +444,13 @@ export default class Dashboard extends Vue {
   async filterCategory(categoryId: number) {
     if (categoryId == 0 || categoryId == null) {
       this.currentCategoryId = null;
-
       this.currentPage = 1;
-      this.retrieveEquipments();
     } else {
       this.currentPage = 1;
       this.currentCategoryId = categoryId;
-      this.retrieveEquipments();
-      this.retrieveOverview();
     }
+    this.retrieveEquipments();
+    this.retrieveOverview();
   }
   async onClickFirstPage() {
     this.currentPage = 1;

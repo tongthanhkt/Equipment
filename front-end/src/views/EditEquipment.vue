@@ -11,7 +11,7 @@
           class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7"
         >
           <div class="flex flex-row">
-            <div class="flex flex-col w-48">
+            <div class="flex flex-col w-64">
               <label class="leading-loose">Mã thiết bị</label>
               <input
                 type="text"
@@ -20,7 +20,7 @@
                 v-model="equipment.device_id"
               />
             </div>
-            <div class="flex flex-col ml-10">
+            <div class="flex flex-col w-64">
               <label class="leading-loose">Tên thiết bị</label>
               <input
                 type="text"
@@ -30,7 +30,7 @@
               />
             </div>
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col w-64">
             <label class="leading-loose">Danh mục</label>
             <select
               v-model="equipment.category_id"
@@ -45,13 +45,13 @@
             </select>
           </div>
           <div class="flex flex-row">
-            <div class="flex flex-col w-48">
+            <div class="flex flex-col w-64">
               <label class="leading-loose">Tình trạng mới nhập</label>
               <select
                 id="country"
                 name="country"
                 autocomplete="country-name"
-                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 v-model="equipment.start_status"
               >
                 <option value="1">New</option>
@@ -62,14 +62,14 @@
                 <option value="6">Thiết bị cũ ( second hand)</option>
               </select>
             </div>
-            <div class="flex flex-col ml-10">
+            <div class="flex flex-col w-64">
               <label class="leading-loose">Trạng thái thiết bị</label>
               <select
                 v-model="equipment.device_status"
                 id="country"
                 name="country"
                 autocomplete="country-name"
-                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="w-48 mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">Bị mất</option>
                 <option value="1">Sử dụng được</option>
@@ -81,8 +81,7 @@
             <div class="flex flex-col">
               <label class="leading-loose">Giá tiền</label>
               <input
-                type="number"
-                class="w-48 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                class="w-36 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                 placeholder=""
                 v-model="equipment.price"
               />
@@ -116,15 +115,9 @@
                 >Thời gian nhập thiết bị</label
               >
               <div class="flex flex-row">
-                <input
-                  type="text"
-                  class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                  placeholder=""
-                  v-model="importDate"
-                />
                 <Datepicker
-                  class="w-3 inline-block"
-                  v-model="importDate"
+                  class="w-64 inline-block"
+                  v-model="equipment.import_date"
                   @update:modelValue="handleDate"
                 ></Datepicker>
               </div>
@@ -152,14 +145,6 @@
                         @change="selectImage"
                       />
                     </label>
-                  </div>
-                  <div class="col-4">
-                    <button
-                      class="btn btn-success btn-sm float-right"
-                      @click="upload"
-                    >
-                      Upload
-                    </button>
                   </div>
                 </div>
                 <div v-if="currentImage" class="progress">
@@ -280,7 +265,10 @@ export default class AddEquipment extends Vue {
     ).then((response) => {
       console.log(response.data);
       this.equipment = response.data;
-      this.importDate = this.handleImportDate(this.equipment.import_date);
+      this.equipment.import_date = this.handleImportDate(
+        this.equipment.import_date
+      );
+      this.equipment.price = parseFloat(this.equipment.price).toString();
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
@@ -294,16 +282,11 @@ export default class AddEquipment extends Vue {
   }
   handleImportDate(data: string) {
     var d = new Date(parseInt(data));
-    return d.toLocaleDateString();
-  }
-  handleDate() {
-    const date = new Date(this.importDate).toLocaleDateString();
-    this.importDate = date;
+    return d.toLocaleString();
   }
   async saveEquipment() {
-    var temp = new Date(this.importDate);
-    var milliseconds = temp.getTime();
-    this.equipment.import_date = milliseconds.toString();
+    var temp = new Date(this.equipment.import_date);
+    var milliseconds = temp.getTime().toString();
     const data = {
       id: this.$route.params.id,
       device_id: this.equipment.device_id,
@@ -313,7 +296,7 @@ export default class AddEquipment extends Vue {
       depreciation_period: this.equipment.depreciation_period,
       period_type: this.equipment.period_type,
       depreciated_value: this.equipment.depreciated_value,
-      import_date: this.equipment.import_date,
+      import_date: milliseconds,
       take_over_status: this.equipment.take_over_status,
       category_id: this.equipment.category_id,
       created_by: this.equipment.created_by,
@@ -335,12 +318,6 @@ export default class AddEquipment extends Vue {
         });
         alert(temp);
       });
-
-    // for (let i = 0; i < this.currentMetadataInfo.length; i++) {
-    //   if (!(this.currentMetadataInfo[i] instanceof File)) {
-    //     console.log(this.currentMetadataInfo[i]);
-    //   }
-    // }
   }
   async getUpdatedMetaData() {
     await this.getDeletedImage();

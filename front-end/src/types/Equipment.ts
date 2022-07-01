@@ -7,7 +7,7 @@ export default interface Equipment {
   id: String;
   import_date: string;
   name: String | null;
-  price: String | null;
+  price: string;
   start_status: String | null;
   take_over_person_id: String | null;
   take_over_person_name: String | null;
