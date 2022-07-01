@@ -118,7 +118,6 @@
                 <Datepicker
                   class="w-64 inline-block"
                   v-model="equipment.import_date"
-                  @update:modelValue="handleDate"
                 ></Datepicker>
               </div>
             </div>
@@ -228,27 +227,28 @@ import UploadFilesService from "@/services/equipments/UploadFilesService";
 })
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
-    device_id: "",
-    name: "",
-    start_status: "",
-    price: "",
-    depreciated_value: "",
-    depreciation_period: "",
-    period_type: "",
-    import_date: "",
-    take_over_status: "1",
-    category_id: "1",
-    category_name: "",
+    device_id: null,
+    name: null,
+    start_status: null,
+    price: null,
+    depreciated_value: null,
+    depreciation_period: null,
+    period_type: null,
+    import_date: null,
+    take_over_status: null,
+    category_id: null,
+    category_name: null,
     device_status: "1",
-    created_by: "",
-    created_time: "",
-    updated_by: "",
-    updated_time: "",
-    take_over_person_id: "",
-    take_over_person_name: "",
-    id: "",
-    metadata_info: "",
+    created_by: null,
+    created_time: null,
+    updated_by: null,
+    updated_time: null,
+    take_over_person_id: null,
+    take_over_person_name: null,
+    id: null,
+    metadata_info: null,
   };
+  private errors: string[] = [];
   private allImageCurrentURL: string[] = []; // Địa chỉ API của hình ảnh ;
   private currentImage: File | null | undefined = null;
   private allNewImageFile: File[] = [];
@@ -266,9 +266,9 @@ export default class AddEquipment extends Vue {
       console.log(response.data);
       this.equipment = response.data;
       this.equipment.import_date = this.handleImportDate(
-        this.equipment.import_date
+        this.equipment.import_date!
       );
-      this.equipment.price = parseFloat(this.equipment.price).toString();
+      this.equipment.price = parseFloat(this.equipment.price!).toString();
       const allImage = Object.values(response.data.metadata_info);
       this.currentMetadataInfo = Object.entries(response.data.metadata_info);
       this.oldMetadataInfo = Object.entries(response.data.metadata_info);
@@ -284,40 +284,69 @@ export default class AddEquipment extends Vue {
     var d = new Date(parseInt(data));
     return d.toLocaleString();
   }
+  checkValidateForm() {
+    if (this.equipment.device_id?.length == 0) {
+      this.errors?.push("Device id required");
+    }
+    if (this.equipment.name?.length == 0) {
+      this.errors?.push("Name's device required");
+    }
+    if (this.equipment.price?.length == 0) {
+      this.errors?.push("Price required");
+    }
+    if (this.equipment.device_id?.length == 0) {
+      this.errors?.push("Device id required");
+    }
+    if (this.equipment.depreciated_value?.length == 0) {
+      this.errors?.push("Depreciated value id required");
+    }
+    if (this.equipment.depreciation_period?.length == 0) {
+      this.errors?.push("Depreciated period id required");
+    }
+  }
   async saveEquipment() {
-    var temp = new Date(this.equipment.import_date);
-    var milliseconds = temp.getTime().toString();
-    const data = {
-      id: this.$route.params.id,
-      device_id: this.equipment.device_id,
-      name: this.equipment.name,
-      start_status: this.equipment.start_status,
-      price: this.equipment.price,
-      depreciation_period: this.equipment.depreciation_period,
-      period_type: this.equipment.period_type,
-      depreciated_value: this.equipment.depreciated_value,
-      import_date: milliseconds,
-      take_over_status: this.equipment.take_over_status,
-      category_id: this.equipment.category_id,
-      created_by: this.equipment.created_by,
-      created_time: "1655043885811",
-      device_status: this.equipment.device_status,
-      updated_time: "13062022",
-      updated_by: "tatthanh",
-      metadata_info: await this.getUpdatedMetaData(),
-    };
-    console.log(data);
-    EquipmentDataService.updateEquipment(data)
-      .then(() => alert("Cập nhật thành công !"))
-      .catch((err) => {
-        const errors = err.response.data.errors[0];
-        console.log(errors);
-        let temp = "";
-        Object.values(errors).forEach((error) => {
-          temp = temp + error + "\n";
+    this.checkValidateForm();
+    if (this.errors.length != 0) {
+      let errors = "";
+      for (let i = 0; i < this.errors.length; i++) {
+        errors = errors + this.errors[i] + "\n";
+      }
+      alert(errors);
+    } else {
+      var temp = new Date(this.equipment.import_date!);
+      var milliseconds = temp.getTime().toString();
+      const data = {
+        id: this.$route.params.id,
+        device_id: this.equipment.device_id,
+        name: this.equipment.name,
+        start_status: this.equipment.start_status,
+        price: this.equipment.price,
+        depreciation_period: this.equipment.depreciation_period,
+        period_type: this.equipment.period_type,
+        depreciated_value: this.equipment.depreciated_value,
+        import_date: milliseconds,
+        take_over_status: this.equipment.take_over_status,
+        category_id: this.equipment.category_id,
+        created_by: this.equipment.created_by,
+        created_time: "1655043885811",
+        device_status: this.equipment.device_status,
+        updated_time: "13062022",
+        updated_by: "tatthanh",
+        metadata_info: await this.getUpdatedMetaData(),
+      };
+
+      EquipmentDataService.updateEquipment(data)
+        .then(() => alert("Cập nhật thành công !"))
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          let temp = "";
+          Object.values(errors).forEach((error) => {
+            temp = temp + error + "\n";
+          });
+          alert(temp);
         });
-        alert(temp);
-      });
+    }
   }
   async getUpdatedMetaData() {
     await this.getDeletedImage();

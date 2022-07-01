@@ -753,7 +753,7 @@ export default class DetailEquipment extends Vue {
     console.log("test");
     const id = this.equipment.id;
     if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
-      EquipmentDataService.deleteEquipment(id)
+      EquipmentDataService.deleteEquipment(id!)
       this.$router.push({name:"Home"})
     }
   }

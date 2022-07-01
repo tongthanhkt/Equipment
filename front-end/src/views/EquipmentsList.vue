@@ -380,17 +380,17 @@ export default class Dashboard extends Vue {
     for (let i = 0; i < this.equipments.length; i++) {
       if (this.equipments[i].updated_time != null) {
         this.equipments[i].updated_time = this.handleImportDate(
-          this.equipments[i].updated_time
+          this.equipments[i].updated_time!
         );
       }
       if (this.equipments[i].import_date != null) {
         this.equipments[i].import_date = this.handleImportDate(
-          this.equipments[i].import_date
+          this.equipments[i].import_date!
         );
       }
 
       this.equipments[i].category_name = this.handleCategoryEquipment(
-        this.equipments[i].category_id
+        this.equipments[i].category_id!
       );
     }
   }
