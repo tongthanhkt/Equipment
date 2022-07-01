@@ -209,7 +209,6 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return result
   }
-
   @throws[Exception]
   def checkUserExist(username: String): Int = {
     val sql =
@@ -264,7 +263,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val rs = pst.executeQuery()
     var result: Equipment = null
     while (rs.next()) {
-      result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
+      result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"),deviceStatus = rs.getString("device_status"))
     }
     if (result == null) {
       return 0
@@ -363,6 +362,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
            updated_by = ?,updated_time = ?,
            metadata_info = if(? is not null, ?,metadata_info)
            WHERE status != ? and id = ?;"""
+
     var con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
     pst.setString(1, e.username);
@@ -390,6 +390,5 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val rs = pst.executeUpdate()
     con.close();
     return rs
-
   }
 }

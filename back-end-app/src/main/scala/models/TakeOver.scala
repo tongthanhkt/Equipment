@@ -56,7 +56,7 @@ case class TakeOver(
   def checkDataUpdate(convertString: ConvertString):Map[Int,String]={
 
     var check:Map[Int,String] = Map()
-    if(equipmentId==null||equipmentId=="") check=check + (1->"The field 'equipmentId' cannot be blank . ")
+
     if(username=="") check=check + (2->"The field 'username' cannot be blank . ")
     if(takeOverTime=="")
       check=check + (3->"The field 'takeOverTime' cannot be blank . ")

@@ -97,7 +97,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             if (newTakeBack == 1) {
               val takeOverId = takeBackService.getTakeOverIdForTackBack(request.equipmentId);
               val updateStatusTakeOver = takeBackService.updateTakeover(takeOverId.id);
-              val updateStatusEquipment = takeBackService.updateEquipment(request.typeTakeBack);
+              val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
               val takeBackId = takeBackService.getIdTakeBackDESC();
               response.created.json(
                 s"""|id: $takeBackId
@@ -131,12 +131,12 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
           } else if (takeBackService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
           }else if (takeBackService.checkUserExist(request.updatedBy) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
+            response.internalServerError.jsonError("Updated by not exists.")
           }
           else{
             val result = takeBackService.updateById(request)
             if (result == 1) {
-              val updateStatusEquipment = takeBackService.updateEquipment(request.typeTakeBack);
+              val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
               response.created.body(s"Update take over successfully !")
             } else response.badRequest.json(
               s"""{
@@ -157,7 +157,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
       catch{
         case ex: Exception => {
           println(ex)
-          response.internalServerError.jsonError("Bàn giao không tồn tại hoặc không thể chỉnh sửa vì trạng thái đã xác thực ")
+          response.internalServerError.jsonError(ex.getMessage())
         }
       }
     }
