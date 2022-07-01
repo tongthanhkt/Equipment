@@ -2,7 +2,7 @@ package modules
 
 import com.twitter.inject.TwitterModule
 import models.ConvertString
-import services.{CRUDEquipmentService, FileService}
+import services.{CRUDEquipmentService, FileService,CRUDFixEquipmentService}
 import utils.DatabaseConnection
 
 import javax.inject.Singleton
@@ -13,6 +13,13 @@ object DependencyModule extends TwitterModule{
                                    convertString: ConvertString): CRUDEquipmentService = {
 
     new CRUDEquipmentService(databaseConnection,convertString)
+  }
+
+  @Singleton
+  def provideCRUDFixEquipmentService (databaseConnection: DatabaseConnection,
+                                   convertString: ConvertString): CRUDFixEquipmentService = {
+
+    new CRUDFixEquipmentService(databaseConnection,convertString)
   }
 
   @Singleton

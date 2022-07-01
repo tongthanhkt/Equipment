@@ -73,10 +73,12 @@ class CRUDEquipmentController @Inject() (
       try {
         val result = equipmentService.deleteById(equipmentId)
         if (result ==1)
-          response.created.body(s"Delete equipment with id = $equipmentId successfully. ")
+          response.created.json(s"""{
+                                   |"msg" : Delete equipment with id = $equipmentId successfully.
+                                   |}""".stripMargin)
         else
           response.internalServerError.
-            body("Cannot delete equipment. ")
+            jsonError("Cannot delete equipment. ")
 
 
       } catch {
@@ -155,10 +157,14 @@ class CRUDEquipmentController @Inject() (
             if (e == null) {
               response.badRequest.jsonError(s"Cannot find equipment with id = ${request.id}. ")
             }
-            val result = equipmentService.updateById(request)
-            if (result ==1)
-              response.created.body(s"Update equipment successfully. ")
-            else response.internalServerError.jsonError("Can not update equipment")
+            else {
+              val result = equipmentService.updateById(request)
+              if (result ==1)
+                response.created.json(s"""{
+                                         |"msg" : Update equipment successfully.
+                                         |}""".stripMargin)
+              else response.internalServerError.jsonError("Can not update equipment")
+            }
           }
           else response.badRequest.jsonError("Device_id of equipment already exists")
         }
