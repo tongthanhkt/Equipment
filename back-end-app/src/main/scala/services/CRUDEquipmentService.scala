@@ -391,6 +391,68 @@ class CRUDEquipmentService @Inject() (
     }
   }
 
+
+
+  @throws[Exception]
+  def checkDeviceStatus(equipmentId: String): Int = {
+    val sql =
+      """
+        |SELECT * from equipment
+        |WHERE equipment.id = ? and equipment.device_status != ?
+        |""".stripMargin
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setString(1,equipmentId)
+    pst.setInt(2,-1)
+    val rs = pst.executeQuery()
+    var result: Equipment = null
+    while (rs.next()) {
+      result = Equipment(id = rs.getString("id"), deviceStatus = rs.getString("device_status"))
+    }
+
+    if (result != null) {
+      if (result.deviceStatus == "0")
+      return 0
+      if (result.deviceStatus == "1")
+        return 1
+      if (result.deviceStatus == "2")
+        return 2
+      else -1
+
+    }
+    else
+      -1
+  }
+
+  @throws[Exception]
+  def checkTakeOverStatus(equipmentId: String): Int = {
+    val sql =
+      """
+        |SELECT * from equipment
+        |WHERE equipment.id = ? and equipment.device_status != ?
+        |""".stripMargin
+    var con = databaseConnection.getConnection()
+    val pst = con.prepareStatement(sql)
+    pst.setString(1,equipmentId)
+    pst.setInt(2,-1)
+    val rs = pst.executeQuery()
+    var result: Equipment = null
+    while (rs.next()) {
+      result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
+    }
+    if (result != null) {
+      if (result.takeOverStatus == "0")
+        return 0
+      if (result.takeOverStatus == "1")
+        return 1
+
+      else -1
+
+    }
+    else
+      -1
+  }
+
   private def toMap (metadata : String): Map[String, UploadFile] ={
     var map : Map[String,UploadFile] = Map()
 
