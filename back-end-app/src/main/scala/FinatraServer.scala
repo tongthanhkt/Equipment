@@ -36,5 +36,6 @@ class FinatraServer extends HttpServer{
   protected override def afterPostWarmup(): Unit = {
     super.afterPostWarmup()
     println("Service setup successfully")
+    //test
   }
 }
