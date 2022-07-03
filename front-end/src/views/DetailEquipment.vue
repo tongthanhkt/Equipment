@@ -49,15 +49,13 @@
                     Danh mục
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.category_id=='1'">Máy tính</p>
-                    <p v-else-if="equipment?.category_id=='2'">Màn hình</p>
-                    <p v-else="equipment?.category_id=='3'">Phụ kiện</p>
+                    {{this.categories[equipment.category_id]}}
                   </p>
                  
                   <div class="p-1 text-base font-medium text-gray-700">
                     Giá tiền
                   </div>
-                  <p class="pl-1 text-slate-500">{{ equipment?.price }}</p>
+                  <p class="pl-1 text-slate-500">{{ equipment?.price }} VND</p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Trạng thái bàn giao
                   </div>
@@ -97,7 +95,7 @@
                     Giá trị khấu hao
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{ equipment?.depreciated_value }} %
+                    {{ equipment?.depreciated_value*100 }} %
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người đang sử dụng
@@ -123,15 +121,7 @@
                     Trạng thái thiết bị
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.device_status=='0'">
-                    Bị mất
-                    </p>
-                    <p v-else-if="equipment?.device_status=='1'">
-                    Sử dụng được
-                    </p>
-                    <p v-else-if="equipment?.device_status=='2'">
-                    Bị hư hỏng
-                    </p>
+                   {{ this.deviceStatus[equipment.device_status] }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Thời gian nhập thiết bị
@@ -561,6 +551,17 @@ import TakeBackService from "@/services/takeback/TakeBackService";
   },
 })
 export default class DetailEquipment extends Vue {
+  public deviceStatus = {
+    0: "Bị Mất",
+    1: "Sử dụng được",
+    2: "Bị hư hỏng",
+    3: "Đã bán cho nhân viên",
+  };
+  public categories={
+    1:"Máy tính",
+    2:"Màn hình",
+    3:"Phụ kiện",
+  }
   public allImageCurrentURL: string[] = []; 
   public indexImage = 0;
   equipment: Equipment= {category_id: "",
@@ -629,19 +630,21 @@ export default class DetailEquipment extends Vue {
       .then((res) => {
         console.log(res.data);
         this.equipment = res.data;
+        this.equipment.import_date = this.handleImportDate(
+        this.equipment.import_date!
+      );
+      this.equipment.price = parseFloat(this.equipment.price!).toString();
         const allImage = Object.values(res.data.metadata_info);
         let result = allImage.map((Image:any)=>Image.file_url);
         result.forEach((URL,index)=>{
           this.allImageCurrentURL[index]=URL;
         })
-
-
       }).then(()=>this.handleFieldEquipment())
       .catch((err) => console.log(err));
   }
-   handleImportDate(data: any) {
+handleImportDate(data: string) {
     var d = new Date(parseInt(data));
-    return d.toLocaleDateString();
+    return d.toLocaleString();
   }
   handleFieldEquipment() {
       if (this.equipment.import_date != null) {

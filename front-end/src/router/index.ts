@@ -14,6 +14,7 @@ import AddTakeOver from "../views/AddTakeOver.vue";
 import TakeOverHistory from "../views/TakeOverHistory.vue";
 import TakeBackHistory from "../views/TakeBackHistory.vue";
 import History from "../views/History.vue";
+import FixEquipmentHistory from "../views/FixEquipmentHistory.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -70,6 +71,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/equipments/update/:id",
     name: "update",
     component: EditEquipment,
+  },
+  {
+    path: "/fix-equipment",
+    name: "FixEquipment",
+    component: FixEquipmentHistory,
   },
 ];
 

@@ -20,7 +20,7 @@ class EquipmentDataService {
     return http.delete(`equipment/delete?id=${id}`);
   }
   searchEquipment(keyword: String) {
-    return http.get(`equipment/search?keyword=${keyword}&size=10`);
+    return http.get(`equipment/search?keyword=${keyword}&size=5`);
   }
   getCountTotal(queryParams: string) {
     return http.get(`equipment/count_total?${queryParams}`);

@@ -181,10 +181,19 @@
                     {{ equipment.device_id }}
                   </td>
                   <td class="px-6 py-4">{{ equipment.name }}</td>
-                  <td class="px-6 py-4">
-                    {{
-                      equipment.take_over_status == "1" ? "Bàn giao" : "Tồn kho"
-                    }}
+                  <td class="px-6 py-4 font-bold">
+                    <p
+                      class="text-orange-700"
+                      v-if="equipment.take_over_status == '0'"
+                    >
+                      {{ this.takeOverStatus[equipment.take_over_status] }}
+                    </p>
+                    <p
+                      class="text-green-500"
+                      v-else="equipment.take_over_status == '0'"
+                    >
+                      {{ this.takeOverStatus[equipment.take_over_status] }}
+                    </p>
                   </td>
                   <td class="px-6 py-4">
                     {{ equipment.take_over_person_name }}
@@ -337,6 +346,10 @@ export default class Dashboard extends Vue {
     2: "Bị hư hỏng",
     3: "Đã bán cho nhân viên",
   };
+  public takeOverStatus = {
+    0: "Tồn kho",
+    1: "Bàn giao",
+  };
 
   public equipments: Equipment[] = [];
 
@@ -346,7 +359,7 @@ export default class Dashboard extends Vue {
   public sumOfDamagedEquipment: number = 0;
 
   public currentPage: number = 1;
-  public currentLimit: number = 10;
+  public currentLimit: number = 5;
   public currentCategoryId: number | null = null;
   public keyword: string | null = null;
   public takeOverPerson: string | null = null;
