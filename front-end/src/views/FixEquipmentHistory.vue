@@ -38,8 +38,8 @@
                   <input
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
-                    placeholder="Tên người bàn giao"
-                    v-model="keyTakeBackPerson"
+                    placeholder="Tên người sửa chữa"
+                    v-model="keyFixEquipmentPerson"
                     @input="retrieveRecordsBySearch"
                   />
                 </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="p-2 flex justify-end w-auto">
               <select
-                v-model="currentTakeBackStatus"
+                v-model="currentFixEquipmentStatus"
                 @change="retrieveRecordsBySearch"
                 name="takeback_status"
                 id="takeback_status"
@@ -57,45 +57,22 @@
                   Trạng thái
                 </option>
                 <option
-                  value="-1"
+                  value="-2"
                   class="bg-white text-black hover:bg-blue-700"
                 >
                   Trạng thái
+                </option>
+                <option
+                  value="-1"
+                  class="bg-white text-black hover:bg-blue-700"
+                >
+                  Không sửa được
                 </option>
                 <option value="0" class="bg-white text-black hover:bg-blue-700">
-                  Chờ xác nhận
+                  Đang sửa
                 </option>
                 <option value="1" class="bg-white text-black hover:bg-blue-700">
-                  Đã xác nhận
-                </option>
-              </select>
-              <select
-                v-model="currentTakeBackType"
-                @change="retrieveRecordsBySearch"
-                name="takeback_status"
-                id="takeback_status"
-                class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
-              >
-                <option value="null" disabled selected hidden>
-                  Loại thu hồi
-                </option>
-                <option
-                  value="-1"
-                  class="bg-white text-black hover:bg-blue-700"
-                >
-                  Loại bàn giao
-                </option>
-                <option value="1" class="bg-white text-black hover:bg-blue-700">
-                  Hoàn trả thiết bị khi nghỉ việc
-                </option>
-                <option value="2" class="bg-white text-black hover:bg-blue-700">
-                  Thu hồi thiết bị hư hỏng để sửa chữa
-                </option>
-                <option value="3" class="bg-white text-black hover:bg-blue-700">
-                  Đền bù thiết bị sử dụng bị mất
-                </option>
-                <option value="4" class="bg-white text-black hover:bg-blue-700">
-                  Nhân viên bù tiền mua thiết bị
+                  Sửa thành công
                 </option>
               </select>
             </div>
@@ -118,14 +95,7 @@
                       Tên thiết bị
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Người trả thiết bị
-                    </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Người thu hồi
-                    </th>
-
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Loại thu hồi
+                      Người sửa chữa
                     </th>
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
                       Trạng thái
@@ -136,8 +106,6 @@
                     <th class="p-2 text-sm font-medium text-left text-gray-700">
                       Thời gian tạo
                     </th>
-
-                    <th></th>
                   </tr>
                 </thead>
 
@@ -161,37 +129,35 @@
 
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.name }}
+                        {{ record.equipment_name }}
                       </div>
                     </td>
+
                     <td>
                       <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.username }}
+                        {{ record.fixer }}
                       </div>
                     </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.take_back_person }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ type[record.type_take_back] }}
-                      </div>
-                    </td>
+
                     <td>
                       <div class="p-1 text-sm text-center">
                         <div
-                          v-if="record.status == '1'"
+                          v-if="record.status == '-1'"
                           class="text-green-500 italic font-semibold"
                         >
-                          Đã xác nhận
+                          Không sửa được
                         </div>
                         <div
                           v-else-if="record.status == '0'"
                           class="text-blue-500 italic font-semibold"
                         >
-                          Chờ xác nhận
+                          Đang sửa
+                        </div>
+                        <div
+                          v-else-if="record.status == '1'"
+                          class="text-blue-500 italic font-semibold"
+                        >
+                          Sửa thành công
                         </div>
                       </div>
                     </td>
@@ -308,12 +274,11 @@
 </template>
 
 <script lang="ts">
-import DetailTakeBack from "./DetailTakeBack.vue";
-import UpdateTakeBack from "./UpdateTakeBack.vue";
-import TakeBackService from "@/services/takeback/TakeBackService";
+import DetailFixEquipment from "./DetailFixEquipment.vue";
+import UpdateFixEquipment from "./UpdateFixEquipment.vue";
+import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
 import { Vue, Options, Emit } from "vue-property-decorator";
-import TakeBackRecord from "@/types/TakeBackRecord";
-
+import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 // @Options({
 //   components: {
 //     DetailTakeBack,
@@ -324,22 +289,14 @@ export default class FixEquipmentHistory extends Vue {
   // isDetailTakeBackShow: Boolean = false;
   // isAddTakeBackShow: Boolean = false;
   // isUpdateTakeBackShow: Boolean = false;
-  public records: TakeBackRecord[] = [];
+  public records: FixEquipmentRecord[] = [];
   public currentPage: number = 1;
   public currentLimit: number = 10;
-  public currentTakeBackStatus: string | null = null;
-  public currentTakeBackType: string | null = null;
+  public currentFixEquipmentStatus: string | null = null;
   public keyUser: string | null = null;
-  keyTakeBackPerson: string | null = null;
+  keyFixEquipmentPerson: string | null = null;
   totalPages: number = 0;
   public recordId: number = 0;
-  type: any = {
-    1: "Hoàn trả thiết bị khi nghỉ việc",
-    2: "Thu hồi thiết bị hư hỏng để sửa chữa",
-    3: "Đền bù thiết bị sử dụng bị mất",
-    4: "Nhân viên bù tiền mua thiết bị",
-  };
-
   // handleDetailTakeBackShow(data: Boolean) {
   //   this.isDetailTakeBackShow = data;
   //   this.isAddTakeBackShow = false;
@@ -357,10 +314,10 @@ export default class FixEquipmentHistory extends Vue {
   }
 
   async retrieveRecords(params: String) {
-    await TakeBackService.getRecordsBySearch(params)
+    await FixEquipmentService.getRecordsBySearch(params)
       .then((res) => {
         console.log(res.data);
-        this.records = res.data.take_back_list;
+        this.records = res.data.fix_equipment_list;
         this.totalPages = res.data.n_pages;
       })
       .catch((err) => {
@@ -369,9 +326,9 @@ export default class FixEquipmentHistory extends Vue {
   }
 
   retrieveRecordsBySearch() {
-    if (this.currentTakeBackStatus == "-1") this.currentTakeBackStatus = null;
-    if (this.currentTakeBackType == "-1") this.currentTakeBackType = null;
-    if (this.keyTakeBackPerson == "") this.keyTakeBackPerson = null;
+    if (this.currentFixEquipmentStatus == "-2")
+      this.currentFixEquipmentStatus = null;
+    if (this.keyFixEquipmentPerson == "") this.keyFixEquipmentPerson = null;
     if (this.keyUser == "0") this.keyUser = null;
     this.currentPage = 1;
     this.retrieveRecords(this.getQueryParams());
@@ -382,9 +339,8 @@ export default class FixEquipmentHistory extends Vue {
       page: this.currentPage,
       limit: this.currentLimit,
       username: this.keyUser,
-      take_back_person: this.keyTakeBackPerson,
-      type_take_back: this.currentTakeBackType,
-      status: this.currentTakeBackStatus,
+      fixer: this.keyFixEquipmentPerson,
+      status: this.currentFixEquipmentStatus,
       equipment_id: this.$route.params.id,
     };
     Object.keys(queryParams).forEach((key) => {
@@ -410,32 +366,23 @@ export default class FixEquipmentHistory extends Vue {
     var d = new Date(Number(data));
     return d.toLocaleString();
   }
-  // async deleteRecord(id: number) {
-
-  //   if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
-  //    await TakeBackService.deleteById(id)
-  //       .then((res) => alert("Delete Successfully !!"))
-  //       .then(() => this.retrieveRecords(this.getQueryParams()))
-  //       .catch((err) => alert(err.response.data));
-  //   }
-  // }
 
   @Emit("deleteRecord")
   deleteRecordReq(id: number) {
     return id;
   }
 
-  @Emit("changeRecordTakeBackId")
+  @Emit("changeRecordFixEquipmentId")
   changeId(id: string) {
     return parseInt(id);
   }
 
-  @Emit("changeDetailTakeBackShow")
+  @Emit("changeDetailFixEquipmentShow")
   changeDetailShow(data: boolean) {
     return data;
   }
 
-  @Emit("changeUpdateTakeBackShow")
+  @Emit("changeUpdateFixEquipmentShow")
   changeUpdateShow(data: boolean) {
     return data;
   }

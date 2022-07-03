@@ -449,20 +449,38 @@
       
         <!-- <TakeOverHistory  v-bind:equipment_id="$route.params.id"/> -->
     <TakeOverHistory 
-        v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-       v-on:deleteRecord="deleteTakeOverRecord"
-       v-on:changeRecordTakeOverId="handleRecordTakeOverId"
-       :key="keyTakeOver"/>
+      v-on:deleteRecord="deleteTakeOverRecord"
+      v-on:changeRecordTakeOverId="handleRecordTakeOverId"
+      :key="keyTakeOver"/>
     <TakeBackHistory
     v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-       v-on:deleteRecord="deleteTakeBackRecord"
-       v-on:changeRecordTakeBackId="handleRecordTakeBackId"
-       :key="keyTakeBack"/>
+      v-on:deleteRecord="deleteTakeBackRecord"
+      v-on:changeRecordTakeBackId="handleRecordTakeBackId"
+      :key="keyTakeBack"/>
+    <FixEquipmentHistory
+    v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+    v-on:deleteRecord="deleteFixEquipmentRecord"
+    v-on:changeRecordFixEquipmentId="handleRecordFixEquipmentId"
     
+    v-bind:key="keyFixEquipment"/>
       </div>
     </div>
+    <DetailFixEquipment
+      v-if="isDetailFixEquipmentShow"
+      v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+      v-bind:id="recordFixEquipmentId"
+
+    />
+    <UpdateFixEquipment
+    v-if="isUpdateFixEquipmentShow"
+    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+    v-bind:id="recordFixEquipmentId"
+    />
     <DetailTakeBack
       v-if="isDetailTakeBackShow"
       v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
@@ -470,7 +488,6 @@
        v-on:deleteRecord="deleteTakeBackRecord"
       v-bind:id="recordTakeBackId"
     />
-
     <UpdateTakeBack
       v-if="isUpdateTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
@@ -483,7 +500,6 @@
        v-on:deleteRecord="deleteTakeOverRecord"
       v-bind:id="recordTakeOverId"
     />
-
     <UpdateTakeOver
       v-if="isUpdateTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
@@ -535,16 +551,21 @@ import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import Equipment from "@/types/Equipment";
 import TakeBackRecord from "@/types/TakeBackRecord";
 import TakeBackService from "@/services/takeback/TakeBackService";
+import FixEquipmentHistory from "./FixEquipmentHistory.vue";
+import DetailFixEquipment from "./DetailFixEquipment.vue";
+import UpdateFixEquipment from "./UpdateFixEquipment.vue";
 
 
 @Options({
   components: {
     DetailTakeBack,
     DetailTakeOver,
+    DetailFixEquipment,
     UpdateTakeBack,
     UpdateTakeOver,
     TakeBackHistory,
     TakeOverHistory,
+    FixEquipmentHistory,
     AddTakeOver,
     AddTakeBack
 
@@ -584,12 +605,18 @@ export default class DetailEquipment extends Vue {
   depreciation_period: "",
   period_type: "",
   metadata_info:""};
+  isDetailFixEquipmentShow:Boolean=false;
+  isAddFixEquipmentShow:Boolean=false;
+  isUpdateFixEquipmentShow:Boolean=false;
+
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isUpdateTakeOverShow: Boolean = false;
+
   isDetailTakeBackShow: Boolean = false;
   isUpdateTakeBackShow: Boolean = false;
   isAddTakeBackShow: Boolean = false;
+
   recordsOfEquipment: TakeOverRecord[] = [];
   currentPage: number = 1;
   currentLimit: number = 5;
@@ -600,8 +627,10 @@ export default class DetailEquipment extends Vue {
   totalPages: number = 0;
   public recordTakeBackId :number = 0;
   public recordTakeOverId :number = 0;
+  public recordFixEquipmentId:number=0;
   keyTakeBack :number =0;
   keyTakeOver :number=0;
+  keyFixEquipment :number=0;
   // type: any = {
   //   1: "Bàn giao thiết bị mới",
   //   2: "Bàn giao thiết bị sau khi sửa chữa",
@@ -694,6 +723,15 @@ handleImportDate(data: string) {
     this.isUpdateTakeOverShow = data;
   }
 
+  handleDetailFixEquipmentShow(data:Boolean){
+    this.isDetailFixEquipmentShow=data;
+  }
+handleUpdateFixEquipmentShow(data: Boolean) {
+    if (data ==false)
+     this.keyFixEquipment+=1
+    //this.isDetailTakeBackShow = false;
+    this.isUpdateTakeBackShow = data;
+  }
   handleDetailTakeBackShow(data: Boolean) {
     this.isDetailTakeBackShow = data;
     //this.isUpdateTakeBackShow = false;
@@ -712,7 +750,9 @@ handleImportDate(data: string) {
     handleRecordTakeBackId(id:number){
         this.recordTakeBackId=id
     }
-
+  handleRecordFixEquipmentId(id:number){
+        this.recordFixEquipmentId=id
+    }
  deleteTakeBackRecord(id: number) {
    
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
@@ -736,6 +776,7 @@ handleImportDate(data: string) {
     }
   }
 
+  
   async retrieveRecordsOfEquipment(params: String) {
     await TakeOverService.getRecordsBySearch(params)
       .then((res) => {
