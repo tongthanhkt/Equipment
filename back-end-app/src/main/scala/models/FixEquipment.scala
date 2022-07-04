@@ -21,6 +21,7 @@ case class FixEquipment(
                      updatedBy: String = null,
                      updatedTime: String = null,
                      metadataInfo: Map[String, UploadFile]  = null,
+                     takeOverStatus: String =null
                    ){
   def checkFitInsert(convertString: ConvertString):Map[Int,String]={
     var check:Map[Int,String] = Map()

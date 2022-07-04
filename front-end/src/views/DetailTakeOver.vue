@@ -164,7 +164,10 @@
             py-2
             rounded-md
             focus:outline-none
+            disabled:cursor-not-allowed
+            disabled:opacity-50
           "
+          :disabled="record.status == '1'"
           v-on:click="showUpdateTakeOver"
         >
           <fa icon="pen-to-square" class="px-2"></fa>
@@ -182,7 +185,10 @@
             p-2
             rounded-md
             focus:outline-none
+            disabled:cursor-not-allowed
+            disabled:opacity-50
           "
+          :disabled="record.status == '1'"
           v-on:click.stop="
             changeShow(false);
             deleteDetailRecord(id);
@@ -221,6 +227,7 @@ export default class DetailTakeOver extends Vue {
     metadata_info: "",
     device_id: "",
     name: "",
+    take_back_status:""
   };
   type: any = {
     1: "Bàn giao thiết bị mới",
@@ -275,6 +282,7 @@ export default class DetailTakeOver extends Vue {
   deleteDetailRecord(id: number) {
     console.log("event1");
     return id;
+    
   }
 
   downloadfile(index:number){

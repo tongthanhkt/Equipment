@@ -269,7 +269,7 @@
                             <fa icon="pen-to-square"></fa>
                           </button>
                           <button
-                            :disabled="record.status == '1'"
+                            :disabled="record.status == '1' "
                             class="
                               disabled:cursor-not-allowed
                               disabled:opacity-50

@@ -15,5 +15,6 @@ export default interface TakeOverRecord {
   updated_time: string;
   metadata_info: Object;
   device_id: string,
-  name: string
+  name: string,
+  take_back_status : string|null
 }
