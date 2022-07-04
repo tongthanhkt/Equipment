@@ -164,7 +164,6 @@
                             v-on:click.stop="
                               changeId(record.id), changeUpdateShow(true)
                             "
-                            :disabled="this.takeOverStatus == '1'"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>

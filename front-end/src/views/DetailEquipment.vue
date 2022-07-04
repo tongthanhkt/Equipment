@@ -463,7 +463,7 @@
       v-on:changeRecordTakeOverId="handleRecordTakeOverId"
       :key="keyTakeOver"/>
     <TakeBackHistory
-    v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-on:deleteRecord="deleteTakeBackRecord"
       v-on:changeRecordTakeBackId="handleRecordTakeBackId"
@@ -477,17 +477,12 @@
       </div>
     </div>
 
-    <DetailFixEquipment
-      v-if="isDetailFixEquipmentShow"
-      v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
-      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-      v-bind:id="recordFixEquipmentId"
-
-    />
-    <UpdateFixEquipment
-    v-if="isUpdateFixEquipmentShow"
-    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-    v-bind:id="recordFixEquipmentId"
+     <DetailTakeOver
+      v-if="isDetailTakeOverShow"
+      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+       v-on:deleteRecord="deleteTakeOverRecord"
+      v-bind:id="recordTakeOverId"
     />
     <DetailTakeBack
       v-if="isDetailTakeBackShow"
@@ -496,23 +491,34 @@
        v-on:deleteRecord="deleteTakeBackRecord"
       v-bind:id="recordTakeBackId"
     />
+    <DetailFixEquipment
+      v-if="isDetailFixEquipmentShow"
+      v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+      v-bind:id="recordFixEquipmentId"
+
+    />
+
+    
+    
+    
     <UpdateTakeBack
       v-if="isUpdateTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-bind:id="recordTakeBackId"
     />
-    <DetailTakeOver
-      v-if="isDetailTakeOverShow"
-      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-       v-on:deleteRecord="deleteTakeOverRecord"
-      v-bind:id="recordTakeOverId"
-    />
+   
     <UpdateTakeOver
       v-if="isUpdateTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
       v-bind:id="recordTakeOverId"
     />
+    <UpdateFixEquipment
+    v-if="isUpdateFixEquipmentShow"
+    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+    v-bind:id="recordFixEquipmentId"
+    />
+
     <AddTakeOver
       v-if="isAddTakeOverShow"
       v-on:changeAddTakeOverShow="handleAddTakeOverShow"
@@ -581,6 +587,7 @@ import UpdateFixEquipment from "./UpdateFixEquipment.vue";
     UpdateTakeBack,
     UpdateTakeOver,
     UpdateFixEquipment,
+    
     TakeBackHistory,
     TakeOverHistory,
     FixEquipmentHistory,
@@ -737,6 +744,7 @@ handleImportDate(data: string) {
     this.isAddFixEquipmentShow=data;
     
   }
+
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
     // this.isAddTakeOverShow = false;
@@ -775,6 +783,7 @@ handleImportDate(data: string) {
     this.isUpdateTakeBackShow = data;
   }
  
+
   handleRecordTakeOverId(id:number){
         this.recordTakeOverId=id
     }

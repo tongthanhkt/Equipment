@@ -6,8 +6,8 @@ export default interface FixEquipmentRecord {
   fixer: string;
   fixing_time: string;
   status: string;
-  message: string;
-  cost: string;
+  message: string | null;
+  cost: string | null;
   created_by: string;
   created_time: string;
   updated_by: string;
