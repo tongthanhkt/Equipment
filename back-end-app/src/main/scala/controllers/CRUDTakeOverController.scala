@@ -42,13 +42,19 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
       val takeOverId = request.id;
       try {
         val checkTakeOver = takeOverService.checkDeleteTakeOver(request.id);
-        if(checkTakeOver==0) response.internalServerError.body(" Take over id not exist.")
-        else if (checkTakeOver== -1) response.internalServerError.body(" Take over have been deleleted.")
-        val result = takeOverService.deleteById(takeOverId)
-        if (result == 1) {
-          response.created.body(s"Delete take over with id =$takeOverId successfully .")
+        if(checkTakeOver==0) response.internalServerError.jsonError(" Thông tin bàn giao không tồn tại hoặc đã được xác nhận. Không thể xóa!")
+        else if (checkTakeOver == -1) response.internalServerError.jsonError(" Thông tin bàn giao thiết bị hiện tại. Không thể xóa!")
+        else if (checkTakeOver == 1)  {
+          val result = takeOverService.deleteById(takeOverId)
+          println(result)
+          if (result == 1) {
+            response.created.json(s"""{
+                                     |"msg" : Delete take over with id =$takeOverId successfully.
+                                     |}""".stripMargin)
+          }
+          else response.internalServerError.jsonError("Can not delete take over. Take over id not exist.")
         }
-        else response.internalServerError.body("Can not delete take over. Take over id not exist.")
+        else response.internalServerError.jsonError("Can not delete take over.")
       } catch {
         case ex: Exception => {
           println(ex)

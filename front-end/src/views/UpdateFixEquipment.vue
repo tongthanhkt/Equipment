@@ -293,6 +293,7 @@ export default class UpdateTakeOver extends Vue {
     metadata_info: "",
     device_id: "",
     name: "",
+    take_back_status:""
   };
   @Prop() id!: number;
   options: User[] = [];
