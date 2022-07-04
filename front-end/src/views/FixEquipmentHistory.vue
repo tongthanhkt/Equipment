@@ -23,21 +23,6 @@
                   <input
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
-                    placeholder="Tên người sử dụng"
-                    v-model="keyUser"
-                    @input="retrieveRecordsBySearch"
-                  />
-                </div>
-                <div
-                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                >
-                  <fa
-                    icon="magnifying-glass"
-                    class="text-gray-400 px-2 py-1"
-                  ></fa>
-                  <input
-                    class="text-base bg-gray-50 w-5/6 focus:outline-none"
-                    type="text"
                     placeholder="Tên người sửa chữa"
                     v-model="keyFixEquipmentPerson"
                     @input="retrieveRecordsBySearch"
@@ -179,18 +164,9 @@
                             v-on:click.stop="
                               changeId(record.id), changeUpdateShow(true)
                             "
-                            :disabled="record.status == '1'"
+                            :disabled="this.takeOverStatus == '1'"
                           >
                             <fa icon="pen-to-square"></fa>
-                          </button>
-                          <button
-                            :disabled="record.status == '1'"
-                            class="disabled:cursor-not-allowed disabled:opacity-50 bg-gray-100 hover:bg-gray-300 m-1 transition-colors flex justify-center items-center w-auto text-red-500 px-3.5 py-2 rounded-md focus:outline-none"
-                            v-on:click.stop="
-                              deleteRecordReq(parseInt(record.id))
-                            "
-                          >
-                            <fa icon="trash-can"></fa>
                           </button>
                         </span>
                       </div>
@@ -277,7 +253,7 @@
 import DetailFixEquipment from "./DetailFixEquipment.vue";
 import UpdateFixEquipment from "./UpdateFixEquipment.vue";
 import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
-import { Vue, Options, Emit } from "vue-property-decorator";
+import { Vue, Options, Emit, Prop } from "vue-property-decorator";
 import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 // @Options({
 //   components: {
@@ -297,6 +273,7 @@ export default class FixEquipmentHistory extends Vue {
   keyFixEquipmentPerson: string | null = null;
   totalPages: number = 0;
   public recordId: number = 0;
+  @Prop() takeOverStatus!: string;
   // handleDetailTakeBackShow(data: Boolean) {
   //   this.isDetailTakeBackShow = data;
   //   this.isAddTakeBackShow = false;
@@ -312,8 +289,8 @@ export default class FixEquipmentHistory extends Vue {
   async created() {
     this.retrieveRecords(this.getQueryParams());
   }
-
   async retrieveRecords(params: String) {
+    console.log(params);
     await FixEquipmentService.getRecordsBySearch(params)
       .then((res) => {
         console.log(res.data);

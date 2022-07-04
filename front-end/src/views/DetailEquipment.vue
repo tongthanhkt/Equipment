@@ -61,9 +61,8 @@
                   </div>
                   <p class="pl-1 text-slate-500">
                     <p v-if="equipment.take_over_status=='-1'">Bị xóa</p>
-                    <p v-else-if="equipment.take_over_status=='0'">Bị mất</p>
-                    <p v-else-if="equipment.take_over_status=='1'">Sử dụng được</p>
-                    <p v-else-if="equipment.take_over_status=='2'">Bị hư hỏng</p>
+                    <p v-else-if="equipment.take_over_status=='1'">Chưa xác nhận</p>
+                    <p v-else-if="equipment.take_over_status=='2'">Đã xác nhận</p>
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người thêm thông tin
@@ -169,11 +168,12 @@
                   Cập nhật
                 </button>
                 <button @click="deleteEquipment"
-                  class="place-self-end bg-gray-50 hover:bg-gray-200 mt-2 transition-colors flex justify-center items-center w-auto text-red-500 p-2 rounded-md focus:outline-none"
+                  class="absolute place-self-end bg-gray-50 hover:bg-gray-200 mt-2 transition-colors flex justify-center items-center w-auto text-red-500 p-2 rounded-md focus:outline-none"
                 >
                   <fa icon="ban" class="pr-2"></fa>
                   Xóa
                 </button>
+
               </div>
             </div>
           </div>
@@ -472,6 +472,7 @@
     v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
     v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
     v-on:changeRecordFixEquipmentId="handleRecordFixEquipmentId"
+    v-bind:takeOverStatus="equipment.take_over_status"
     v-bind:key="keyFixEquipment"/>
       </div>
     </div>
@@ -651,6 +652,7 @@ export default class DetailEquipment extends Vue {
   keyTakeBack :number =0;
   keyTakeOver :number=0;
   keyFixEquipment :number=0;
+ 
   // type: any = {
   //   1: "Bàn giao thiết bị mới",
   //   2: "Bàn giao thiết bị sau khi sửa chữa",
@@ -729,12 +731,11 @@ handleImportDate(data: string) {
     // this.isUpdateTakeOverShow = false;
   }
   handleAddFixEquipmentShow(data:Boolean){
-    console.log(this.isAddFixEquipmentShow);
-    if(data==false){
-  this.keyFixEquipment+=1;
+    if(data==false)
+      this.keyFixEquipment+=1;
     this.retrieveDetailEquipment(this.$route.params.id);
     this.isAddFixEquipmentShow=data;
-    }
+    
   }
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
@@ -824,7 +825,6 @@ handleImportDate(data: string) {
     this.$router.push({name:"update",params:{id:id}});
   }
   deleteEquipment() {
-    console.log("test");
     const id = this.equipment.id;
     if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
       EquipmentDataService.deleteEquipment(id!)

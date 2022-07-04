@@ -8,7 +8,7 @@
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
       >
-        Bàn giao thiết bị
+        Sửa chữa thiết bị
       </h1>
       <button
         class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors w-auto text-white rounded-md focus:outline-none"
@@ -39,7 +39,7 @@
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
         <div class="p-1 col-span-2 font-medium text-gray-700">
-          Thời gian bàn giao
+          Thời gian sửa chữa
         </div>
 
         <div>
@@ -58,15 +58,15 @@
           />
         </div>
 
-        <div class="p-1 font-medium text-gray-700">Người bàn giao</div>
+        <div class="p-1 font-medium text-gray-700">Người sửa chữa</div>
         <div class="pl-1 col-span-2 font-medium text-gray-700">
-          Loại bàn giao
+          Trạng thái sửa chữa
         </div>
         <div>
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
-            v-model="take_over_person"
+            v-model="fixer"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
           >
@@ -87,67 +87,16 @@
         </div>
         <div class="col-span-2">
           <select
-            v-model="record.type_take_over"
+            v-model="record.status"
             id="type"
             name="type"
             autocomplete="type-name"
             class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
           >
-            <option value="1">Bàn giao thiết bị mới</option>
-            <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
+            <option value="-1">Không sửa được</option>
+            <option value="0">Đang sửa</option>
+            <option value="1">Sửa thành công</option>
           </select>
-        </div>
-        <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
-        <div class="p-1 col-span-2 font-medium text-gray-700">
-          Người xác nhận
-        </div>
-
-        <div>
-          <v-select
-            class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-            :options="options"
-            v-model="user"
-            :get-option-label="(option) => option.username"
-            :dropdown-should-open="dropdownShouldOpen"
-            @change="changeUser"
-          >
-            <template #search="{ attributes, events }">
-              <input
-                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
-                v-bind="attributes"
-                v-on="events"
-                @input="retrieveUser"
-              />
-            </template>
-            <template #option="{ username, fullname }">
-              {{ fullname }}
-              <br />
-              <cite>{{ username }} </cite>
-            </template>
-          </v-select>
-        </div>
-        <div>
-          <v-select
-            class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-            :options="options"
-            v-model="verifier"
-            :get-option-label="(option) => option.username"
-            :dropdown-should-open="dropdownShouldOpen"
-          >
-            <template #search="{ attributes, events }">
-              <input
-                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
-                v-bind="attributes"
-                v-on="events"
-                @input="retrieveUser"
-              />
-            </template>
-            <template #option="{ username, fullname }">
-              {{ fullname }}
-              <br />
-              <cite>{{ username }} </cite>
-            </template>
-          </v-select>
         </div>
       </div>
       <div
@@ -215,10 +164,10 @@
       <div class="flex flex-row gap">
         <button
           class="bg-green-500 hover:bg-green-600 m-3.5 transition-colors text-base w-auto text-white p-2 rounded-md focus:outline-none"
-          @click="insertTakeOverRecord"
+          @click="insertFixEquipmentRecord"
         >
           <fa icon="rotate-right" class="px-1"></fa>
-          Bàn giao
+          Thêm sửa chữa
         </button>
         <button
           class="bg-red-500 hover:bg-red-600 m-3.5 transition-colors w-auto text-white p-2 rounded-md focus:outline-none"
@@ -236,10 +185,10 @@
 import Datepicker from "@vuepic/vue-datepicker";
 import UploadService from "../services/equipments/UploadFilesService";
 import { Vue, Options, Emit, Ref, Prop } from "vue-property-decorator";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
-import TakeOverService from "@/services/takeover/TakeOverService";
+import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
 
 @Options({
   components: {
@@ -253,11 +202,9 @@ export default class AddFixEquipment extends Vue {
 
   record = {
     equipment_id: "",
-    username: "",
-    take_over_time: "",
-    verifier: "",
-    take_over_person: "",
-    type_take_over: "",
+    fixing_time: "",
+    fixer: "",
+    status: "",
     message: null,
     cost: null,
     created_by: "tatthanh",
@@ -266,16 +213,15 @@ export default class AddFixEquipment extends Vue {
   timeOut: any;
   private options: User[] = [];
   user: User | null = null;
-  take_over_person: User | null = null;
-  verifier: User | null = null;
+  fixer: User | null = null;
 
-  @Emit("changeFixEquipmentShow")
+  @Emit("changeAddFixEquipmentShow")
   changeShow(data: boolean) {
     return data;
   }
 
   changeUser() {
-    this.verifier = this.user;
+    this.fixer = this.user;
   }
   editDate: any = null;
 
@@ -341,35 +287,22 @@ export default class AddFixEquipment extends Vue {
     }, 300);
   }
 
-  async insertTakeOverRecord() {
-    if (this.user == null) {
-      alert("Hãy chọn người nhận thiết bị!");
-    } else if (this.take_over_person == null) {
-      alert("Hãy chọn người bàn giao!");
-    } else if (this.verifier == null) {
-      alert("Hãy chọn người xác nhận !");
+  async insertFixEquipmentRecord() {
+    if (this.fixer == null) {
+      alert("Hãy chọn người sửa chữa!");
     } else if (this.editDate === null || this.editDate === undefined) {
-      alert("Hãy nhập thời gian bàn giao");
-    } else if (
-      this.record.type_take_over == null ||
-      this.record.type_take_over == ""
-    ) {
-      alert("Hãy chọn loại bàn giao");
-    }
-    // else if (this.msgError!=null){
-    //   alert("Chọn file <= 5MB");
-    // }
-    else {
-      this.record.username = this.user.username;
-      this.record.take_over_person = this.take_over_person.username;
-      this.record.verifier = this.verifier.username;
-      this.record.take_over_time = this.editDate.getTime();
+      alert("Hãy nhập thời gian sửa chữa");
+    } else if (this.record.status == null || this.record.status == "") {
+      alert("Hãy chọn trạng thái sửa chữa");
+    } else {
+      this.record.fixer = this.fixer.username;
+      this.record.fixing_time = this.editDate.getTime();
       this.record.metadata_info = await this.uploadFiles();
       this.record.equipment_id = this.equipment_id;
       console.log(this.record);
-      TakeOverService.add(this.record)
+      FixEquipmentService.add(this.record)
         .then((res) => {
-          alert("Thêm thông tin bàn giao cho thiết bị thành công !");
+          alert("Thêm thông tin sửa chữa cho thiết bị thành công !");
           this.changeShow(false);
         })
         .catch((err) => {
