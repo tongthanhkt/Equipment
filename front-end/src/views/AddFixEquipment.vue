@@ -8,7 +8,7 @@
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
       >
-        Chỉnh sửa thông tin bàn giao - {{ id }}
+        Bàn giao thiết bị
       </h1>
       <button
         class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors w-auto text-white rounded-md focus:outline-none"
@@ -27,14 +27,14 @@
           <div
             class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
           >
-            {{ record.device_id }}
+            {{ device_id }}
           </div>
         </div>
         <div class="col-span-2">
           <div
             class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
           >
-            {{ record.name }}
+            {{ equipment_name }}
           </div>
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
@@ -63,12 +63,6 @@
           Loại bàn giao
         </div>
         <div>
-          <!-- <input
-                type="text"
-                class=" mx-1  px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-                placeholder=""
-                v-model="record.take_over_person"
-              /> -->
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
@@ -167,35 +161,17 @@
           cols="50"
           class="mx-1 my-2 px-2 py-1.5 border rounded"
           v-model="record.message"
-        >
-        </textarea>
+        ></textarea>
         <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
-        <div v-if="currentFileName.length != 0">
-          <ul class="list-group list-group-flush flex flex-row flex-wrap">
-            <div v-for="(file_name, index) in currentFileName" :key="index">
-              <div>
-                <div
-                  class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
-                >
-                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
-                  <div class="py-1">{{ file_name }}</div>
-                  <span
-                    class="close px-2 py-1"
-                    @click="deleteCurrentFile(index)"
-                    >&times;</span
-                  >
-                </div>
-              </div>
-            </div>
-          </ul>
-        </div>
+        <!-- <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
 
+       </div> -->
         <div class="mx-1 mt-2 mb-3">
           <div class="row">
-            <div class="col-8">
-              <label class="px-2">Thêm tệp mới: </label>
-
-              <input type="file" ref="file" @change="selectFiles" multiple />
+            <div class="col-5">
+              <label class="btn btn-default p-0">
+                <input type="file" ref="file" @change="selectFiles" multiple />
+              </label>
             </div>
           </div>
           <span
@@ -208,13 +184,13 @@
 
           <div class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
             <div
-              class="border-b-2 border-indigo-300 text-sm text-orange-600 font-semibold flex flex-row"
+              class="border-b-2 border-indigo-300 text-base text-orange-600 font-semibold flex flex-row"
             >
               <fa icon="folder" class="px-2 py-1"></fa>
-              <div class="p-1">Selected Files</div>
+              <div>Selected Files</div>
             </div>
             <ul class="list-group list-group-flush flex flex-row flex-wrap">
-              <div v-for="(file, index) in allFiles">
+              <div v-for="(file, index) in allFiles" :key="index">
                 <div>
                   <div
                     class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
@@ -238,11 +214,11 @@
       <!-- <div class="p-1 m-2 text-base  font-medium text-gray-700">Thông tin</div> -->
       <div class="flex flex-row gap">
         <button
-          class="bg-sky-500 hover:bg-sky-600 m-3.5 transition-colors text-base w-auto text-white p-2 rounded-md focus:outline-none"
-          @click="updateTakeOverRecord"
+          class="bg-green-500 hover:bg-green-600 m-3.5 transition-colors text-base w-auto text-white p-2 rounded-md focus:outline-none"
+          @click="insertTakeOverRecord"
         >
-          <fa icon="pen-to-square" class="px-1"></fa>
-          Save
+          <fa icon="rotate-right" class="px-1"></fa>
+          Bàn giao
         </button>
         <button
           class="bg-red-500 hover:bg-red-600 m-3.5 transition-colors w-auto text-white p-2 rounded-md focus:outline-none"
@@ -258,65 +234,50 @@
 
 <script lang="ts">
 import Datepicker from "@vuepic/vue-datepicker";
-import { ref } from "vue";
 import UploadService from "../services/equipments/UploadFilesService";
-import TakeOverService from "@/services/takeover/TakeOverService";
+import { Vue, Options, Emit, Ref, Prop } from "vue-property-decorator";
 import TakeOverRecord from "@/types/TakeOverRecord";
-import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-import "vue-select/dist/vue-select.css";
-import Fuse from "fuse.js";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
-import UploadFilesService from "../services/equipments/UploadFilesService";
+import TakeOverService from "@/services/takeover/TakeOverService";
 
 @Options({
   components: {
     Datepicker,
   },
 })
-export default class UpdateTakeOver extends Vue {
-  record: TakeOverRecord = {
-    id: "",
+export default class AddFixEquipment extends Vue {
+  @Prop(String) device_id!: string;
+  @Prop(String) equipment_name!: string;
+  @Prop(String) equipment_id!: string;
+
+  record = {
     equipment_id: "",
     username: "",
     take_over_time: "",
-    status: "",
     verifier: "",
     take_over_person: "",
     type_take_over: "",
     message: null,
     cost: null,
-    created_by: "",
-    created_time: "",
-    updated_by: "",
-    updated_time: "",
-    metadata_info: "",
-    device_id: "",
-    name: "",
-  };
-  @Prop() id!: number;
-  options: User[] = [];
-  user: User = {
-    username: this.record.username,
-    fullname: "",
-  };
-  take_over_person: User = {
-    username: this.record.take_over_person,
-    fullname: "",
-  };
-  verifier: User = {
-    username: this.record.verifier,
-    fullname: "",
+    created_by: "tatthanh",
+    metadata_info: {},
   };
   timeOut: any;
-  editDate: any = null;
-  currentMetaData: any;
-  currentFileName: string[] = [];
+  private options: User[] = [];
+  user: User | null = null;
+  take_over_person: User | null = null;
+  verifier: User | null = null;
 
-  @Emit("changeUpdateTakeOverShow")
+  @Emit("changeFixEquipmentShow")
   changeShow(data: boolean) {
     return data;
   }
+
+  changeUser() {
+    this.verifier = this.user;
+  }
+  editDate: any = null;
 
   format(date: Date | null | undefined) {
     if (date === null || date === undefined) return null;
@@ -326,8 +287,8 @@ export default class UpdateTakeOver extends Vue {
   }
 
   @Ref("file") inpuFile!: HTMLInputElement;
-  msgError: string | null | undefined = null;
-  allFiles: File[] = [];
+  private msgError: string | null | undefined = null;
+  private allFiles: File[] = [];
   selectFiles(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.allFiles = [];
@@ -339,7 +300,6 @@ export default class UpdateTakeOver extends Vue {
         if (currentFile != null && currentFile?.size > 5000000) {
           this.msgError = "Chọn file <= 5MB";
           this.allFiles = [];
-
           return;
         }
         if (currentFile != null) this.allFiles.push(currentFile);
@@ -357,99 +317,31 @@ export default class UpdateTakeOver extends Vue {
         obj = Object.assign(response.data, obj);
       });
     }
-    return obj;
-  }
-  changeUser() {
-    this.verifier = this.user;
-  }
-
-  async created() {
-    await this.retrieveRecord();
-    this.options.push(this.user);
-    this.options.push(this.take_over_person);
-    this.options.push(this.verifier);
-  }
-
-  async getCurrentMetaData() {
-    await this.deleteOldFile();
-    const newMetaData = await this.uploadFiles();
-    let obj = Object.assign(
-      Object.fromEntries(this.currentMetaData),
-      newMetaData
-    );
     if (obj === null || obj === undefined) return {};
     return obj;
   }
 
-  deleteFiles: string[] = [];
-  deleteCurrentFile(index: number) {
-    this.deleteFiles.push(this.currentFileName[index]);
-    this.currentFileName.splice(index, 1);
-    this.currentMetaData.splice(index, 1);
-  }
-
-  async deleteOldFile() {
-    for (let i = 0; i < this.deleteFiles.length; i++) {
-      await UploadFilesService.deleteFile(this.deleteFiles[i])
-        .then(() => {
-          console.log("Delete done!");
-        })
-        .catch((err) => console.log(err));
-    }
-  }
-
   dropdownShouldOpen(VueSelect: any) {
-    console.log(this.editDate);
     return VueSelect.search.length !== 0;
   }
 
-  async retrieveRecord() {
-    await TakeOverService.getRecordById(this.id)
-      .then((res) => {
-        this.record = res.data;
-        console.log(this.record);
-        // this.record.take_over_time = this.handleDate(
-        //   this.record.take_over_time
-        // );
-        if (this.record.cost != null)
-          this.record.cost = parseFloat(this.record.cost).toString();
-        this.editDate = ref(new Date(Number(this.record.take_over_time)));
-        this.currentMetaData = Object.entries(res.data.metadata_info);
-        let result = Object.values(res.data.metadata_info).map(
-          (File: any) => File.file_name
-        );
-        result.forEach((file_name, index) => {
-          this.currentFileName[index] = `${file_name}`;
+  async retrieveUser(event: Event) {
+    //console.log(keyword);
+    clearTimeout(this.timeOut);
+
+    this.timeOut = setTimeout(() => {
+      UserService.getBySearch((event.target as HTMLInputElement).value)
+        .then((res) => {
+          this.options = res.data.user_list;
+          console.log(this.options);
+        })
+        .catch((err) => {
+          alert(err.response.data);
         });
-        console.log(this.editDate);
-        this.user = {
-          username: this.record.username,
-          fullname: "",
-        };
-        this.take_over_person = {
-          username: this.record.take_over_person,
-          fullname: "",
-        };
-        this.verifier = {
-          username: this.record.verifier,
-          fullname: "",
-        };
-      })
-      .catch((err) => {
-        alert(err.response.data);
-      });
-  }
-  handleDate(event: Event) {
-    if (
-      (event.target as HTMLInputElement).value === undefined ||
-      (event.target as HTMLInputElement).value === null
-    )
-      return "";
-    var d = new Date((event.target as HTMLInputElement).value);
-    this.record.take_over_time = d.toLocaleString();
+    }, 300);
   }
 
-  async updateTakeOverRecord() {
+  async insertTakeOverRecord() {
     if (this.user == null) {
       alert("Hãy chọn người nhận thiết bị!");
     } else if (this.take_over_person == null) {
@@ -468,55 +360,28 @@ export default class UpdateTakeOver extends Vue {
     //   alert("Chọn file <= 5MB");
     // }
     else {
-      console.log(this.editDate.getTime());
-
-      const data = {
-        id: this.record.id,
-        equipment_id: this.record.equipment_id,
-        username: this.user?.username,
-        take_over_time: this.editDate.getTime(),
-        verifier: this.verifier?.username,
-        take_over_person: this.take_over_person?.username,
-        type_take_over: this.record.type_take_over,
-        message: this.record.message,
-        cost: this.record.cost,
-        updated_by: "tatthanh",
-        metadata_info: await this.getCurrentMetaData(),
-      };
-      if (this.record.cost == "") data.cost = null;
-
-      console.log(data);
-      TakeOverService.update(data)
+      this.record.username = this.user.username;
+      this.record.take_over_person = this.take_over_person.username;
+      this.record.verifier = this.verifier.username;
+      this.record.take_over_time = this.editDate.getTime();
+      this.record.metadata_info = await this.uploadFiles();
+      this.record.equipment_id = this.equipment_id;
+      console.log(this.record);
+      TakeOverService.add(this.record)
         .then((res) => {
-          alert("Cập nhật thông tin bàn giao thành công !");
+          alert("Thêm thông tin bàn giao cho thiết bị thành công !");
           this.changeShow(false);
         })
         .catch((err) => {
           const errors = err.response.data.errors[0];
-          console.log(errors);
-          let temp = "";
-          Object.values(errors).forEach((error) => {
-            temp = temp + error + "\n";
-          });
-          alert(temp);
+          // console.log(errors);
+          // let temp = "";
+          // Object.values(errors).forEach((error) => {
+          //   temp = temp + error + "\n";
+          // });
+          alert(errors);
         });
     }
-  }
-
-  async retrieveUser(event: Event) {
-    //console.log(keyword);
-    clearTimeout(this.timeOut);
-
-    this.timeOut = setTimeout(() => {
-      UserService.getBySearch((event.target as HTMLInputElement).value)
-        .then((res) => {
-          this.options = res.data.user_list;
-          console.log(this.options);
-        })
-        .catch((err) => {
-          alert(err.response.data);
-        });
-    }, 300);
   }
 }
 </script>

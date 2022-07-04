@@ -111,7 +111,7 @@
       <div class="grid grid-cols-2">
         <button
           class="justify-self-start bg-sky-500 hover:bg-sky-600 m-3.5 transition-colors text-base w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none"
-          v-on:click="showUpdateTakeOver"
+          v-on:click="showUpdateFixEquipment"
         >
           <fa icon="pen-to-square" class="px-2"></fa>
           Cập nhật
@@ -173,7 +173,7 @@ export default class DetailTakeOver extends Vue {
   }
 
   @Emit("changeUpdateFixEquipmentShow")
-  showUpdateTakeOver() {
+  showUpdateFixEquipment() {
     return true;
   }
 

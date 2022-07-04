@@ -137,7 +137,7 @@
                   </p>
                 </div>
               </span>
-              <div class="p-2 mt-4 grid grid-cols-3">
+              <div class="p-2 mt-4 grid grid-cols-4">
                 <button
                   class="bg-green-500 hover:bg-green-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
                   v-on:click="handleAddTakeOverShow(true)"
@@ -153,6 +153,14 @@
                 >
                   <fa icon="rotate-left" class="pr-2"></fa>
                   Thu hồi
+                </button>
+                 <button
+                  class="bg-yellow-500 hover:bg-yellow-600 m-2 transition-colors flex justify-center w-auto-2 items-center text-white px-1 py-2 rounded-md focus:outline-none"
+                  v-if="equipment?.take_over_status == '0' && equipment.device_status=='2'"
+                  v-on:click="handleAddFixEquipmentShow(true)"
+                >
+                  <fa icon="rotate-left" class="pr-2"></fa>
+                  Sửa chữa
                 </button>
                 <button @click="editEquipment"
                   class="bg-sky-500 hover:bg-sky-600 m-2 transition-colors flex justify-center items-center w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none"
@@ -463,12 +471,11 @@
     <FixEquipmentHistory
     v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
     v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-    v-on:deleteRecord="deleteFixEquipmentRecord"
     v-on:changeRecordFixEquipmentId="handleRecordFixEquipmentId"
-    
     v-bind:key="keyFixEquipment"/>
       </div>
     </div>
+
     <DetailFixEquipment
       v-if="isDetailFixEquipmentShow"
       v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
@@ -519,6 +526,13 @@
       v-bind:equipment_name="equipment?.name"
        v-bind:equipment_id="equipment?.id"
     />
+    <AddFixEquipment
+      v-if="isAddFixEquipmentShow"
+      v-on:changeAddFixEquipmentShow="handleAddFixEquipmentShow"
+      v-bind:device_id="equipment.device_id"
+      v-bind:equipment_name="equipment.name"
+      v-bind:equipment_id="equipment.id"
+    />
     <!-- <DetailTakeOver
       v-if="isDetailTakeOverShow"
       v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
@@ -544,6 +558,7 @@ import DetailTakeBack from "./DetailTakeBack.vue";
 import UpdateTakeBack from "./UpdateTakeBack.vue";
 import AddTakeOver from "./AddTakeOver.vue";
 import AddTakeBack from "./AddTakeBack.vue";
+import AddFixEquipment from "./AddFixEquipment.vue";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeOverRecord from "@/types/TakeOverRecord";
@@ -561,13 +576,17 @@ import UpdateFixEquipment from "./UpdateFixEquipment.vue";
     DetailTakeBack,
     DetailTakeOver,
     DetailFixEquipment,
+    
     UpdateTakeBack,
     UpdateTakeOver,
+    UpdateFixEquipment,
     TakeBackHistory,
     TakeOverHistory,
     FixEquipmentHistory,
+    
     AddTakeOver,
-    AddTakeBack
+    AddTakeBack,
+    AddFixEquipment,
 
   },
 })
@@ -605,6 +624,7 @@ export default class DetailEquipment extends Vue {
   depreciation_period: "",
   period_type: "",
   metadata_info:""};
+
   isDetailFixEquipmentShow:Boolean=false;
   isAddFixEquipmentShow:Boolean=false;
   isUpdateFixEquipmentShow:Boolean=false;
@@ -708,6 +728,14 @@ handleImportDate(data: string) {
     // this.isDetailTakeOverShow = false;
     // this.isUpdateTakeOverShow = false;
   }
+  handleAddFixEquipmentShow(data:Boolean){
+    console.log(this.isAddFixEquipmentShow);
+    if(data==false){
+  this.keyFixEquipment+=1;
+    this.retrieveDetailEquipment(this.$route.params.id);
+    this.isAddFixEquipmentShow=data;
+    }
+  }
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
     // this.isAddTakeOverShow = false;
@@ -726,24 +754,24 @@ handleImportDate(data: string) {
   handleDetailFixEquipmentShow(data:Boolean){
     this.isDetailFixEquipmentShow=data;
   }
-handleUpdateFixEquipmentShow(data: Boolean) {
+  handleUpdateFixEquipmentShow(data: Boolean) {
     if (data ==false)
      this.keyFixEquipment+=1
     //this.isDetailTakeBackShow = false;
-    this.isUpdateTakeBackShow = data;
+    this.isUpdateFixEquipmentShow = data;
   }
+
   handleDetailTakeBackShow(data: Boolean) {
     this.isDetailTakeBackShow = data;
     //this.isUpdateTakeBackShow = false;
   }
-
   handleUpdateTakeBackShow(data: Boolean) {
     if (data ==false)
      this.keyTakeBack+=1
     //this.isDetailTakeBackShow = false;
     this.isUpdateTakeBackShow = data;
   }
-
+ 
   handleRecordTakeOverId(id:number){
         this.recordTakeOverId=id
     }

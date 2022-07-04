@@ -303,8 +303,15 @@ export default class AddEquipment extends Vue {
     if (this.equipment.depreciation_period?.length == 0) {
       this.errors?.push("Depreciated period id required");
     }
+    if (
+      this.equipment.import_date?.length == 0 ||
+      this.equipment.import_date == null
+    ) {
+      this.errors?.push(" Import date required");
+    }
   }
   async saveEquipment() {
+    console.log(this.equipment.import_date);
     this.checkValidateForm();
     if (this.errors.length != 0) {
       let errors = "";
