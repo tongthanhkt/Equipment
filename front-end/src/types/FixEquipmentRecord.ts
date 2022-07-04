@@ -13,6 +13,7 @@ export default interface FixEquipmentRecord {
   updated_by: string;
   updated_time: string;
   metadata_info: Object;
+  take_over_status: string;
 
   name: string;
 }

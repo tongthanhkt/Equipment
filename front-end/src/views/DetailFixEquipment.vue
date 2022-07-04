@@ -108,25 +108,6 @@
     </div>
     <div class="bg-indigo-100 w-full border-t border-gray-300">
       <!-- <div class="p-1 m-2 text-base  font-medium text-gray-700">Thông tin</div> -->
-      <div class="grid grid-cols-2">
-        <button
-          class="justify-self-start bg-sky-500 hover:bg-sky-600 m-3.5 transition-colors text-base w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none"
-          v-on:click="showUpdateFixEquipment"
-        >
-          <fa icon="pen-to-square" class="px-2"></fa>
-          Cập nhật
-        </button>
-        <button
-          class="justify-self-end bg-indigo-10 hover:bg-gray-300 m-3.5 transition-colors w-auto text-red-500 p-2 rounded-md focus:outline-none"
-          v-on:click.stop="
-            changeShow(false);
-            deleteDetailRecord(id);
-          "
-        >
-          <fa icon="ban" class="px-2"></fa>
-          Xóa
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -138,7 +119,7 @@ import TakeOverService from "@/services/takeover/TakeOverService";
 import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 
-export default class DetailTakeOver extends Vue {
+export default class DetailFixEquipment extends Vue {
   record: FixEquipmentRecord = {
     id: "",
     equipment_id: "",
@@ -154,7 +135,7 @@ export default class DetailTakeOver extends Vue {
     updated_by: "",
     updated_time: "",
     metadata_info: "",
-
+    take_over_status: "",
     name: "",
   };
   type: any = {

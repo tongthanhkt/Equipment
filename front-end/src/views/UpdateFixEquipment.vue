@@ -214,6 +214,7 @@ export default class UpdateFixEquipment extends Vue {
     updated_by: "",
     updated_time: "",
     metadata_info: "",
+    take_over_status: "",
     name: "",
   };
   @Prop() id!: number;

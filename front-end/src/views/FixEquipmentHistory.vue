@@ -28,6 +28,21 @@
                     @input="retrieveRecordsBySearch"
                   />
                 </div>
+                <div
+                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                >
+                  <fa
+                    icon="magnifying-glass"
+                    class="text-gray-400 px-2 py-1"
+                  ></fa>
+                  <input
+                    class="text-base bg-gray-50 w-5/6 focus:outline-none"
+                    type="text"
+                    placeholder="Mã thiết bị"
+                    v-model="keyFixEquipmentDeviceId"
+                    @input="retrieveRecordsBySearch"
+                  />
+                </div>
               </span>
             </div>
             <div class="p-2 flex justify-end w-auto">
@@ -164,6 +179,7 @@
                             v-on:click.stop="
                               changeId(record.id), changeUpdateShow(true)
                             "
+                            :disabled="record.take_over_status == '1'"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>
@@ -270,6 +286,7 @@ export default class FixEquipmentHistory extends Vue {
   public currentFixEquipmentStatus: string | null = null;
   public keyUser: string | null = null;
   keyFixEquipmentPerson: string | null = null;
+  keyFixEquipmentDeviceId: string | null = null;
   totalPages: number = 0;
   public recordId: number = 0;
   @Prop() takeOverStatus!: string;
@@ -289,7 +306,6 @@ export default class FixEquipmentHistory extends Vue {
     this.retrieveRecords(this.getQueryParams());
   }
   async retrieveRecords(params: String) {
-    console.log(params);
     await FixEquipmentService.getRecordsBySearch(params)
       .then((res) => {
         console.log(res.data);
@@ -318,6 +334,7 @@ export default class FixEquipmentHistory extends Vue {
       fixer: this.keyFixEquipmentPerson,
       status: this.currentFixEquipmentStatus,
       equipment_id: this.$route.params.id,
+      device_id: this.keyFixEquipmentDeviceId,
     };
     Object.keys(queryParams).forEach((key) => {
       if (queryParams[key] === null || queryParams[key] === undefined) {
