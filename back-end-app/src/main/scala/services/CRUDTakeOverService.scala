@@ -73,7 +73,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql=
       """
          SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
-          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time
+          ,tov.message,tov.cost,tov.created_by,tov.created_time,tov.updated_by,tov.updated_time,tov.takeback_status
         FROM equipment_management.takeover_equipment_info as tov
         LEFT JOIN equipment_management.equipment as e
         on e.id = tov.equipment_id
@@ -119,6 +119,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       createdTime = rs.getString("created_time"),
       updatedBy = rs.getString("updated_by"),
       updatedTime = rs.getString("updated_time"),
+      takeBackStatus=rs.getString("takeback_status"),
       metadataInfo = toMap(rs.getString("metadata_info")));
 
       takeOverList.add(e);
@@ -177,7 +178,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   @throws[SQLException]
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
-      SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
+      SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time,tov.takeback_status
       FROM equipment_management.takeover_equipment_info as tov, equipment as e
       WHERE  tov.id = ? and tov.equipment_id=e.id
 				;"""
@@ -204,6 +205,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         createdTime = rs.getString("created_time"),
         updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
+        takeBackStatus=rs.getString("takeback_status"),
         metadataInfo = toMap(rs.getString("metadata_info")));
     }
     con.close();
