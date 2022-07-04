@@ -43,11 +43,6 @@ case class TakeBack(
     else if (convertString.isInt(typeTakeBack)&&(convertString.toInt(typeTakeBack).get>4)||convertString.toInt(typeTakeBack).get<1)
       check=check + (11 -> "The typeTakeBack is incorrect ! ")
 
-    if(status==null||status=="") (12->"The field 'status' cannot be blank . ")
-    else if (!convertString.isInt(status)) check = check + (13 -> "The 'status' field : type mismatch, required : Int. ")
-    else if(convertString.isInt(status)&&convertString.toInt(status).get< -1||convertString.toInt(status).get>1)
-      check=check + (14 -> "The 'Start Status' field : type mismatch, required : Int. ")
-
     if (cost!= null && !convertString.isDouble(cost))
       check = check + (15 -> "The 'Cost' field : type mismatch, required : Double. ")
     else if (convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
@@ -74,10 +69,6 @@ case class TakeBack(
     else if (convertString.isInt(typeTakeBack)&&(convertString.toInt(typeTakeBack).get>4)||convertString.toInt(typeTakeBack).get<1)
       check=check + (11 -> "The typeTakeBack is incorrect ! ")
 
-    if(status=="") (12->"The field 'status' cannot be blank . ")
-    else if (!convertString.isInt(status)) check = check + (13 -> "The 'status' field : type mismatch, required : Int. ")
-    else if(convertString.isInt(status)&&convertString.toInt(status).get< -1||convertString.toInt(status).get>1)
-      check=check + (14 -> "The 'Start Status' field : type mismatch, required : Int. ")
 
 
     if (cost!=null && !convertString.isDouble(cost))
