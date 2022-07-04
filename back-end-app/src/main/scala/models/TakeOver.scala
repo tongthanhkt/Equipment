@@ -43,10 +43,7 @@ case class TakeOver(
     else if (!convertString.isInt(typeTakeOver)) check = check + (10 -> "The 'TakeOver Time' field : type mismatch, required : Int. ")
     else if (convertString.isInt(typeTakeOver)&&(convertString.toInt(typeTakeOver).get>2)||convertString.toInt(typeTakeOver).get<1)
                                              check=check + (11 -> "The typeTakeOver is incorrect ! ")
-    if(status==null||status=="") (12->"The field 'status' cannot be blank . ")
-    else if (!convertString.isInt(status)) check = check + (13 -> "The 'status' field : type mismatch, required : Int. ")
-    else if(convertString.isInt(status)&&convertString.toInt(status).get< -1||convertString.toInt(status).get>1)
-                                            check=check + (14 -> "The 'Start Status' field : type mismatch, required : Int. ")
+
     if (cost!= null && !convertString.isDouble(cost))
       check = check + (15 -> "The 'Cost' field : type mismatch, required : Double. ")
     else if (convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
