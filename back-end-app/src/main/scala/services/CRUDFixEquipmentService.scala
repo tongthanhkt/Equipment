@@ -18,7 +18,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
     val takeOverList = new util.ArrayList[FixEquipment]()
     val sql=
       """
-         SELECT fix.*,e.device_id,e.name as equipment_name
+         SELECT fix.*,e.device_id,e.name as equipment_name,e.takeover_status
         FROM equipment_management.fixing_equipment_info as fix
         JOIN equipment_management.equipment as e
         on e.id = fix.equipment_id
@@ -61,6 +61,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
         createdTime = rs.getString("created_time"),
         updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
+        takeOverStatus =  rs.getString("takeover_status"),
         metadataInfo = toMap(rs.getString("metadata_info")));
 
       takeOverList.add(e);
@@ -126,7 +127,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
   @throws[SQLException]
   def searchById(id:String): FixEquipment = {
     val sql = """
-      SELECT fix.*,e.device_id,e.name as equipment_name
+      SELECT fix.*,e.device_id,e.name as equipment_name,e.takeover_status
         FROM equipment_management.fixing_equipment_info as fix
         JOIN equipment_management.equipment as e
         on e.id = fix.equipment_id
@@ -153,6 +154,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
         createdTime = rs.getString("created_time"),
         updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
+        takeOverStatus =  rs.getString("takeover_status"),
         metadataInfo = toMap(rs.getString("metadata_info")));
     }
     con.close();

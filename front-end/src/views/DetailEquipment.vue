@@ -119,7 +119,7 @@
                   <div class="p-1 text-base font-medium text-gray-700">
                     Trạng thái thiết bị
                   </div>
-                  <p class="pl-1 text-slate-500">
+                  <p class="pl-1 text-yellow-500 italic font-semibold">
                    {{ this.deviceStatus[equipment.device_status] }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
@@ -136,11 +136,11 @@
                   </p>
                 </div>
               </span>
-              <div class="relative p-2 mt-4 grid grid-cols-4">
+              <div class="p-2 mt-4 grid grid-cols-3">
                 <button
                   class="bg-green-500 hover:bg-green-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
                   v-on:click="handleAddTakeOverShow(true)"
-                  v-if="equipment?.take_over_status == '0'"
+                  v-if="equipment?.take_over_status == '0' && equipment?.device_status == '1' "
                 >
                   <fa icon="rotate-right" class="pr-2"></fa>
                   Bàn giao
@@ -754,7 +754,7 @@ handleImportDate(data: string) {
   handleUpdateTakeOverShow(data: Boolean) {
     if (data ==false)
      this.keyTakeOver+=1
-    
+    this.retrieveDetailEquipment(this.$route.params.id);
     // this.isDetailTakeOverShow = false;
     // this.isAddTakeOverShow = false;
     this.isUpdateTakeOverShow = data;
@@ -766,6 +766,7 @@ handleImportDate(data: string) {
   handleUpdateFixEquipmentShow(data: Boolean) {
     if (data ==false)
      this.keyFixEquipment+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
     //this.isDetailTakeBackShow = false;
     this.isUpdateFixEquipmentShow = data;
   }
@@ -777,6 +778,7 @@ handleImportDate(data: string) {
   handleUpdateTakeBackShow(data: Boolean) {
     if (data ==false)
      this.keyTakeBack+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
     //this.isDetailTakeBackShow = false;
     this.isUpdateTakeBackShow = data;
   }

@@ -164,7 +164,10 @@
             py-2
             rounded-md
             focus:outline-none
+            disabled:cursor-not-allowed
+            disabled:opacity-50
           "
+          :disabled="record.status == '1'"
           v-on:click="showUpdateTakeBack"
         >
           <fa icon="pen-to-square" class="px-2"></fa>
@@ -182,7 +185,10 @@
             p-2
             rounded-md
             focus:outline-none
+            disabled:cursor-not-allowed
+            disabled:opacity-50
           "
+          :disabled="record.status == '1'"
           v-on:click.stop="
             changeShow(false);
             deleteDetailRecord(id);

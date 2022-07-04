@@ -271,7 +271,7 @@
             class=" bg-red-500 hover:bg-red-600 m-3.5 transition-colors  text-base w-auto text-white p-2 rounded-md focus:outline-none"
             @click="insertTakeBackRecord"
           >
-            <fa icon="rotate-right"  class="px-1" ></fa>
+            <fa icon="rotate-left"  class="px-1" ></fa>
             Thu hồi
           </button>
           <button
