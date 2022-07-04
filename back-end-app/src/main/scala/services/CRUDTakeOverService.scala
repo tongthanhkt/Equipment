@@ -236,7 +236,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql =
       """
         |SELECT * from takeover_equipment_info as tov
-        |WHERE tov.id = ?
+        |WHERE tov.id = ? ;
         |""".stripMargin
         var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
@@ -249,8 +249,8 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     if(result==null){
       return 0 // takeover khong ton tai
     }else if(result.status=="-1") return -1 ; //take over da bi xoa
-    else if(result.takeBackStatus=="1") return 1; //take over da duoc ban giao
-    else return 100;
+    else if(result.takeBackStatus=="0") return 2; //take over da duoc ban giao
+    else return 1;
   }
   @throws[Exception]
   def checkequipmentForTakeOver(equipmentId: String): Int = {
