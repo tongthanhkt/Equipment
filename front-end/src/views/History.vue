@@ -171,8 +171,8 @@ export default class History extends Vue {
           this.keyTakeOver += 1;
           alert("Delete Successfully !!");
         })
-
-        .catch((err) => alert(err.response.data));
+        
+        .catch((err) => alert(err.response.data.errors[0]));
     }
   }
 }

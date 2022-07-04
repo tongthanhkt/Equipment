@@ -113,7 +113,7 @@
                     transition-colors
                     hover:bg-gray-400
                   "
-                  @click=" downloadfile(index)"
+                  @click="downloadfile(index)"
                 >
                   <fa icon="file-arrow-up" class="px-2 py-2"></fa>
                   <div class="py-1 pr-2">{{ file_name }}</div>
@@ -164,8 +164,7 @@
             py-2
             rounded-md
             focus:outline-none
-            disabled:cursor-not-allowed
-            disabled:opacity-50
+            disabled:cursor-not-allowed disabled:opacity-50
           "
           :disabled="record.status == '1'"
           v-on:click="showUpdateTakeOver"
@@ -185,10 +184,9 @@
             p-2
             rounded-md
             focus:outline-none
-            disabled:cursor-not-allowed
-            disabled:opacity-50
+            disabled:cursor-not-allowed disabled:opacity-50
           "
-          :disabled="record.status == '1'"
+          :disabled="record.status == '1' || record.take_back_status == '0'"
           v-on:click.stop="
             changeShow(false);
             deleteDetailRecord(id);
@@ -227,7 +225,7 @@ export default class DetailTakeOver extends Vue {
     metadata_info: "",
     device_id: "",
     name: "",
-    take_back_status:""
+    take_back_status: "",
   };
   type: any = {
     1: "Bàn giao thiết bị mới",
@@ -259,8 +257,8 @@ export default class DetailTakeOver extends Vue {
       .then((res) => {
         console.log(res.data);
         this.record = res.data;
-        if(this.record.cost!=null)
-        this.record.cost=parseFloat(this.record.cost).toString()
+        if (this.record.cost != null)
+          this.record.cost = parseFloat(this.record.cost).toString();
         this.currentMetaData = Object.entries(res.data.metadata_info);
         let result = Object.values(res.data.metadata_info).map(
           (File: any) => File.file_name
@@ -282,22 +280,20 @@ export default class DetailTakeOver extends Vue {
   deleteDetailRecord(id: number) {
     console.log("event1");
     return id;
-    
   }
 
-  downloadfile(index:number){
-    UploadFilesService.getFile(this.currentMetaData[index][1].file_url)
-    .then((response) => {
-  const url = window.URL.createObjectURL(new Blob([response.data]));
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', this.currentMetaData[index][1].file_name);
-  document.body.appendChild(link);
-  link.click();
-});
-
+  downloadfile(index: number) {
+    UploadFilesService.getFile(this.currentMetaData[index][1].file_url).then(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", this.currentMetaData[index][1].file_name);
+        document.body.appendChild(link);
+        link.click();
+      }
+    );
   }
-
 }
 </script>
 

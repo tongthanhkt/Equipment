@@ -61,8 +61,8 @@
                   </div>
                   <p class="pl-1 text-slate-500">
                     <p v-if="equipment.take_over_status=='-1'">Bị xóa</p>
-                    <p v-else-if="equipment.take_over_status=='1'">Chưa xác nhận</p>
-                    <p v-else-if="equipment.take_over_status=='2'">Đã xác nhận</p>
+                    <p v-else-if="equipment.take_over_status=='1'">Đã được bàn giao</p>
+                    <p v-else-if="equipment.take_over_status=='2'">Đang tồn kho</p>
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người thêm thông tin
@@ -812,7 +812,7 @@ handleImportDate(data: string) {
             alert("Delete Successfully !!")
         })
         
-        .catch((err) => alert(err.response.data));
+        .catch((err) => alert(err.response.data.errors[0]));
     }
   }
 

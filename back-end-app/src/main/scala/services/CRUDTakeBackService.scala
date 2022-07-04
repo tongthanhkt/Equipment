@@ -179,7 +179,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_back_time,tov.take_back_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time
       FROM equipment_management.takeback_equipment_info as tov, equipment as e
-      WHERE  tov.id = ? and tov.status != 1 and tov.equipment_id=e.id
+      WHERE  tov.id = ?  and tov.equipment_id=e.id
 				;"""
 
     var con = databaseConnection.getConnection()

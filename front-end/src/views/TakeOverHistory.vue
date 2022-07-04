@@ -6,7 +6,17 @@
           class="p-1 mt-8 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
         >
           <div
-            class="text-center p-2 border-b-2 border-indigo-300 w-full block font-semibold text-base self-start text-black"
+            class="
+              text-center
+              p-2
+              border-b-2 border-indigo-300
+              w-full
+              block
+              font-semibold
+              text-base
+              self-start
+              text-black
+            "
           >
             <h1 class="text-2xl leading-relaxed">Lịch sử bàn giao</h1>
           </div>
@@ -14,7 +24,21 @@
             <div class="p-2 flex place-items-end w-auto">
               <span class="flex justify-start">
                 <div
-                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  class="
+                    px-1
+                    py-2
+                    m-2
+                    text-base
+                    grid grid-rows-1 grid-flow-col
+                    rounded-md
+                    h-fit
+                    w-fit
+                    border-2 border-blue-400
+                    focus:border-blue-600
+                    focus:ring
+                    focus:ring-opacity-40
+                    focus:ring-indigo-500
+                  "
                 >
                   <fa
                     icon="magnifying-glass"
@@ -29,7 +53,21 @@
                   />
                 </div>
                 <div
-                  class="px-1 py-2 m-2 text-base grid grid-rows-1 grid-flow-col rounded-md h-fit w-fit border-2 border-blue-400 focus:border-blue-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  class="
+                    px-1
+                    py-2
+                    m-2
+                    text-base
+                    grid grid-rows-1 grid-flow-col
+                    rounded-md
+                    h-fit
+                    w-fit
+                    border-2 border-blue-400
+                    focus:border-blue-600
+                    focus:ring
+                    focus:ring-opacity-40
+                    focus:ring-indigo-500
+                  "
                 >
                   <fa
                     icon="magnifying-glass"
@@ -98,7 +136,14 @@
           <div class="p-1 mx-1 my-2">
             <div class="min-w-full align-middle flex justify-center">
               <table
-                class="hover:border-collapse min -w-full bg-gray-100 rounded-xl place-content-center"
+                class="
+                  hover:border-collapse
+                  min
+                  -w-full
+                  bg-gray-100
+                  rounded-xl
+                  place-content-center
+                "
               >
                 <thead>
                   <tr class="border-b border-gray-500">
@@ -137,7 +182,11 @@
 
                 <tbody>
                   <tr
-                    class="hover:bg-gray-200 transition-colors border-b border-gray-200"
+                    class="
+                      hover:bg-gray-200
+                      transition-colors
+                      border-b border-gray-200
+                    "
                     v-on:click="changeId(record.id), changeDetailShow(true)"
                     v-for="(record, index) in records"
                     :key="index"
@@ -203,7 +252,22 @@
                       <div class="flex justify-around w-auto">
                         <span class="flex justify-center">
                           <button
-                            class="bg-gray-100 hover:bg-gray-300 m-1 transition-colors flex justify-center items-center w-auto text-blue-500 px-3.5 py-2 rounded-md focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                            class="
+                              bg-gray-100
+                              hover:bg-gray-300
+                              m-1
+                              transition-colors
+                              flex
+                              justify-center
+                              items-center
+                              w-auto
+                              text-blue-500
+                              px-3.5
+                              py-2
+                              rounded-md
+                              focus:outline-none
+                              disabled:cursor-not-allowed disabled:opacity-50
+                            "
                             v-on:click.stop="
                               changeId(record.id), changeUpdateShow(true)
                             "
@@ -212,8 +276,23 @@
                             <fa icon="pen-to-square"></fa>
                           </button>
                           <button
-                            :disabled="record.status == '1'"
-                            class="disabled:cursor-not-allowed disabled:opacity-50 bg-gray-100 hover:bg-gray-300 m-1 transition-colors flex justify-center items-center w-auto text-red-500 px-3.5 py-2 rounded-md focus:outline-none"
+                            :disabled="record.status == '1' || record.take_back_status=='0'"
+                            class="
+                              disabled:cursor-not-allowed disabled:opacity-50
+                              bg-gray-100
+                              hover:bg-gray-300
+                              m-1
+                              transition-colors
+                              flex
+                              justify-center
+                              items-center
+                              w-auto
+                              text-red-500
+                              px-3.5
+                              py-2
+                              rounded-md
+                              focus:outline-none
+                            "
                             v-on:click.stop="
                               deleteRecordReq(parseInt(record.id))
                             "
@@ -233,7 +312,23 @@
               <li>
                 <button
                   @click="onClickFirstPage"
-                  class="py-2 px-3 ml-0 disabled:cursor-not-allowed leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    ml-0
+                    disabled:cursor-not-allowed
+                    leading-tight
+                    text-gray-500
+                    bg-white
+                    rounded-l-lg
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == 1"
                 >
                   First
@@ -242,7 +337,21 @@
               <li>
                 <button
                   @click="onClickPreviousPage"
-                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    disabled:cursor-not-allowed
+                    text-gray-500
+                    bg-white
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == 1"
                 >
                   Preivous
@@ -251,14 +360,38 @@
 
               <li>
                 <a
-                  class="pb-3 leading-tight px-3 mt-4 disable text-white bg-blue-500 border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                  class="
+                    pb-3
+                    leading-tight
+                    px-3
+                    mt-4
+                    disable
+                    text-white
+                    bg-blue-500
+                    border border-gray-300
+                    dark:border-gray-700 dark:bg-gray-700 dark:text-white
+                  "
                   >{{ currentPage }}</a
                 >
               </li>
               <li>
                 <button
                   @click="onClickNextPage"
-                  class="py-2 px-3 leading-tight text-gray-500 disabled:cursor-not-allowed bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    text-gray-500
+                    disabled:cursor-not-allowed
+                    bg-white
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == totalPages"
                 >
                   Next
@@ -268,7 +401,22 @@
               <li>
                 <button
                   @click="onClickLastPage"
-                  class="py-2 px-3 leading-tight disabled:cursor-not-allowed text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  class="
+                    py-2
+                    px-3
+                    leading-tight
+                    disabled:cursor-not-allowed
+                    text-gray-500
+                    bg-white
+                    rounded-r-lg
+                    border border-gray-300
+                    hover:bg-gray-100 hover:text-gray-700
+                    dark:bg-gray-800
+                    dark:border-gray-700
+                    dark:text-gray-400
+                    dark:hover:bg-gray-700
+                    dark:hover:text-white
+                  "
                   :disabled="currentPage == totalPages"
                 >
                   Last
@@ -415,7 +563,6 @@ export default class TakeOverHistory extends Vue {
 
   @Emit("changeDetailTakeOverShow")
   changeDetailShow(data: boolean) {
-    console.log("test");
     return data;
   }
 
@@ -447,4 +594,5 @@ export default class TakeOverHistory extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+</style>
