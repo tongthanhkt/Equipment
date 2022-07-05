@@ -85,8 +85,8 @@ case class Equipment(
       check = check + (22 -> "The 'Device Status' field cannot be blank.  ")
     else if (!convertString.isInt(deviceStatus))
       check = check + (23-> "The 'Device Status' field : type mismatch, required : Int. ")
-    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 2 || convertString.toInt(deviceStatus).get < -1))
-      check = check + (24 -> "Start device of device is incorrect. ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 4 || convertString.toInt(deviceStatus).get < 0))
+      check = check + (24 -> "Start status of device is incorrect. ")
 
     if (createdBy == null)
       check = check + (25 -> "There is not information of created person. ")
@@ -145,8 +145,8 @@ case class Equipment(
 
     if (deviceStatus != null && !convertString.isInt(deviceStatus))
       check = check + (23-> "The 'Device Status' field : type mismatch, required : Int.  ")
-    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 2 || convertString.toInt(deviceStatus).get < -1))
-      check = check + (24 -> "Start device of device is incorrect. ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 4 || convertString.toInt(deviceStatus).get < 0))
+      check = check + (24 -> "Start status of device is incorrect. ")
 
     if (updatedBy == null)
       check = check + (27 -> "There is not information of updated person. ")

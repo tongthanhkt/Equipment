@@ -76,6 +76,10 @@ case class TakeBack(
     else if (convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
       check = check + (16 -> "Cost of take over must be > 0. ")
 
+    if (status != null && !convertString.isInt(status))
+      check = check + (17-> "The 'Status' field : type mismatch, required : Int.  ")
+    else if (convertString.isInt(status) && (convertString.toInt(status).get > 1 || convertString.toInt(status).get < 0))
+      check = check + (18 -> "Status of take_over record is incorrect. ")
     return check
   }
 }

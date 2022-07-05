@@ -131,6 +131,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         println(request)
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
+          println(takeOverService.checkUserExist(request.verifier))
           if (takeOverService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
           } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
@@ -138,7 +139,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           } else if (takeOverService.checkUserExist(request.verifier) == 0) {
             response.internalServerError.jsonError("Verifier not exists.")
           }else if (takeOverService.checkUserExist(request.updatedBy) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
+            response.internalServerError.jsonError("Updater not exists.")
           }
           else{
             val result = takeOverService.updateById(request)
