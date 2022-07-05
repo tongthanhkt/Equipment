@@ -3,14 +3,15 @@ package controllers
 import com.twitter.finatra.http.Controller
 import com.twitter.util.jackson.JSON
 import models.{ConvertString, CountEquipmentsResponse, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
-import services.CRUDEquipmentService
+import services.{CRUDCategoryService, CRUDEquipmentService}
 
 import java.util
 import javax.inject.Inject
 
 class CRUDEquipmentController @Inject() (
                                        equipmentService: CRUDEquipmentService,
-                                       convertString: ConvertString
+                                       convertString: ConvertString,
+                                       categoryService: CRUDCategoryService
                                        )  extends Controller {
 
   prefix("/equipment"){
@@ -117,23 +118,27 @@ class CRUDEquipmentController @Inject() (
       try {
         val check = request.checkFitInsert(convertString)
         if (check.isEmpty){
-          if (equipmentService.checkDeviceIdInsert(request.deviceId)){
+          if(categoryService.checkAvailableCategory(request.categoryId)){
+            if (equipmentService.checkDeviceIdInsert(request.deviceId)){
 
-            val result = equipmentService.add(request)
-            if (result >0) {
+              val result = equipmentService.add(request)
+              if (result >0) {
 
-              response.created.json(
-                s"""|id: $result
-                    |""".stripMargin)
-            }
-            else if (result == -1) {
-              response.badRequest.jsonError("Device_id of equipment already exists")
+                response.created.json(
+                  s"""|id: $result
+                      |""".stripMargin)
+              }
+              else if (result == -1) {
+                response.badRequest.jsonError("Device_id of equipment already exists")
+              }
+              else
+                response.internalServerError.jsonError("Can not add new equipment")
             }
             else
-              response.internalServerError.jsonError("Can not add new equipment")
+              response.badRequest.jsonError("Device_id of equipment already exists")
           }
           else
-            response.badRequest.jsonError("Device_id of equipment already exists")
+            response.badRequest.jsonError("Category of new equipment is not available")
         }
         else
           response.badRequest.json(
@@ -155,21 +160,25 @@ class CRUDEquipmentController @Inject() (
 
         println(check)
         if (check.isEmpty){
-          if (equipmentService.checkDeviceIdUpdate(request.id,request.deviceId)){
-            val e = equipmentService.searchById(convertString.toInt(request.id).get)
-            if (e == null) {
-              response.badRequest.jsonError(s"Cannot find equipment with id = ${request.id}. ")
-            }
-            else {
-              val result = equipmentService.updateById(request)
-              if (result ==1)
-                response.created.json(s"""{
-                                         |"msg" : Update equipment successfully.
-                                         |}""".stripMargin)
-              else response.internalServerError.jsonError("Can not update equipment")
-            }
-          }
-          else response.badRequest.jsonError("Device_id of equipment already exists")
+         if(categoryService.checkAvailableCategory(request.categoryId)){
+           if (equipmentService.checkDeviceIdUpdate(request.id,request.deviceId)){
+             val e = equipmentService.searchById(convertString.toInt(request.id).get)
+             if (e == null) {
+               response.badRequest.jsonError(s"Cannot find equipment with id = ${request.id}. ")
+             }
+             else {
+               val result = equipmentService.updateById(request)
+               if (result ==1)
+                 response.created.json(s"""{
+                                          |"msg" : Update equipment successfully.
+                                          |}""".stripMargin)
+               else response.internalServerError.jsonError("Can not update equipment")
+             }
+           }
+           else response.badRequest.jsonError("Device_id of equipment already exists")
+         }
+         else
+           response.badRequest.jsonError("Category you want to update is not available")
         }
         else
           response.badRequest.json(

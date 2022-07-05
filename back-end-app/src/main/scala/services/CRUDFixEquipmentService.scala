@@ -15,7 +15,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
 
   @throws[Exception]
   def search(searchFixEquipmentRequest: SearchFixEquipmentRequest,offset:Int):util.ArrayList[FixEquipment]={
-    val takeOverList = new util.ArrayList[FixEquipment]()
+    val fixEquipments = new util.ArrayList[FixEquipment]()
     val sql=
       """
          SELECT fix.*,e.device_id,e.name as equipment_name,e.takeover_status
@@ -64,10 +64,10 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
         takeOverStatus =  rs.getString("takeover_status"),
         metadataInfo = toMap(rs.getString("metadata_info")));
 
-      takeOverList.add(e);
+      fixEquipments.add(e);
     }
     con.close()
-    takeOverList;
+    fixEquipments;
   }
 
   @throws[Exception]

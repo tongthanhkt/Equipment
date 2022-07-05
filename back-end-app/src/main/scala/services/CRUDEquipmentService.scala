@@ -331,7 +331,7 @@ class CRUDEquipmentService @Inject() (
       false
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def updateById(e: Equipment): Int={
     var lockObj = mPutDevice.get(e.deviceId)
     if(lockObj == null) {
