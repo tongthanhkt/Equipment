@@ -84,6 +84,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         print(request)
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
+          val checkEquipmentStatus = takeOverService.checkequipmentForTakeOver(request.equipmentId)
           if (takeOverService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
           } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
@@ -92,14 +93,17 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
             response.internalServerError.jsonError("Verifier not exists.")
           }  else if (takeOverService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not valid. ")
-          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -1) {
-            response.internalServerError.jsonError("Equipment have been taken over.")
-          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == 0) {
+          }else if (checkEquipmentStatus == -1) {
+            response.internalServerError.jsonError("Equipment is inventory")
+          }else if (checkEquipmentStatus == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
-          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -2) {
+          } else if (checkEquipmentStatus == -2) {
             response.internalServerError.jsonError("Equipment was lost.")
-          }else if (takeOverService.checkequipmentForTakeOver(request.equipmentId) == -3) {
+          }else if (checkEquipmentStatus == -3) {
             response.internalServerError.jsonError("Equipment was damaged.")
+          }
+          else if (checkEquipmentStatus == -4) {
+            response.internalServerError.jsonError("Equipment was sold.")
           }
           else {
             val result = takeOverService.add(request)

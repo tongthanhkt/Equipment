@@ -18,7 +18,7 @@ class CRUDEquipmentController @Inject() (
     get("/search"){request: SearchRequest => {
       println(request)
       try {
-        val totalEquipments  = equipmentService.countBySearch(request.keyword,request.categoryId,request.takeOverPerson,request.takeOverStatus,request.deviceStatus)
+        val totalEquipments  = equipmentService.countBySearch(request.keyword,request.categoryId,request.takeOverPerson,request.takeOverStatus,request.deviceStatus,null)
         var nPages:Int = totalEquipments/request.limit;
         val currentPage = request.page
         if(totalEquipments%request.limit>0)
@@ -29,7 +29,7 @@ class CRUDEquipmentController @Inject() (
           pageNumbers.add(Page(i,i==currentPage));
         }
         val offset = (currentPage-1)*request.limit
-        val result:util.ArrayList[Equipment] =equipmentService.search(request,offset);
+        val result:util.ArrayList[Equipment] =equipmentService.search(request,offset,null);
         response.ok.body(SearchEquipmentsResponse(equipments = result,
           empty = result.isEmpty,nPages =nPages,
           pageNumbers = pageNumbers,firstPage = +request.page==1,
@@ -50,16 +50,18 @@ class CRUDEquipmentController @Inject() (
       val takeOverStatus = request.takeOverStatus
       val deviceStatus = request.deviceStatus
       try {
-        val totalEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,deviceStatus)
-        val totalTakeOverEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,"1",deviceStatus)
-        val totalInventoryEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,"0",deviceStatus)
-        val totalDamagedEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,"2")
-        val totalLostEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,"0")
+        val totalEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,deviceStatus,null)
+        val totalTakeOverEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,"1",deviceStatus,null)
+        val totalInventoryEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,"0",deviceStatus,null)
+        val totalDamagedEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,"2",null)
+        val totalLostEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,"0",null)
+        val totalCompensationEquipments = equipmentService.countBySearch(keyword,category,takeOverPerson,takeOverStatus,"0","0")
         response.ok.body(CountEquipmentsResponse(totalEquipments= totalEquipments,
           totalTakeOverEquipments = totalTakeOverEquipments,
           totalInventoryEquipments = totalInventoryEquipments,
           totalDamagedEquipments = totalDamagedEquipments ,
-          totalLostEquipments = totalLostEquipments))
+          totalLostEquipments = totalLostEquipments,
+          totalCompensationEquipments=totalCompensationEquipments))
       } catch {
         case ex:Exception =>{
           println(ex)
@@ -116,6 +118,7 @@ class CRUDEquipmentController @Inject() (
         val check = request.checkFitInsert(convertString)
         if (check.isEmpty){
           if (equipmentService.checkDeviceIdInsert(request.deviceId)){
+
             val result = equipmentService.add(request)
             if (result >0) {
 

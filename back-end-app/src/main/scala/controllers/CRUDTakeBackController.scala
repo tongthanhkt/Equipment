@@ -74,6 +74,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
       try {
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
+          val checkEquipmentStatus = takeBackService.checkequipmentForTakeBack(request.equipmentId)
           if (takeBackService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
           } else if (takeBackService.checkUserExist(request.takeBackPerson) == 0) {
@@ -82,14 +83,17 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             response.internalServerError.jsonError("Verifier not exists.")
           } else if (takeBackService.checkUserExist(request.createdBy) == 0) {
             response.internalServerError.jsonError("Created by not exists. ")
-          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -1) {
+          }else if (checkEquipmentStatus == -1) {
             response.internalServerError.jsonError("Equipment is inventory")
-          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == 0) {
+          }else if (checkEquipmentStatus == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
-          } else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -2) {
+          } else if (checkEquipmentStatus == -2) {
             response.internalServerError.jsonError("Equipment was lost.")
-          }else if (takeBackService.checkequipmentForTakeBack(request.equipmentId) == -3) {
+          }else if (checkEquipmentStatus == -3) {
             response.internalServerError.jsonError("Equipment was damaged.")
+          }
+          else if (checkEquipmentStatus == -4) {
+            response.internalServerError.jsonError("Equipment was sold.")
           }
           else {
             print(request);

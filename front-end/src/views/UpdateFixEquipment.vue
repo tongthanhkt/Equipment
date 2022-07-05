@@ -215,11 +215,7 @@ export default class UpdateFixEquipment extends Vue {
     updated_time: "",
     metadata_info: "",
     take_over_status: "",
-<<<<<<< HEAD
-    name: "",
-=======
     name: ""
->>>>>>> demo
   };
   @Prop() id!: number;
   options: User[] = [];

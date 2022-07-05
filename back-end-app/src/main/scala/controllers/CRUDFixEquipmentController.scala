@@ -76,6 +76,8 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                 response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} has been lost. Cannot fix! ")
               else if (deviceStatus == 1)
                 response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} is working normally. Cannot fix! ")
+              else if (deviceStatus == 3 )
+                response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} was sold. Cannot fix! ")
               else if (deviceStatus == 2){
                 if (request.status == "0" && fixEquipmentService.isFixingExits(request.equipmentId)){
                   response.badRequest.jsonError(s"Equipment is fixing. ")
@@ -146,7 +148,9 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                   response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} has been taken over. Cannot update fix record! ")
                 else if (takeOverStatus==0){
                   if (deviceStatus == 0)
-                    response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} has been lost. Cannot update fix record! ")
+                    response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} has been losy. Cannot update fix record! ")
+                  else if (deviceStatus == 3 )
+                    response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} was sold. Cannot fix! ")
                   else if (deviceStatus == 1 || deviceStatus == 2 )
                     {
                     val result = fixEquipmentService.updateById(request)

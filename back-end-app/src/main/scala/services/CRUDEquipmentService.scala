@@ -19,7 +19,7 @@ class CRUDEquipmentService @Inject() (
                                      ) {
   private[this] var mPutDevice = new util.HashMap[String,Object]()
   @throws[SQLException]
-  def search(searchRequest: SearchRequest,offset : Int): util.ArrayList[Equipment] ={
+  def search(searchRequest: SearchRequest,offset : Int,isCompensation:String): util.ArrayList[Equipment] ={
 
     val equipments = new util.ArrayList[Equipment]
       val sql = """
@@ -37,6 +37,7 @@ class CRUDEquipmentService @Inject() (
       and (? is null or u.username LIKE CONCAT('%',?,'%') or u.fullname LIKE CONCAT('%',?,'%') )
       and (? is null or e.device_status = ? )
       and (? is null or e.takeover_status = ? )
+      and (? is null or e.compensation_status = ? )
       LIMIT ? OFFSET ?;"""
       val con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
@@ -53,8 +54,10 @@ class CRUDEquipmentService @Inject() (
       pst.setString(11,searchRequest.deviceStatus) //device status
       pst.setString(12, searchRequest.takeOverStatus)//null
       pst.setString(13, searchRequest.takeOverStatus)//take over status
-      pst.setInt(14,searchRequest.limit) //litmit
-      pst.setInt(15,offset) //offset
+    pst.setString(14, isCompensation)
+    pst.setString(15, isCompensation)
+      pst.setInt(16,searchRequest.limit) //litmit
+      pst.setInt(17,offset) //offset
       val rs = pst.executeQuery
       while ( rs.next) {
         val e = Equipment(id=rs.getString("id"),
@@ -75,6 +78,7 @@ class CRUDEquipmentService @Inject() (
           updatedTime = rs.getString("updated_time"),
           takeOverPersonId = rs.getString("username"),
           takeOverPersonName = rs.getString("fullname"),
+          compensationStatus = rs.getString("compensation_status"),
           metadataInfo = toMap(rs.getString("metadata_info")));
 
 
@@ -86,7 +90,7 @@ class CRUDEquipmentService @Inject() (
   }
 
   @throws[SQLException]
-  def countBySearch(keyword:String,category:String,takeOverPerson:String,takeOverStatus:String,deviceStatus:String): Int ={
+  def countBySearch(keyword:String,category:String,takeOverPerson:String,takeOverStatus:String,deviceStatus:String,isCompensation:String): Int ={
     val sql = """
       SELECT count(*) as total
       FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
@@ -102,6 +106,7 @@ class CRUDEquipmentService @Inject() (
       and (? is null or u.username LIKE CONCAT('%',?,'%') or u.fullname LIKE CONCAT('%',?,'%') )
       and (? is null or e.device_status = ? )
       and (? is null or e.takeover_status = ? )
+      and (? is null or e.compensation_status = ? )
       """
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
@@ -118,6 +123,8 @@ class CRUDEquipmentService @Inject() (
       pst.setString(11,deviceStatus)
       pst.setString(12, takeOverStatus)
       pst.setString(13, takeOverStatus)
+      pst.setString(14, isCompensation)
+      pst.setString(15, isCompensation)
 
       val rs = pst.executeQuery
       var total =0
@@ -180,6 +187,7 @@ class CRUDEquipmentService @Inject() (
           updatedTime = rs.getString("updated_time"),
           takeOverPersonId = rs.getString("username"),
           takeOverPersonName = rs.getString("fullname"),
+          compensationStatus = rs.getString("compensation_status"),
           metadataInfo = toMap(rs.getString("metadata_info")));
       }
       con.close();
@@ -236,7 +244,7 @@ class CRUDEquipmentService @Inject() (
         if(e.metadataInfo != null)
           uploadFiles =e.metadataInfo
 
-        val sql = """CALL insert_equipment (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+        val sql = """CALL insert_equipment (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
         var con = databaseConnection.getConnection()
         val pst = con.prepareStatement(sql)
@@ -257,6 +265,7 @@ class CRUDEquipmentService @Inject() (
           s"""
              |{"files": ${JSON.write(uploadFiles)}}
              |""".stripMargin)
+        pst.setString(15,e.compensationStatus)
 
         val rs = pst.executeQuery()
 
@@ -349,7 +358,8 @@ class CRUDEquipmentService @Inject() (
            ,depreciation_period = if(? is not null, ?,depreciation_period) ,period_type = if(? is not null, ?,period_type),
            metadata_info = if(? is not null, ?,metadata_info),import_date = if(? is not null, ?,import_date),
            device_status = if(? is not null, ?,device_status) ,
-           updated_by = ?,updated_time = ?
+           updated_by = ?,updated_time = ?,
+           compensation_status=?
           WHERE device_status != ? and id = ?;"""
 
       var con = databaseConnection.getConnection()
@@ -380,8 +390,9 @@ class CRUDEquipmentService @Inject() (
       pst.setString(23, e.updatedBy)
 
       pst.setLong(24, System.currentTimeMillis())
-      pst.setInt(25, -1)
-      pst.setString(26, e.id)
+      pst.setString(25, e.compensationStatus)
+      pst.setInt(26, -1)
+      pst.setString(27, e.id)
       val rs = pst.executeUpdate()
       con.close();
       return rs
@@ -392,8 +403,6 @@ class CRUDEquipmentService @Inject() (
       mPutDevice.remove(e.deviceId)
     }
   }
-
-
 
   @throws[Exception]
   def checkDeviceStatus(equipmentId: String): Int = {
@@ -419,6 +428,8 @@ class CRUDEquipmentService @Inject() (
         return 1
       if (result.deviceStatus == "2")
         return 2
+      if (result.deviceStatus == "3")
+        return 3
       else -1
 
     }

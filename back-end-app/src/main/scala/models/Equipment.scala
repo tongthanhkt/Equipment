@@ -28,7 +28,8 @@ case class Equipment(
                              updatedBy: String = null,
                              updatedTime: String = null,
                              takeOverPersonId: String = null,
-                             takeOverPersonName : String = null
+                             takeOverPersonName : String = null,
+                             compensationStatus : String = null
                            ){
   def checkFitInsert(convertString: ConvertString): Map[Int,String]  ={
     var check : Map[Int,String] =Map()
@@ -85,11 +86,22 @@ case class Equipment(
       check = check + (22 -> "The 'Device Status' field cannot be blank.  ")
     else if (!convertString.isInt(deviceStatus))
       check = check + (23-> "The 'Device Status' field : type mismatch, required : Int. ")
-    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 4 || convertString.toInt(deviceStatus).get < 0))
-      check = check + (24 -> "Start status of device is incorrect. ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 3 || convertString.toInt(deviceStatus).get < 0))
+      check = check + (24 -> "Status of device is incorrect. ")
+
+    if (compensationStatus != null && !convertString.isInt(compensationStatus))
+      check = check + (25-> "The 'Compensation Status' field : type mismatch, required : Int.  ")
+    else if (convertString.isInt(compensationStatus) && (convertString.toInt(compensationStatus).get > 1 || convertString.toInt(compensationStatus).get < 0))
+      check = check + (26 -> "Compensation status of device is incorrect. ")
+
+    if(deviceStatus == "0" && compensationStatus == null)
+      check = check + (29 -> s"The 'Compensation Status' field cannot be blank if equipment is damaged. ")
+
+    if(deviceStatus != "0" && compensationStatus != null)
+      check = check + (30 -> s"The 'Compensation Status' field cannot be fill if equipment is not damaged. ")
 
     if (createdBy == null)
-      check = check + (25 -> "There is not information of created person. ")
+      check = check + (27 -> "There is not information of created person. ")
 
 //    if (metadataInfo.nonEmpty){
 //      val loop = new Breaks;
@@ -145,11 +157,21 @@ case class Equipment(
 
     if (deviceStatus != null && !convertString.isInt(deviceStatus))
       check = check + (23-> "The 'Device Status' field : type mismatch, required : Int.  ")
-    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 4 || convertString.toInt(deviceStatus).get < 0))
-      check = check + (24 -> "Start status of device is incorrect. ")
+    else if (convertString.isInt(deviceStatus) && (convertString.toInt(deviceStatus).get > 3 || convertString.toInt(deviceStatus).get < 0))
+      check = check + (24 -> "Status of device is incorrect. ")
 
+    if(deviceStatus == "0" && compensationStatus == null)
+      check = check + (29 -> s"The 'Compensation Status' field cannot be blank if equipment is damaged. ")
+
+    if (compensationStatus != null && !convertString.isInt(compensationStatus))
+      check = check + (25-> "The 'Compensation Status' field : type mismatch, required : Int.  ")
+    else if (convertString.isInt(compensationStatus) && (convertString.toInt(compensationStatus).get > 1 || convertString.toInt(compensationStatus).get < 0))
+      check = check + (26 -> "Compensation status of device is incorrect. ")
+
+    if(deviceStatus != "0" && compensationStatus != null)
+      check = check + (30 -> s"The 'Compensation Status' field cannot be fill if equipment is not damaged. ")
     if (updatedBy == null)
-      check = check + (27 -> "There is not information of updated person. ")
+      check = check + (28 -> "There is not information of updated person. ")
 
 
 //    if (metadataInfo.nonEmpty){
@@ -180,6 +202,7 @@ case class CountEquipmentsResponse(
                                     totalInventoryEquipments: Int,
                                     totalDamagedEquipments : Int,
                                     totalLostEquipments: Int,
+                                    totalCompensationEquipments:Int
                                     )
 
 case class DeleteEquipmentRequest(@QueryParam id:Int)

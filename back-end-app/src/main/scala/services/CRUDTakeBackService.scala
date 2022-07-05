@@ -250,12 +250,15 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     if (result.takeOverStatus == "0") {
       return -1
     } // Da duoc thu hoi
-    if (result.deviceStatus == "0") {
+    if (result.deviceStatus == "0" ) {
       return -2
     } // Da bi mat
     if (result.deviceStatus == "2") {
       return -3
     } // Da hu hong
+    if (result.deviceStatus == "3") {
+      return -4
+    } // bán cho nhân viên
     return 1
   }
   @throws[Exception]
