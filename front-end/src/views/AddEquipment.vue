@@ -122,7 +122,7 @@
           <div class="flex flex-row w-36">
             <div class="flex flex-col">
               <label class="leading-loose">Thời gian nhập thiết bị</label>
-              <DatePicker class="w-64" />
+              <DatePicker class="w-64" v-model="equipment.import_date" />
             </div>
             <div class="flex flex-col ml-14">
               <label class="leading-loose">Giá trị khấu hao</label>
@@ -239,7 +239,7 @@ export default class AddEquipment extends Vue {
     depreciated_value: "",
     depreciation_period: "",
     period_type: "",
-    import_date: "1655372446944",
+    import_date: "",
     take_over_status: "0",
     category_id: "",
     device_status: "",
@@ -253,6 +253,7 @@ export default class AddEquipment extends Vue {
     metadata_info: "",
     category_name: "",
   };
+  private errors: string[] = [];
   private importDate: string = "";
   @Ref("file") inpuFile!: HTMLInputElement;
   private allImageCurrentURL: String[] = [];
@@ -280,38 +281,75 @@ export default class AddEquipment extends Vue {
     }
     return obj;
   }
+  checkValidateForm() {
+    if (this.equipment.device_id?.length == 0) {
+      this.errors?.push("Device id required");
+    }
+    if (this.equipment.name?.length == 0) {
+      this.errors?.push("Name's device required");
+    }
+    if (this.equipment.price?.length == 0) {
+      this.errors?.push("Price required");
+    }
+    if (this.equipment.device_id?.length == 0) {
+      this.errors?.push("Device id required");
+    }
+    if (this.equipment.depreciated_value?.length == 0) {
+      this.errors?.push("Depreciated value id required");
+    }
+    if (this.equipment.depreciation_period?.length == 0) {
+      this.errors?.push("Depreciated period id required");
+    }
+    if (
+      this.equipment.import_date?.length == 0 ||
+      this.equipment.import_date == null
+    ) {
+      this.errors?.push(" Import date required");
+    }
+  }
   async saveEquipment() {
-    const data = {
-      device_id: this.equipment.device_id,
-      name: this.equipment.name,
-      start_status: this.equipment.start_status,
-      price: this.equipment.price,
-      depreciation_period: this.equipment.depreciation_period,
-      period_type: this.equipment.period_type,
-      depreciated_value: this.equipment.depreciated_value,
-      import_date: this.equipment.import_date,
-      take_over_status: this.equipment.take_over_status,
-      category_id: this.equipment.category_id,
-      created_by: this.equipment.created_by,
-      created_time: this.equipment.created_time,
-      device_status: this.equipment.device_status,
-      metadata_info: await this.getImageFile(),
-    };
+    let errors = "";
+    this.checkValidateForm();
+    if (this.errors.length != 0) {
+      for (let i = 0; i < this.errors.length; i++) {
+        errors = errors + this.errors[i] + "\n";
+      }
+      alert(errors);
+      this.errors = [];
+    } else {
+      var temp = new Date(this.equipment.import_date!);
+      var milliseconds = temp.getTime().toString();
+      const data = {
+        device_id: this.equipment.device_id,
+        name: this.equipment.name,
+        start_status: this.equipment.start_status,
+        price: this.equipment.price,
+        depreciation_period: this.equipment.depreciation_period,
+        period_type: this.equipment.period_type,
+        depreciated_value: this.equipment.depreciated_value,
+        import_date: milliseconds,
+        take_over_status: this.equipment.take_over_status,
+        category_id: this.equipment.category_id,
+        created_by: this.equipment.created_by,
+        created_time: this.equipment.created_time,
+        device_status: this.equipment.device_status,
+        metadata_info: await this.getImageFile(),
+      };
 
-    EquipmentDataService.addData(data)
-      .then(() => console.log(data.device_id))
-      .catch((err) => {
-        const errors = err.response.data.errors[0];
-        console.log(errors);
-        let temp = "";
-        Object.values(errors).forEach((error) => {
-          temp = temp + error + "\n";
+      EquipmentDataService.addData(data)
+        .then(() => alert("Thêm thiết bị thành công"))
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          let temp = "";
+          Object.values(errors).forEach((error) => {
+            temp = temp + error + "\n";
+          });
+          alert(temp);
         });
-        alert(temp);
-      });
-    const a = this.allImageFile.forEach((imageFile) => {});
-    await Promise.all([a]).then((values) => console.log(values));
-
+      const a = this.allImageFile.forEach((imageFile) => {});
+      await Promise.all([a]).then((values) => console.log(values));
+    }
   }
 }
 </script>

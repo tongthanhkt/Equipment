@@ -688,9 +688,6 @@ export default class DetailEquipment extends Vue {
       .then((res) => {
         console.log(res.data);
         this.equipment = res.data;
-        this.equipment.import_date = this.handleImportDate(
-        this.equipment.import_date!
-      );
       this.equipment.price = parseFloat(this.equipment.price!).toString();
         const allImage = Object.values(res.data.metadata_info);
         let result = allImage.map((Image:any)=>Image.file_url);
