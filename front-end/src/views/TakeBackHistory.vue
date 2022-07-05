@@ -76,7 +76,7 @@
                   <input
                     class="text-base bg-gray-50 w-5/6 focus:outline-none"
                     type="text"
-                    placeholder="Tên người bàn giao"
+                    placeholder="Tên người thu hồi"
                     v-model="keyTakeBackPerson"
                     @input="retrieveRecordsBySearch"
                   />

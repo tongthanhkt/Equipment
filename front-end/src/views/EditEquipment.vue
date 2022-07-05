@@ -311,14 +311,14 @@ export default class AddEquipment extends Vue {
     }
   }
   async saveEquipment() {
-    console.log(this.equipment.import_date);
+    let errors = "";
     this.checkValidateForm();
     if (this.errors.length != 0) {
-      let errors = "";
       for (let i = 0; i < this.errors.length; i++) {
         errors = errors + this.errors[i] + "\n";
       }
       alert(errors);
+      this.errors = [];
     } else {
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
