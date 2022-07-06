@@ -21,6 +21,7 @@ class FileService {
     false
   }
 
+  @throws[Exception]
   def getFile(fileName: String): File ={
     val fileUrl = dirName.concat(fileName)
     new File(fileUrl)

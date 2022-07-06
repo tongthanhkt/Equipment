@@ -50,6 +50,8 @@ case class Category(
   }
 }
 
+case class SearchCategoryResponse(categories: util.ArrayList[Category])
+
 
 case class DeleteCategoryRequest(@QueryParam id:Int)
 

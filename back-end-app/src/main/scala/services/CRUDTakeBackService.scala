@@ -10,6 +10,7 @@ import javax.inject.Inject
 import scala.models.{SearchTakeBackRequest, TakeBack}
 import java.util
 class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString) {
+  @throws[Exception]
   def searchTakeBackByEquipmentId(equipmentId:Int): util.ArrayList[TakeBack] = {
     val takeBackList = new util.ArrayList[TakeBack]()
     val sql = """
@@ -46,6 +47,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return takeBackList;
   }
+  @throws[Exception]
   def searchUser(searchUserRequest:SearchUserRequest):util.ArrayList[User]={
     val userList = new util.ArrayList[User]()
     val sql =
@@ -66,6 +68,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return userList;
   }
+  @throws[Exception]
   def searchTakeBack(searchTakeBackRequest: SearchTakeBackRequest,offset:Int):util.ArrayList[TakeBack]={
     val takeBackList = new util.ArrayList[TakeBack]()
     val sql=
@@ -353,7 +356,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       con.close();
       return rs
   }
-  @throws[SQLException]
+  @throws[Exception]
   def getIdTakeBackDESC():Int = {
     val sql = """
       SELECT *
@@ -371,6 +374,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return id
   }
+
+  @throws[Exception]
   def deleteById(takeBackId:Int):Int={
     val sql="UPDATE takeback_equipment_info SET status = -1 WHERE  id = ?;"
     val con = databaseConnection.getConnection()
@@ -380,6 +385,8 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return rs
   }
+
+  @throws[Exception]
   def updateById(e:TakeBack):Int= {
     var uploadFile: String = null
     if (e.metadataInfo != null)

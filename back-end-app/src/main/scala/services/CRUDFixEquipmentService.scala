@@ -124,7 +124,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
     map
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def searchById(id:String): FixEquipment = {
     val sql = """
       SELECT fix.*,e.device_id,e.name as equipment_name,e.takeover_status

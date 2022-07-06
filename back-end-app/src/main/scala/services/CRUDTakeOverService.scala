@@ -12,6 +12,7 @@ import javax.inject.Inject
 
 class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString){
 
+  @throws[Exception]
   def searchTakeOverByEquipmentId(equipmentId:Int): util.ArrayList[TakeOver] = {
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql = """
@@ -48,6 +49,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return takeOverList;
   }
+  @throws[Exception]
   def searchUser(searchUserRequest:SearchUserRequest):util.ArrayList[User]={
     val userList = new util.ArrayList[User]()
     val sql =
@@ -68,6 +70,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return userList;
   }
+  @throws[Exception]
   def searchTakeOver(searchTakeOverRequest: SearchTakeOverRequest,offset:Int):util.ArrayList[TakeOver]={
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql=
@@ -139,7 +142,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
 
     return map
   }
-  @throws[SQLException]
+  @throws[Exception]
   def countBySearchTakeOver(username:String,takeOverPerson:String,typeTakeOver:String,status:String,equipmentId:String):Int={
     val sql=
       """
@@ -175,7 +178,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return total
   }
-  @throws[SQLException]
+  @throws[Exception]
   def searchTakeOverById(takeOver:Int): TakeOver = {
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time,tov.takeback_status
@@ -318,7 +321,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
       return rs
 
   }
-  @throws[SQLException]
+  @throws[Exception]
   def getIdTakeOverDESC():Int = {
     val sql = """
       SELECT *
@@ -339,7 +342,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close();
     return id
   }
-  @throws[SQLException]
+  @throws[Exception]
   def deleteById(takeOverId:Int):Int={
     val sql="UPDATE takeover_equipment_info SET status = ? WHERE  id = ? ;"
     val con = databaseConnection.getConnection()
@@ -350,7 +353,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     con.close()
     return rs
   }
-  @throws[SQLException]
+  @throws[Exception]
   def updateById(e:TakeOver):Int= {
     var uploadFile: String = null
     if (e.metadataInfo != null)

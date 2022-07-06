@@ -10,6 +10,7 @@ import java.util
 import javax.inject.Inject
 
 class UserService  @Inject()(databaseConnection:DatabaseConnection) {
+  @throws[Exception]
   def searchUser(searchUserRequest:SearchUserRequest):util.ArrayList[User]={
     val userList = new util.ArrayList[User]()
     val sql =

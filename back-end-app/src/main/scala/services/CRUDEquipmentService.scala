@@ -18,7 +18,7 @@ class CRUDEquipmentService @Inject() (
                                        convertString: ConvertString
                                      ) {
   private[this] var mPutDevice = new util.HashMap[String,Object]()
-  @throws[SQLException]
+  @throws[Exception]
   def search(searchRequest: SearchRequest,offset : Int,isCompensation:String): util.ArrayList[Equipment] ={
 
     val equipments = new util.ArrayList[Equipment]
@@ -89,7 +89,7 @@ class CRUDEquipmentService @Inject() (
       return equipments
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def countBySearch(keyword:String,category:String,takeOverPerson:String,takeOverStatus:String,deviceStatus:String,isCompensation:String): Int ={
     val sql = """
       SELECT count(*) as total
@@ -135,7 +135,7 @@ class CRUDEquipmentService @Inject() (
       return total
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def deleteById(equipmentId:Int): Int = {
 
       val sql = "UPDATE equipment SET device_status = -1 WHERE id = ?;"
@@ -148,7 +148,7 @@ class CRUDEquipmentService @Inject() (
       return rs
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def   searchById(equipmentId:Int): Equipment = {
 
       val sql = """
@@ -195,7 +195,7 @@ class CRUDEquipmentService @Inject() (
       return result
   }
 
-  @throws[SQLException]
+  @throws[Exception]
   def getIdEquipmentDESC():Int = {
 
       val sql = """

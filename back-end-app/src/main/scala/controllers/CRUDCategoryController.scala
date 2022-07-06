@@ -2,7 +2,7 @@ package controllers
 
 import com.twitter.finatra.http.Controller
 import com.twitter.util.jackson.JSON
-import models.{Category, ConvertString, CountEquipmentsResponse, DeleteCategoryRequest, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchCategoryByIdRequest, SearchCategoryRequest, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
+import models.{Category, ConvertString, CountEquipmentsResponse, DeleteCategoryRequest, DeleteEquipmentRequest, DeleteImageByIdRequest, Equipment, Page, SearchCategoryByIdRequest, SearchCategoryRequest, SearchCategoryResponse, SearchEquipmentByIdRequest, SearchEquipmentsResponse, SearchRequest, UploadFile}
 import services.{CRUDCategoryService, CRUDEquipmentService}
 
 import java.util
@@ -20,7 +20,7 @@ class CRUDCategoryController @Inject() (
       try {
 
         val result:util.ArrayList[Category] =categoryService.search(request);
-        response.ok.body(result)
+        response.ok.body(SearchCategoryResponse(result))
       } catch {
         case ex: Exception =>{
           println(ex)
