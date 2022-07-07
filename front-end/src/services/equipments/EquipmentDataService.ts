@@ -7,7 +7,7 @@ class EquipmentDataService {
     return http.post("/equipment/add", data);
   }
   getAllEquipments(queryParams: string) {
-    console.log(queryParams);
+    console.log(queryParams); 
     return http.get(`/equipment/search?${queryParams}`);
   }
   updateEquipment(data: any) {

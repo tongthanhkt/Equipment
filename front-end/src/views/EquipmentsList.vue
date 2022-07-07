@@ -10,31 +10,32 @@
   background-color: #4aae9b;
   color: #ffffff;
 }
-.list_equipments:hover {
-  background-color: beige;
+.action-hover:hover {
+  background-color: beige !important;
   cursor: pointer;
 }
 </style>
 <template>
   <div class="px-3">
     <div class="h-24">
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
+      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
         <div class="inline-block category">
           <div class="relative">
             <div class="flex flex-row">
-              <a
-                class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
-              >
-                Danh mục
-              </a>
+              <router-link to="/category">
+                <a
+                  class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
+                >
+                  Danh mục
+                </a>
+              </router-link>
+
               <select
                 class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 v-model="categoryId"
                 @change="filterCategory(categoryId)"
                 required
-                name=""
               >
-                <option v-bind:value="0" selected>Tất cả</option>
                 <option
                   v-for="(category, index) in categories"
                   v-bind:value="category.value"
@@ -46,14 +47,15 @@
           </div>
         </div>
       </div>
+
       <router-link to="/add-equipment">
-        <div class="inline-block w-full px-3 sm:w-1/2 xl:w-1/4">
+        <div class="inline-block w-full px-3 sm:w-1/2 xl:w-1/5">
           <a class="bg-stone-700 text-white font-bold py-2 px-4 rounded">
             Tạo mới thiết bị
           </a>
         </div>
       </router-link>
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
+      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -76,7 +78,7 @@
           />
         </div>
       </div>
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/4">
+      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
         <div class="ml-10 btn-search relative mx-4 lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg class="h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -101,8 +103,11 @@
       </div>
     </div>
     <div class="flex flex-wrap -mx-6">
-      <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
-        <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div
+          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(null, null)"
+        >
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfEquipments }}
@@ -111,8 +116,11 @@
           </div>
         </div>
       </div>
-      <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
-        <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div
+          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(1, null)"
+        >
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfTakeOverEquipment }}
@@ -121,8 +129,11 @@
           </div>
         </div>
       </div>
-      <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
-        <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div
+          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(0, null)"
+        >
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfInventoryEquipment }}
@@ -131,13 +142,29 @@
           </div>
         </div>
       </div>
-      <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
-        <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div
+          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(null, 2)"
+        >
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfDamagedEquipment }}
             </h4>
             <div class="text-gray-500">Tổng hư hỏng</div>
+          </div>
+        </div>
+      </div>
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div
+          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(null, 0)"
+        >
+          <div class="mx-5">
+            <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfLostEquipment }}
+            </h4>
+            <div class="text-gray-500">Tổng bị mất</div>
           </div>
         </div>
       </div>
@@ -175,7 +202,7 @@
                 >
                   <td
                     scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap list_equipments"
+                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap action-hover"
                     @click.prevent="detailEquipment(equipment.id)"
                   >
                     {{ equipment.device_id }}
@@ -186,13 +213,13 @@
                       class="text-orange-700"
                       v-if="equipment.take_over_status == '0'"
                     >
-                      {{ this.takeOverStatus[equipment.take_over_status] }}
+                      {{ this.takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
                     <p
                       class="text-green-500"
                       v-else="equipment.take_over_status == '0'"
                     >
-                      {{ this.takeOverStatus[equipment.take_over_status] }}
+                      {{ this.takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
                   </td>
                   <td class="px-6 py-4">
@@ -207,7 +234,7 @@
                       <div class="ml-4">
                         <div class="text-sm leading-5 text-gray-500">
                           <div>
-                            {{ this.deviceStatus[equipment.device_status] }}
+                            {{ this.deviceStatusEnum[equipment.device_status] }}
                           </div>
                         </div>
                       </div>
@@ -328,7 +355,6 @@ import Equipment from "@/types/Equipment";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import { Vue, Options } from "vue-property-decorator";
 import Pagination from "./Pagination.vue";
-
 @Options({
   components: {
     Pagination,
@@ -336,17 +362,18 @@ import Pagination from "./Pagination.vue";
 })
 export default class Dashboard extends Vue {
   public categories = [
+    { value: 0, name: "Tất cả" },
     { value: 1, name: "Máy tính" },
     { value: 2, name: "Màn hình" },
     { value: 3, name: "Phụ kiện" },
   ];
-  public deviceStatus = {
+  public deviceStatusEnum = {
     0: "Bị Mất",
     1: "Sử dụng được",
     2: "Bị hư hỏng",
     3: "Đã bán cho nhân viên",
   };
-  public takeOverStatus = {
+  public takeOverStatusEnum = {
     0: "Tồn kho",
     1: "Bàn giao",
   };
@@ -357,17 +384,18 @@ export default class Dashboard extends Vue {
   public sumOfEquipments: number = 0;
   public sumOfInventoryEquipment: number = 0;
   public sumOfDamagedEquipment: number = 0;
-
+  public sumOfLostEquipment: number = 0;
   public currentPage: number = 1;
   public currentLimit: number = 5;
   public currentCategoryId: number | null = null;
   public keyword: string | null = null;
   public takeOverPerson: string | null = null;
-
+  public deviceStatus: number | null = null;
+  public takeOverStatus: number | null = null;
   public totalPages: number = 0;
   public valueCategory: number = 1;
   public queryParams: any;
-
+  public categoryId = 0;
   async mounted() {
     this.retrieveEquipments();
     this.retrieveOverview();
@@ -378,16 +406,19 @@ export default class Dashboard extends Vue {
       this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
       this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
       this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
+      this.sumOfLostEquipment = res.data.total_lost_equipments;
     });
   }
   async retrieveEquipments() {
     EquipmentDataService.getAllEquipments(this.getQueryParams())
       .then((res: any) => {
-        console.log(res.data);
         this.totalPages = res.data.n_pages;
         this.equipments = res.data.equipments;
       })
-      .then(() => this.handleFieldEquipment());
+      .then(() => {
+        console.log(this.equipments);
+        this.handleFieldEquipment();
+      });
   }
   handleFieldEquipment() {
     for (let i = 0; i < this.equipments.length; i++) {
@@ -414,6 +445,8 @@ export default class Dashboard extends Vue {
       category_id: this.currentCategoryId,
       keyword: this.keyword,
       take_over_person: this.takeOverPerson,
+      take_over_status: this.takeOverStatus,
+      device_status: this.deviceStatus,
     };
 
     Object.keys(this.queryParams).forEach((key) => {
@@ -454,12 +487,23 @@ export default class Dashboard extends Vue {
         .catch((err) => console.log(err));
     }
   }
+  filterOverView(takeOverStatus: number | null, deviceStatus: number | null) {
+    this.takeOverStatus = takeOverStatus;
+
+    this.deviceStatus = deviceStatus;
+
+    this.retrieveEquipments();
+  }
   async filterCategory(categoryId: number) {
-    if (categoryId == 0 || categoryId == null) {
+    this.currentPage = 1;
+    this.currentLimit = 5;
+    this.keyword = null;
+    this.takeOverPerson = null;
+    this.takeOverStatus = null;
+    this.deviceStatus = null;
+    if (categoryId == 0) {
       this.currentCategoryId = null;
-      this.currentPage = 1;
     } else {
-      this.currentPage = 1;
       this.currentCategoryId = categoryId;
     }
     this.retrieveEquipments();

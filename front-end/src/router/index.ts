@@ -15,6 +15,8 @@ import TakeOverHistory from "../views/TakeOverHistory.vue";
 import TakeBackHistory from "../views/TakeBackHistory.vue";
 import History from "../views/History.vue";
 import FixEquipmentHistory from "../views/FixEquipmentHistory.vue";
+import CategoryList from "../views/CategoryList.vue";
+import StatisticCategory from "../views/StatisticCategory.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -27,9 +29,19 @@ const routes: Array<RouteRecordRaw> = [
     component: EquipmentsList,
   },
   {
+    path: "/statistic-category",
+    name: "StatisticCategory",
+    component: StatisticCategory,
+  },
+  {
     path: "/equipments",
     name: "EquipmentsList",
     component: EquipmentsList,
+  },
+  {
+    path: "/category",
+    name: "Category",
+    component: CategoryList,
   },
   {
     path: "/add-equipment",

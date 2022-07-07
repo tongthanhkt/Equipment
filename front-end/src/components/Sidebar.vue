@@ -142,7 +142,7 @@
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Cards' ? activeClass : inactiveClass]"
-          to="/cards"
+          to="/statistic-category"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +164,7 @@
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Modal' ? activeClass : inactiveClass]"
-          to="/modal"
+          to="/statistic-category"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
