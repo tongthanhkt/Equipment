@@ -51,7 +51,6 @@
                   <p class="pl-1 text-slate-500">
                     {{this.categories[equipment.category_id]}}
                   </p>
-                 
                   <div class="p-1 text-base font-medium text-gray-700">
                     Giá tiền
                   </div>
@@ -120,8 +119,11 @@
                     Trạng thái thiết bị
                   </div>
                   <p class="pl-1 text-yellow-500 italic font-semibold">
-                   {{ this.deviceStatus[equipment.device_status] }}
+                   {{ this.deviceStatus[equipment.device_status] }} 
+                   <span v-if="equipment.compensation_status=='0'">chưa đền bù</span>
+                   <span v-if="equipment.compensation_status=='1'">đã đền bù</span>
                   </p>
+                  
                   <div class="p-1 text-base font-medium text-gray-700">
                     Thời gian nhập thiết bị
                   </div>
@@ -132,7 +134,9 @@
                     Thời gian kì hạn
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{ equipment?.depreciation_period }}
+                    {{ equipment?.depreciation_period }} 
+                    <span v-if="equipment.period_type=='1'">Tháng</span>
+                    <span v-else-if="equipment.period_type =='2'">Năm</span>
                   </p>
                 </div>
               </span>
@@ -833,10 +837,16 @@ handleImportDate(data: string) {
   }
   deleteEquipment() {
     const id = this.equipment.id;
-    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+    const takeOverStatus=this.equipment.take_over_status;
+    if(takeOverStatus=="1"){
+      alert("Thiết bị đang được bàn giao hiện không thể xóa !!")
+    }else{
+       if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
       EquipmentDataService.deleteEquipment(id!)
       this.$router.push({name:"Home"})
+      }
     }
+   
   }
   
   handleDate(data: string) {

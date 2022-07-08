@@ -1,28 +1,9 @@
 <template>
   <div
-    class="
-      absolute
-      h-screen
-      top-0
-      right-0
-      w-1/2
-      shadow-2xl
-      border-l-2 border-indigo-300
-      rounded-none
-    "
+    class="absolute h-screen top-0 right-0 w-1/2 shadow-2xl border-l-2 border-indigo-300 rounded-none"
   >
     <div
-      class="
-        grid grid-cols-4
-        text-start
-        border-b-2 border-indigo-300
-        w-auto
-        font-semibold
-        text-base
-        self-start
-        text-black
-        bg-indigo-500
-      "
+      class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto font-semibold text-base self-start text-black bg-indigo-500"
     >
       <h1
         class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
@@ -30,17 +11,7 @@
         Chỉnh sửa thông tin thu hồi - {{ id }}
       </h1>
       <button
-        class="
-          place-self-end
-          bg-indigo-500
-          hover:bg-indigo-200
-          m-2
-          transition-colors
-          w-auto
-          text-white
-          rounded-md
-          focus:outline-none
-        "
+        class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors w-auto text-white rounded-md focus:outline-none"
         v-on:click="changeShow(false)"
       >
         <fa icon="xmark" class="px-2 py-2"></fa>
@@ -54,44 +25,14 @@
 
         <div>
           <div
-            class="
-              mx-1
-              px-2
-              py-1.5
-              border
-              bg-gray-200
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-base
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-gray-700
-            "
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
           >
             {{ record.device_id }}
           </div>
         </div>
         <div class="col-span-2">
           <div
-            class="
-              mx-1
-              px-2
-              py-1.5
-              border
-              bg-gray-200
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-base
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-gray-700
-            "
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
           >
             {{ record.name }}
           </div>
@@ -104,40 +45,14 @@
         <div>
           <input
             type="number"
-            class="
-              mx-1
-              px-2
-              py-1.5
-              border
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-base
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             placeholder=""
             v-model="record.cost"
           />
         </div>
         <div class="flex flex-row col-span-2 w-11/12">
           <Datepicker
-            class="
-              mx-1
-              w-11/12
-              border
-              focus:ring-gray-500
-              hover:border-gray-900
-              lg:text-base
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 w-11/12 border focus:ring-gray-500 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             v-model="editDate"
             :format="format"
           />
@@ -155,20 +70,7 @@
                 v-model="record.take_back_person"
               /> -->
           <v-select
-            class="
-              mx-1
-              bg-white
-              border
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-sm
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
             v-model="take_back_person"
             :get-option-label="(option) => option.username"
@@ -176,14 +78,7 @@
           >
             <template #search="{ attributes, events }">
               <input
-                class="
-                  vs__search
-                  bg-white
-                  lg:text-base
-                  sm:text-sm
-                  focus:outline-none
-                  text-black
-                "
+                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
                 v-bind="attributes"
                 v-on="events"
                 @input="retrieveUser"
@@ -202,34 +97,12 @@
             id="type"
             name="type"
             autocomplete="type-name"
-            class="
-              mx-1
-              px-2
-              py-1.5
-              border
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-base
-              sm:text-sm
-              border-gray-300
-              rounded-md
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
           >
-            <option value="1" >
-                  Hoàn trả thiết bị khi nghỉ việc
-                </option>
-                <option value="2" >
-                  Thu hồi thiết bị hư hỏng để sửa chữa
-                </option>
-                 <option value="3" >
-                  Đền bù thiết bị sử dụng bị mất
-                </option>
-                 <option value="4" >
-                  Nhân viên bù tiền mua thiết bị
-                </option>
+            <option value="1">Hoàn trả thiết bị khi nghỉ việc</option>
+            <option value="2">Thu hồi thiết bị hư hỏng để sửa chữa</option>
+            <option value="3">Đền bù thiết bị sử dụng bị mất</option>
+            <option value="4">Nhân viên bù tiền mua thiết bị</option>
           </select>
         </div>
         <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
@@ -239,20 +112,7 @@
 
         <div>
           <v-select
-            class="
-              mx-1
-              bg-white
-              border
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-sm
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
             v-model="user"
             :get-option-label="(option) => option.username"
@@ -261,14 +121,7 @@
           >
             <template #search="{ attributes, events }">
               <input
-                class="
-                  vs__search
-                  bg-white
-                  lg:text-base
-                  sm:text-sm
-                  focus:outline-none
-                  text-black
-                "
+                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
                 v-bind="attributes"
                 v-on="events"
                 @input="retrieveUser"
@@ -283,20 +136,7 @@
         </div>
         <div>
           <v-select
-            class="
-              mx-1
-              bg-white
-              border
-              focus:ring-gray-500
-              w-11/12
-              hover:border-gray-900
-              lg:text-sm
-              sm:text-sm
-              border-gray-300
-              rounded
-              focus:outline-none
-              text-black
-            "
+            class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
             v-model="verifier"
             :get-option-label="(option) => option.username"
@@ -304,14 +144,7 @@
           >
             <template #search="{ attributes, events }">
               <input
-                class="
-                  vs__search
-                  bg-white
-                  lg:text-base
-                  sm:text-sm
-                  focus:outline-none
-                  text-black
-                "
+                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
                 v-bind="attributes"
                 v-on="events"
                 @input="retrieveUser"
@@ -326,16 +159,22 @@
         </div>
       </div>
       <div
-        class="
-          px-3
-          pt-2
-          bg-indigo-100
-          grid grid-cols-1
-          text-sm
-          w-full
-          grid-flow-row
-          border-t border-gray-300
-        "
+        class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
+      >
+        <div class="p-1 font-medium text-gray-700">Trạng thái</div>
+        <select
+          v-model="record.status"
+          id="type"
+          name="type"
+          autocomplete="type-name"
+          class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+        >
+          <option value="1">Đã xác nhận</option>
+          <option value="0">Chờ xác nhận</option>
+        </select>
+      </div>
+      <div
+        class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
       >
         <div class="pl-1 font-medium text-gray-700">Message</div>
         <textarea
@@ -353,19 +192,13 @@
             <div v-for="(file_name, index) in currentFileName" :key="index">
               <div>
                 <div
-                  class="
-                    bg-gray-300
-                    w-fit
-                    h-fit
-                    border
-                    rounded
-                    flex flex-row
-                    m-2
-                  "
+                  class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
                 >
                   <fa icon="file-arrow-up" class="px-2 py-2"></fa>
                   <div class="py-1">{{ file_name }}</div>
-                  <span class="close px-2 py-1" @click="deleteCurrentFile(index)"
+                  <span
+                    class="close px-2 py-1"
+                    @click="deleteCurrentFile(index)"
                     >&times;</span
                   >
                 </div>
@@ -390,17 +223,9 @@
             *{{ msgError }}
           </span>
 
-          <div
-           
-            class="bg-white h-36 overflow-y-auto border-2 border-indigo-300"
-          >
+          <div class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
             <div
-              class="
-                border-b-2 border-indigo-300
-                text-sm text-orange-600
-                font-semibold
-                flex flex-row
-              "
+              class="border-b-2 border-indigo-300 text-sm text-orange-600 font-semibold flex flex-row"
             >
               <fa icon="folder" class="px-2 py-1"></fa>
               <div class="p-1">Selected Files</div>
@@ -409,15 +234,7 @@
               <div v-for="(file, index) in allFiles">
                 <div>
                   <div
-                    class="
-                      bg-gray-300
-                      w-fit
-                      h-fit
-                      border
-                      rounded
-                      flex flex-row
-                      m-2
-                    "
+                    class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
                   >
                     <fa icon="file-arrow-up" class="px-2 py-2"></fa>
                     <div class="py-1">{{ file.name }}</div>
@@ -438,35 +255,14 @@
       <!-- <div class="p-1 m-2 text-base  font-medium text-gray-700">Thông tin</div> -->
       <div class="flex flex-row gap">
         <button
-          class="
-            bg-sky-500
-            hover:bg-sky-600
-            m-3.5
-            transition-colors
-            text-base
-            w-auto
-            text-white
-            p-2
-            rounded-md
-            focus:outline-none
-          "
+          class="bg-sky-500 hover:bg-sky-600 m-3.5 transition-colors text-base w-auto text-white p-2 rounded-md focus:outline-none"
           @click="updateTakeBackRecord"
         >
           <fa icon="pen-to-square" class="px-1"></fa>
           Save
         </button>
         <button
-          class="
-            bg-red-500
-            hover:bg-red-600
-            m-3.5
-            transition-colors
-            w-auto
-            text-white
-            p-2
-            rounded-md
-            focus:outline-none
-          "
+          class="bg-red-500 hover:bg-red-600 m-3.5 transition-colors w-auto text-white p-2 rounded-md focus:outline-none"
           v-on:click="changeShow(false)"
         >
           <fa icon="xmark" class="px-1"></fa>
@@ -543,7 +339,6 @@ export default class UpdateTakeBack extends Vue {
     if (date === null || date === undefined) return null;
     else {
       return date.toLocaleString();
-      
     }
   }
 
@@ -561,7 +356,7 @@ export default class UpdateTakeBack extends Vue {
         if (currentFile != null && currentFile?.size > 5000000) {
           this.msgError = "Chọn file <= 5MB";
           this.allFiles = [];
-          
+
           return;
         }
         if (currentFile != null) this.allFiles.push(currentFile);
@@ -581,8 +376,8 @@ export default class UpdateTakeBack extends Vue {
     }
     return obj;
   }
-  changeTakeBackPerson(){
-    this.verifier=this.take_back_person
+  changeTakeBackPerson() {
+    this.verifier = this.take_back_person;
   }
 
   async created() {
@@ -633,8 +428,8 @@ export default class UpdateTakeBack extends Vue {
         // this.record.take_back_time = this.handleDate(
         //   this.record.take_back_time
         // );
-        if(this.record.cost!=null)
-        this.record.cost=parseFloat(this.record.cost).toString()
+        if (this.record.cost != null)
+          this.record.cost = parseFloat(this.record.cost).toString();
         this.editDate = ref(new Date(Number(this.record.take_back_time)));
         this.currentMetaData = Object.entries(res.data.metadata_info);
         let result = Object.values(res.data.metadata_info).map(
@@ -672,33 +467,26 @@ export default class UpdateTakeBack extends Vue {
   }
 
   async updateTakeBackRecord() {
-   
-    if (this.user == null ) {
+    if (this.user == null) {
       alert("Hãy chọn người trả thiết bị!");
-      
-    }
-    else if (this.take_back_person == null ) {
+    } else if (this.take_back_person == null) {
       alert("Hãy chọn người thu hồi!");
-     
-    }
-    else if (this.verifier == null ) {
+    } else if (this.verifier == null) {
       alert("Hãy chọn người xác nhận !");
-      
-    }
-    else if (this.editDate === null || this.editDate === undefined) {
+    } else if (this.editDate === null || this.editDate === undefined) {
       alert("Hãy nhập thời gian thu hồi");
-      
-    }
-    else if (this.record.type_take_back == null || this.record.type_take_back == "") {
+    } else if (
+      this.record.type_take_back == null ||
+      this.record.type_take_back == ""
+    ) {
       alert("Hãy chọn loại thu hồi");
-      
     }
     // else if (this.msgError!=null){
     //   alert("Chọn file <= 5MB");
     // }
     else {
-       console.log(this.editDate.getTime())
-      
+      console.log(this.editDate.getTime());
+
       const data = {
         id: this.record.id,
         equipment_id: this.record.equipment_id,
@@ -711,26 +499,25 @@ export default class UpdateTakeBack extends Vue {
         cost: this.record.cost,
         updated_by: "tatthanh",
         metadata_info: await this.getCurrentMetaData(),
+        status: this.record.status,
       };
-      if (this.record.cost=='')
-      data.cost=null
-      
-      console.log(data)
-      TakeBackService.update(data)
-      .then(res=>{
-        alert("Cập nhật thông tin thu hồi thành công !")
-        this.changeShow(false)
-      })
-      .catch((err) => {
-        const errors = err.response.data.errors[0];
-        console.log(errors);
-        let temp = "";
-        Object.values(errors).forEach((error) => {
-          temp = temp + error + "\n";
-        });
-        alert(temp);
-      });
+      if (this.record.cost == "") data.cost = null;
 
+      console.log(data);
+      TakeBackService.update(data)
+        .then((res) => {
+          alert("Cập nhật thông tin thu hồi thành công !");
+          this.changeShow(false);
+        })
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          let temp = "";
+          Object.values(errors).forEach((error) => {
+            temp = temp + error + "\n";
+          });
+          alert(temp);
+        });
     }
   }
 
@@ -752,5 +539,4 @@ export default class UpdateTakeBack extends Vue {
 }
 </script>
 
-<style>
-</style>
+<style></style>

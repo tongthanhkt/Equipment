@@ -17,44 +17,41 @@
 </style>
 <template>
   <div class="px-3">
-    <div class="h-24">
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
-        <div class="inline-block category">
-          <div class="relative">
-            <div class="flex flex-row">
-              <router-link to="/category">
-                <a
-                  class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
-                >
-                  Danh mục
-                </a>
-              </router-link>
+    <div class="flex flex-wrap -mx-6 my-6">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div class="flex flex-row">
+          <router-link to="/category">
+            <a
+              class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
+            >
+              Danh mục
+            </a>
+          </router-link>
 
-              <select
-                class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                v-model="categoryId"
-                @change="filterCategory(categoryId)"
-                required
-              >
-                <option
-                  v-for="(category, index) in categories"
-                  v-bind:value="category.value"
-                >
-                  {{ category.name }}
-                </option>
-              </select>
-            </div>
-          </div>
+          <select
+            class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            v-model="categoryId"
+            @change="filterCategory(categoryId)"
+            required
+          >
+            <option
+              v-for="(category, index) in categories"
+              v-bind:value="category.value"
+            >
+              {{ category.name }}
+            </option>
+          </select>
         </div>
       </div>
-
-      <router-link to="/add-equipment">
-        <div class="inline-block w-full px-3 sm:w-1/2 xl:w-1/5">
-          <a class="bg-stone-700 text-white font-bold py-2 px-4 rounded">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <router-link to="/add-equipment">
+          <a
+            class="sm:w-48 bg-stone-700 text-white font-bold py-2 px-4 rounded mt-1 block py-2 px-3"
+          >
             Tạo mới thiết bị
           </a>
-        </div>
-      </router-link>
+        </router-link>
+      </div>
       <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
         <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -244,7 +241,7 @@
                     <div>
                       <span class="flex justify-center">
                         <a
-                          class="mx-2 px-2 rounded-md list_equipments"
+                          class="mx-2 px-2 rounded-md action-hover"
                           @click.prevent="editEquipment(equipment.id)"
                         >
                           <svg
@@ -266,7 +263,12 @@
 
                         <button
                           class="mx-2 px-2 rounded-md list_equipments"
-                          @click="deleteEquipment(equipment.id)"
+                          @click="
+                            deleteEquipment(
+                              equipment.id,
+                              equipment.take_over_status
+                            )
+                          "
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -478,13 +480,17 @@ export default class Dashboard extends Vue {
   detailEquipment(id: any) {
     this.$router.push({ name: "DetailEquipment", params: { id: id } });
   }
-  deleteEquipment(id: String) {
+  deleteEquipment(id: String, takeOverStatus: string) {
     let queryParams = `page=1`;
-    if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
-      EquipmentDataService.deleteEquipment(id)
-        .then((res) => console.log("Delete Successfully !!"))
-        .then(() => this.retrieveEquipments())
-        .catch((err) => console.log(err));
+    if (takeOverStatus == "1") {
+      alert("Không thể xóa thiết bị vì thiết bị đang được bàn giao ");
+    } else {
+      if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+        EquipmentDataService.deleteEquipment(id)
+          .then((res) => console.log("Delete Successfully !!"))
+          .then(() => this.retrieveEquipments())
+          .catch((err) => console.log(err));
+      }
     }
   }
   filterOverView(takeOverStatus: number | null, deviceStatus: number | null) {

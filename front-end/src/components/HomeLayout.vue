@@ -4,9 +4,7 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <Header />
       <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
-        <div>
-          <router-view />
-        </div>
+        <router-view />
       </main>
       <Footer />
     </div>
