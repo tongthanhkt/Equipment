@@ -1,45 +1,53 @@
 <template>
-  <div class="p-1 font-medium text-gray-700">
-    Năm
-    <select
-      @change="handleYear()"
-      id="year"
-      name="type"
-      autocomplete="type-name"
-      v-model="year"
-      class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-    >
-      <option value="2022" selected disabled hidden>2022</option>
-      <option v-for="item in years" :value="item.id">{{ item.name }}</option>
-    </select>
-  </div>
-  <div class="p-1 font-medium text-gray-700">
-    <select
-      @change="handleQuater()"
-      v-model="quater"
-      id="quater"
-      name="type"
-      autocomplete="type-name"
-      class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-    >
-      <option value="0" selected disabled hidden>Quý</option>
-      <option v-for="item in quaters" :value="item.id">{{ item.name }}</option>
-    </select>
-  </div>
-  <div class="p-1 font-medium text-gray-700">
-    <select
-      @change="handleMonth()"
-      v-model="month"
-      id="month"
-      name="type"
-      autocomplete="type-name"
-      class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-    >
-      <option value="0" selected disabled hidden>Tháng</option>
-      <option v-for="item in months" :value="item.id">{{ item.name }}</option>
-    </select>
-  </div>
-  <div class="flex flex-col mt-8">
+  <div class="flex flex-col mx-64 my-16">
+    <div class="flex flex-wrap justify-end">
+      <p class="pt-2 font-medium text-3xl">NĂM</p>
+      <div class="p-1 font-medium text-gray-700">
+        <select
+          @change="handleYear()"
+          id="year"
+          name="type"
+          autocomplete="type-name"
+          v-model="year"
+          class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+        >
+          <option value="2022" selected disabled hidden>2022</option>
+          <option v-for="item in years" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+      <div class="p-1 font-medium text-gray-700">
+        <select
+          @change="handleQuater()"
+          v-model="quater"
+          id="quater"
+          name="type"
+          autocomplete="type-name"
+          class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+        >
+          <option value="0" selected disabled hidden>Quý</option>
+          <option v-for="item in quaters" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+      <div class="p-1 font-medium text-gray-700">
+        <select
+          @change="handleMonth()"
+          v-model="month"
+          id="month"
+          name="type"
+          autocomplete="type-name"
+          class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+        >
+          <option value="0" selected disabled hidden>Tháng</option>
+          <option v-for="item in months" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+    </div>
     <div class="py-2 -my-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       <div
         class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg"

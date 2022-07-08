@@ -74,6 +74,7 @@
             <div class="flex flex-col ml-10">
               <label class="leading-loose">Trạng thái thiết bị</label>
               <select
+                @change="handleLostEquipment()"
                 v-model="equipment.device_status"
                 id="country"
                 name="country"
@@ -83,6 +84,22 @@
                 <option value="0">Bị mất</option>
                 <option value="1">Sử dụng được</option>
                 <option value="2">Bị hư hỏng</option>
+              </select>
+            </div>
+            <div
+              v-if="equipment.device_status == '0'"
+              class="flex flex-col ml-10"
+            >
+              <label class="leading-loose">Đền bù</label>
+              <select
+                v-model="equipment.compensation_status"
+                id="country"
+                name="country"
+                autocomplete="country-name"
+                class="w-75px mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option value="0">Chưa đền bù</option>
+                <option value="1">Đã đền bù</option>
               </select>
             </div>
           </div>
@@ -142,8 +159,9 @@
                   <div class="col-8">
                     <label class="btn btn-default p-0">
                       <input
+                        name="myImage"
+                        accept="image/png, image/gif, image/jpeg"
                         type="file"
-                        accept="image/*"
                         ref="file"
                         @change="selectImage"
                       />
@@ -193,25 +211,27 @@
           >
             Thêm thiết bị
           </button>
-          <button
-            class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none"
-          >
-            <svg
-              class="w-6 h-6 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <a href="/equipment">
+            <button
+              class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-            Hủy
-          </button>
+              <svg
+                class="w-6 h-6 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+              Hủy
+            </button></a
+          >
         </div>
       </div>
     </div>
@@ -224,6 +244,7 @@ import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options, Ref } from "vue-property-decorator";
 import UploadImage from "./UploadImage.vue";
+import { numberLiteral } from "@babel/types";
 @Options({
   components: {
     DatePicker,
@@ -233,10 +254,11 @@ import UploadImage from "./UploadImage.vue";
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
     device_id: "",
+    compensation_status: "",
     name: "",
     start_status: "",
     price: "",
-    depreciated_value: "",
+    depreciated_value: null,
     depreciation_period: "",
     period_type: "",
     import_date: "",
@@ -268,6 +290,7 @@ export default class AddEquipment extends Vue {
       this.allImageCurrentURL.push(temp);
     }
   }
+  handleLostEquipment() {}
   deleteImage(index: number) {
     this.allImageCurrentURL.splice(index, 1);
     this.allImageFile.splice(index, 1);
@@ -275,9 +298,11 @@ export default class AddEquipment extends Vue {
   async getImageFile() {
     let obj = {};
     for (let i = 0; i < this.allImageFile.length; i++) {
-      await UploadService.upload(this.allImageFile[i]).then((response) => {
-        obj = Object.assign(response.data, obj);
-      });
+      await UploadService.upload(this.allImageFile[i])
+        .then((response) => {
+          obj = Object.assign(response.data, obj);
+        })
+        .catch((error) => alert(error.message));
     }
     return obj;
   }
@@ -288,14 +313,25 @@ export default class AddEquipment extends Vue {
     if (this.equipment.name?.length == 0) {
       this.errors?.push("Name's device required");
     }
+    if (this.equipment.category_id?.length == 0) {
+      this.errors?.push("Category's device required");
+    }
+    if (this.equipment.start_status?.length == 0) {
+      this.errors?.push("Start status device required");
+    }
+    if (this.equipment.device_status?.length == 0) {
+      this.errors?.push("Device status required");
+    }
     if (this.equipment.price?.length == 0) {
       this.errors?.push("Price required");
     }
-    if (this.equipment.device_id?.length == 0) {
-      this.errors?.push("Device id required");
-    }
-    if (this.equipment.depreciated_value?.length == 0) {
+    if (this.equipment.depreciated_value == null) {
       this.errors?.push("Depreciated value id required");
+    } else if (
+      this.equipment.depreciated_value < 0 ||
+      this.equipment.depreciated_value > 1
+    ) {
+      this.errors?.push("Depreciated value id must be >0 and <1");
     }
     if (this.equipment.depreciation_period?.length == 0) {
       this.errors?.push("Depreciated period id required");
@@ -306,17 +342,17 @@ export default class AddEquipment extends Vue {
     ) {
       this.errors?.push(" Import date required");
     }
+    if (
+      this.equipment.device_status == "0" &&
+      this.equipment.compensation_status?.length == 0
+    ) {
+      this.errors?.push("Compensation status required");
+    }
   }
   async saveEquipment() {
     let errors = "";
     this.checkValidateForm();
-    if (this.errors.length != 0) {
-      for (let i = 0; i < this.errors.length; i++) {
-        errors = errors + this.errors[i] + "\n";
-      }
-      alert(errors);
-      this.errors = [];
-    } else {
+    if (this.errors.length == 0) {
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
       const data = {
@@ -333,9 +369,9 @@ export default class AddEquipment extends Vue {
         created_by: this.equipment.created_by,
         created_time: this.equipment.created_time,
         device_status: this.equipment.device_status,
+        compensation_status: this.equipment.compensation_status,
         metadata_info: await this.getImageFile(),
       };
-
       EquipmentDataService.addData(data)
         .then(() => alert("Thêm thiết bị thành công"))
         .catch((err) => {
@@ -348,8 +384,14 @@ export default class AddEquipment extends Vue {
           alert(temp);
         });
       const a = this.allImageFile.forEach((imageFile) => {});
-      await Promise.all([a]).then((values) => console.log(values));
+      await Promise.all([a]);
+    } else {
+      for (let i = 0; i < this.errors.length; i++) {
+        errors = errors + this.errors[i] + "\n";
+      }
+      alert(errors);
     }
+    this.errors = [];
   }
 }
 </script>

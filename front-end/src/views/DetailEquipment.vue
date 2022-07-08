@@ -613,6 +613,7 @@ export default class DetailEquipment extends Vue {
   public allImageCurrentURL: string[] = []; 
   public indexImage = 0;
   equipment: Equipment= {category_id: "",
+  compensation_status: "",
   category_name:"",
   created_by: "",
   created_time: "",
@@ -628,7 +629,7 @@ export default class DetailEquipment extends Vue {
   updated_by: "",
   updated_time: "",
   device_status: "",
-  depreciated_value: "",
+  depreciated_value: null,
   depreciation_period: "",
   period_type: "",
   metadata_info:""};
