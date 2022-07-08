@@ -487,8 +487,6 @@ export default class UpdateTakeOver extends Vue {
     //   alert("Chọn file <= 5MB");
     // }
     else {
-      console.log(this.editDate.getTime());
-
       const data = {
         id: this.record.id,
         equipment_id: this.record.equipment_id,

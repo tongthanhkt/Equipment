@@ -132,7 +132,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
     }
     put("/update") { request: TakeOver => {
       try{
-        println(request)
+        println("cost"+request.cost)
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
           println(takeOverService.checkUserExist(request.verifier))
