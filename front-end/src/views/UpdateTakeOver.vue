@@ -505,19 +505,22 @@ export default class UpdateTakeOver extends Vue {
 
       console.log(data);
       TakeOverService.update(data)
-        .then((res) => {
-          alert("Cập nhật thông tin bàn giao thành công !");
-          this.changeShow(false);
-        })
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          console.log(errors);
-          let temp = "";
-          Object.values(errors).forEach((error) => {
-            temp = temp + error + "\n";
-          });
-          alert(temp);
+      .then(()=>{
+        alert("Cập nhật thông tin bàn giao thành công !")
+        this.changeShow(false)
+      })
+      .catch((err) => {
+        const errors = err.response.data.errors[0];
+        console.log(errors);
+        let temp = "";
+        Object.values(errors).forEach((error) => {
+          temp = temp + error + "\n";
         });
+        alert(temp);
+      });
+
+      
+
     }
   }
 

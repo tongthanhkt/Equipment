@@ -74,11 +74,19 @@ class CRUDEquipmentController @Inject() (
     delete("/delete"){request: DeleteEquipmentRequest => {
       val equipmentId = request.id
       try {
-        val result = equipmentService.deleteById(equipmentId)
-        if (result ==1)
-          response.created.json(s"""{
-                                   |"msg" : Delete equipment with id = $equipmentId successfully.
-                                   |}""".stripMargin)
+        val isTakeOver = equipmentService.checkTakeOverStatus(equipmentId.toString)
+        if (isTakeOver == 0){
+          val result = equipmentService.deleteById(equipmentId)
+          if (result ==1)
+            response.created.json(s"""{
+                                     |"msg" : Delete equipment with id = $equipmentId successfully.
+                                     |}""".stripMargin)
+          else
+            response.internalServerError.
+              jsonError("Cannot delete equipment. ")
+        }
+        else if (isTakeOver == 1)
+          response.badRequest.jsonError("Cannot delete equipment has been taken over.")
         else
           response.internalServerError.
             jsonError("Cannot delete equipment. ")
@@ -194,46 +202,5 @@ class CRUDEquipmentController @Inject() (
       }
     }}
   }
-
-//  post("/milu"){request: Request => {
-//
-//    val map :Map[String, MultipartItem] = RequestUtils.multiParams(request)
-//    implicit val formats = DefaultFormats
-//    try {
-//      var files_upload= new util.ArrayList[UploadFile]
-//      val dirname :String = System.getProperty("user.dir")+"/images/";
-//      var check_files_upload = equipmentService.checkFilesUpload(map);
-//      val new_equipment_id = equipmentService.getIdEquipmentDESC();
-//      var uploadfiles : Map[String, UploadFile] = Map();
-//      for (key <- map.keys){
-//          val image = map.get(key)
-//          val filename :String = "image"+new_equipment_id+"_"+System.currentTimeMillis();
-//          val extension = FilenameUtils.getExtension(key)
-//          val basename = filename.concat(".").concat(extension)
-//          val path = Paths.get(dirname,basename)
-//          val data = image.get.data
-//          val size = data.length
-//          println(image.get.contentType.get.split("/")(0))
-//          Files.write(path,data, StandardOpenOption.CREATE)
-//        uploadfiles = uploadfiles + (filename -> UploadFile(file_url = path.toString,file_name = filename,size = size ,file_extension=extension))
-//    }
-//          var currentFiles :  Map[String, UploadFile] = equipmentService.searchMetaDataById(new_equipment_id)
-//          currentFiles = currentFiles ++ uploadfiles;
-//          val update_row = equipmentService.updateMetaDataById(currentFiles,new_equipment_id);
-//          if (update_row == 1 ){
-//            response.created.body(JSON.write(currentFiles))
-//          }
-//          else response.internalServerError.json(
-//            """
-//              |msg: "Can not add images"
-//              |""".stripMargin)
-//
-//    } catch {
-//      case ex: Exception =>{
-//        println(ex)
-//        response.internalServerError.jsonError(ex.toString)
-//      }
-//    }
-//  }}
 
 }

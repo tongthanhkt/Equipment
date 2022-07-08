@@ -141,7 +141,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
 
     return map
   }
-  @throws[SQLException]
+  @throws[Exception]
   def countBySearchTakeBack(username:String,takeBackPerson:String,typeTakeBack:String,status:String,equipmentId:String):Int={
     val sql=
       """
