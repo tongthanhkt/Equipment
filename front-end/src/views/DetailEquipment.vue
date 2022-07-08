@@ -10,7 +10,16 @@
               Thông tin chi tiết thiết bị
             </h1>
           </div>
-
+          <div>
+            <div class="flex flex-row">
+              <div class="flex flex-col">
+              </div>
+              <div class="flex flex-col">
+              </div>
+              <div class="flex flex-col">
+              </div>
+      </div>
+          </div>
           <div class="p-1 m-4 grid grid-rows-1 grid-flow-col">
             <div
               class="gap-px grid grid-cols-1 grid-flow-row place-items-center"
@@ -59,9 +68,8 @@
                     Trạng thái bàn giao
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment.take_over_status=='-1'">Bị xóa</p>
-                    <p v-else-if="equipment.take_over_status=='1'">Đã được bàn giao</p>
-                    <p v-else-if="equipment.take_over_status=='2'">Đang tồn kho</p>
+                    <p v-if="equipment.take_over_status=='1'">Đã được bàn giao</p>
+                    <p v-else-if="equipment.take_over_status=='0'">Đang tồn kho</p>
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người thêm thông tin
