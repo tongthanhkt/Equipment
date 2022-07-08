@@ -31,6 +31,7 @@
       v-if="isUpdateFixEquipmentShow"
       v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
       v-bind:id="recordFixEquipmentId"
+       v-on:handleUpdate="handleFixingUpdate"
     />
 
     <DetailTakeBack
@@ -45,6 +46,7 @@
       v-if="isUpdateTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-bind:id="recordTakeBackId"
+       v-on:handleUpdate="handleTakeBackUpdate"
     />
     <DetailTakeOver
       v-if="isDetailTakeOverShow"
@@ -57,6 +59,7 @@
       v-if="isUpdateTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
       v-bind:id="recordTakeOverId"
+       v-on:handleUpdate="handleTakeOverUpdate"
     />
   </div>
 </template>
@@ -158,7 +161,7 @@ export default class History extends Vue {
   deleteTakeBackRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
       TakeBackService.deleteById(id)
-        .then((res) => alert("Delete Successfully !!"))
+        .then(() => alert("Delete Successfully !!"))
         .then(() => (this.keyTakeBack += 1))
         .catch((err) => alert(err.response.data));
     }
@@ -167,7 +170,7 @@ export default class History extends Vue {
   deleteTakeOverRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
       TakeOverService.deleteById(id)
-        .then((res) => {
+        .then(() => {
           this.keyTakeOver += 1;
           alert("Delete Successfully !!");
         })
@@ -175,6 +178,21 @@ export default class History extends Vue {
         .catch((err) => alert(err.response.data.errors[0]));
     }
   }
+
+  handleTakeOverUpdate(){
+    this.keyTakeOver+=1
+    
+   }
+
+   handleTakeBackUpdate(){
+    this.keyTakeBack+=1
+   
+   }
+
+   handleFixingUpdate(){
+    this.keyFixEquipment+=1
+    
+   }
 }
 </script>
 

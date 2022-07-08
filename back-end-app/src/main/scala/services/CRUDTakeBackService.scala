@@ -309,19 +309,24 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
   @throws[Exception]
   def updateEquipment(equipmentId:String,typeTakeBack:String):Int={
     var result:String="1";
+    var isCompensation :String = null
     if(typeTakeBack=="2") result="2";
-    else if(typeTakeBack=="3") result="0";
+    else if(typeTakeBack=="3") {
+      result = "0"
+      isCompensation = "1"
+    };
     else if(typeTakeBack=="4") result="3";
     val sql =
       """
         |UPDATE equipment as e
-        |SET e.device_status = ?
+        |SET e.device_status = ?, e.compensation_status = ?
         |WHERE e.id = ?;
         |""".stripMargin
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
     pst.setString(1,result);
-    pst.setString(2,equipmentId);
+    pst.setString(2,isCompensation)
+    pst.setString(3,equipmentId);
     val rs = pst.executeUpdate()
     con.close()
     return rs;

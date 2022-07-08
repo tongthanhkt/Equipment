@@ -58,7 +58,7 @@
           />
         </div>
 
-        <div class="p-1 font-medium text-gray-700">Người bàn giao</div>
+        <div class="p-1 font-medium text-gray-700">Người trả thiết bị</div>
         <div class="pl-1 col-span-2 font-medium text-gray-700">
           Loại bàn giao
         </div>
@@ -72,7 +72,7 @@
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
-            v-model="take_back_person"
+            v-model="user"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
           >
@@ -105,16 +105,17 @@
             <option value="4">Nhân viên bù tiền mua thiết bị</option>
           </select>
         </div>
-        <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
-        <div class="p-1 col-span-2 font-medium text-gray-700">
+        <div class="p-1 font-medium text-gray-700">Người thu hồi</div>
+        <div class="p-1  font-medium text-gray-700">
           Người xác nhận
         </div>
+        <div class="p-1 font-medium text-gray-700">Trạng thái</div>
 
         <div>
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
             :options="options"
-            v-model="user"
+            v-model="take_back_person"
             :get-option-label="(option) => option.username"
             :dropdown-should-open="dropdownShouldOpen"
             @change="changeTakeBackPerson"
@@ -134,6 +135,8 @@
             </template>
           </v-select>
         </div>
+   
+
         <div>
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
@@ -157,11 +160,10 @@
             </template>
           </v-select>
         </div>
-      </div>
-      <div
-        class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
+        <div
+       
       >
-        <div class="p-1 font-medium text-gray-700">Trạng thái</div>
+        
         <select
           v-model="record.status"
           id="type"
@@ -173,6 +175,8 @@
           <option value="0">Chờ xác nhận</option>
         </select>
       </div>
+      </div>
+     
       <div
         class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
       >
@@ -505,7 +509,8 @@ export default class UpdateTakeBack extends Vue {
 
       console.log(data);
       TakeBackService.update(data)
-        .then((res) => {
+        .then(() => {
+          this.$emit('handleUpdate')
           alert("Cập nhật thông tin thu hồi thành công !");
           this.changeShow(false);
         })

@@ -381,7 +381,8 @@ export default class UpdateFixEquipment extends Vue {
 
       console.log(data);
       FixEquipmentService.update(data)
-        .then((res) => {
+        .then(() => {
+          this.$emit('handleUpdate')
           alert("Cập nhật thông tin sửa chữa thành công !");
           this.changeShow(false);
         })

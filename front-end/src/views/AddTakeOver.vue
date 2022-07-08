@@ -292,7 +292,6 @@
 import Datepicker from "@vuepic/vue-datepicker";
 import UploadService from "../services/equipments/UploadFilesService";
 import { Vue, Options,Emit,Ref,Prop } from "vue-property-decorator";
-import TakeOverRecord from "@/types/TakeOverRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import TakeOverService from "@/services/takeover/TakeOverService";
@@ -437,6 +436,7 @@ export default class AddTakeOver extends Vue {
       console.log(this.record)
       TakeOverService.add(this.record)
       .then(()=>{
+        this.$emit('handleUpdate')
         alert("Thêm thông tin bàn giao cho thiết bị thành công !")
         this.changeShow(false)
       })

@@ -510,17 +510,20 @@
       v-if="isUpdateTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-bind:id="recordTakeBackId"
+       v-on:handleUpdate="handleTakeBackUpdate"
     />
    
     <UpdateTakeOver
       v-if="isUpdateTakeOverShow"
       v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
       v-bind:id="recordTakeOverId"
+       v-on:handleUpdate="handleTakeOverUpdate"
     />
     <UpdateFixEquipment
     v-if="isUpdateFixEquipmentShow"
     v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
     v-bind:id="recordFixEquipmentId"
+     v-on:handleUpdate="handleFixingUpdate"
     />
 
     <AddTakeOver
@@ -529,6 +532,7 @@
       v-bind:device_id="equipment?.device_id"
       v-bind:equipment_name="equipment?.name"
        v-bind:equipment_id="equipment?.id"
+        v-on:handleUpdate="handleTakeOverUpdate"
     />
     <AddTakeBack
       v-if="isAddTakeBackShow"
@@ -536,6 +540,7 @@
       v-bind:device_id="equipment?.device_id"
       v-bind:equipment_name="equipment?.name"
        v-bind:equipment_id="equipment?.id"
+        v-on:handleUpdate="handleTakeBackUpdate"
     />
     <AddFixEquipment
       v-if="isAddFixEquipmentShow"
@@ -543,6 +548,7 @@
       v-bind:device_id="equipment.device_id"
       v-bind:equipment_name="equipment.name"
       v-bind:equipment_id="equipment.id"
+      v-on:handleUpdate="handleFixingUpdate"
     />
     <!-- <DetailTakeOver
       v-if="isDetailTakeOverShow"
@@ -724,25 +730,19 @@ handleImportDate(data: string) {
     }
   }
   handleAddTakeOverShow(data: Boolean) {
-   if (data ==false)
-     this.keyTakeOver+=1
-    this.retrieveDetailEquipment(this.$route.params.id);
+  
     this.isAddTakeOverShow = data;
     // this.isDetailTakeOverShow = false;
     // this.isUpdateTakeOverShow = false;
   }
   handleAddTakeBackShow(data: Boolean) {
-   if (data ==false)
-     this.keyTakeBack+=1
-    this.retrieveDetailEquipment(this.$route.params.id);
+   
     this.isAddTakeBackShow = data;
     // this.isDetailTakeOverShow = false;
     // this.isUpdateTakeOverShow = false;
   }
   handleAddFixEquipmentShow(data:Boolean){
-    if(data==false)
-      this.keyFixEquipment+=1;
-    this.retrieveDetailEquipment(this.$route.params.id);
+    
     this.isAddFixEquipmentShow=data;
     
   }
@@ -754,10 +754,8 @@ handleImportDate(data: string) {
   }
 
   handleUpdateTakeOverShow(data: Boolean) {
-    if (data ==false)
-     this.keyTakeOver+=1
-    this.retrieveDetailEquipment(this.$route.params.id);
-    // this.isDetailTakeOverShow = false;
+   
+    this.isDetailTakeOverShow = false;
     // this.isAddTakeOverShow = false;
     this.isUpdateTakeOverShow = data;
   }
@@ -766,10 +764,9 @@ handleImportDate(data: string) {
     this.isDetailFixEquipmentShow=data;
   }
   handleUpdateFixEquipmentShow(data: Boolean) {
-    if (data ==false)
-     this.keyFixEquipment+=1
-    this.retrieveDetailEquipment(this.$route.params.id);
-    //this.isDetailTakeBackShow = false;
+    
+    
+    this.isDetailFixEquipmentShow = false;
     this.isUpdateFixEquipmentShow = data;
   }
 
@@ -778,10 +775,7 @@ handleImportDate(data: string) {
     //this.isUpdateTakeBackShow = false;
   }
   handleUpdateTakeBackShow(data: Boolean) {
-    if (data ==false)
-     this.keyTakeBack+=1
-    this.retrieveDetailEquipment(this.$route.params.id);
-    //this.isDetailTakeBackShow = false;
+    this.isDetailTakeBackShow = false;
     this.isUpdateTakeBackShow = data;
   }
  
@@ -799,17 +793,33 @@ handleImportDate(data: string) {
    
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
     TakeBackService.deleteById(id)
-        .then((res) => alert("Delete Successfully !!"))
+        .then(() => alert("Delete Successfully !!"))
         .then(() => this.keyTakeBack+=1)
         .catch((err) => alert(err.response.data));
     }
   }
    
+
+   handleTakeOverUpdate(){
+    this.keyTakeOver+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
+   }
+
+   handleTakeBackUpdate(){
+    this.keyTakeBack+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
+   }
+
+   handleFixingUpdate(){
+    this.keyFixEquipment+=1
+    this.retrieveDetailEquipment(this.$route.params.id);
+   }
+
     deleteTakeOverRecord(id: number) {
    
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
      TakeOverService.deleteById(id)
-        .then((res) => {
+        .then(() => {
             this.keyTakeOver+=1
             alert("Delete Successfully !!")
         })

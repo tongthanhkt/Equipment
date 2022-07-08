@@ -281,7 +281,7 @@ import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeOverRecord from "@/types/TakeOverRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
-import Fuse from "fuse.js";
+
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadFilesService from "../services/equipments/UploadFilesService";
@@ -508,6 +508,7 @@ export default class UpdateTakeOver extends Vue {
       console.log(data);
       TakeOverService.update(data)
       .then(()=>{
+        this.$emit('handleUpdate')
         alert("Cập nhật thông tin bàn giao thành công !")
         this.changeShow(false)
       })
