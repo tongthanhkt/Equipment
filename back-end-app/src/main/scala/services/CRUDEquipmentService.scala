@@ -138,11 +138,12 @@ class CRUDEquipmentService @Inject() (
   @throws[Exception]
   def deleteById(equipmentId:Int): Int = {
 
-      val sql = "UPDATE equipment SET device_status = -1 WHERE id = ?;"
+      val sql = "UPDATE equipment SET device_status = -1 WHERE id = ? and takeover_status != ? ;"
 
       var con = databaseConnection.getConnection()
       val pst = con.prepareStatement(sql)
       pst.setInt(1, equipmentId)
+    pst.setInt(2, 1)
       val rs = pst.executeUpdate()
       con.close();
       return rs

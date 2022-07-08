@@ -54,7 +54,7 @@ case class Equipment(
     else if (!convertString.isDouble(depreciatedValue))
       check = check + (9 -> "The 'Depreciated Value' field : type mismatch, required : Double. ")
     else if (convertString.isDouble(depreciatedValue) && (convertString.toDouble(depreciatedValue).get > 1 || convertString.toDouble(depreciatedValue).get < 0))
-      check = check + (10 -> "'Depreciated Value' must be > 0")
+      check = check + (10 -> "'Depreciated Value' must be between 0 to 1")
 
     if (depreciationPeriod == null)
       check = check + (11 -> "The 'Depreciation Period' field cannot be blank. ")
