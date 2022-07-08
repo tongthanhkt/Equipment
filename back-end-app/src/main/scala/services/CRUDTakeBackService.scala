@@ -294,12 +294,14 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
     return result
   }
   @throws[Exception]
-  def updateTakeover(equipment:String):Int={
+  def updateTakeover(equipmentId:String):Int={
     val sql =
       """UPDATE takeover_equipment_info as tov
-          SET tov.takeback_status = 1 ;"""
+          SET tov.takeback_status = 1
+          WHERE tov.equipment_id= ?;"""
     var con = databaseConnection.getConnection()
     val pst= con.prepareStatement(sql)
+    pst.setString(1,equipmentId);
     val rs = pst.executeUpdate()
     con.close();
     return rs

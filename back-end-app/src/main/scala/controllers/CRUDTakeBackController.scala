@@ -99,8 +99,8 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             print(request);
             val newTakeBack = takeBackService.add(request)
             if (newTakeBack == 1) {
-              val takeOverId = takeBackService.getTakeOverIdForTackBack(request.equipmentId);
-              val updateStatusTakeOver = takeBackService.updateTakeover(takeOverId.id);
+              //val takeOverId = takeBackService.getTakeOverIdForTackBack(request.equipmentId);
+              val updateStatusTakeOver = takeBackService.updateTakeover(request.equipmentId);
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
               val takeBackId = takeBackService.getIdTakeBackDESC();
               response.created.json(
