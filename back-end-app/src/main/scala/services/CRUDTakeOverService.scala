@@ -11,9 +11,10 @@ import javax.inject.Inject
 
 
 class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,convertString:ConvertString){
-
+  private[this] var mPutDevice = new util.HashMap[String,Object]()
   @throws[Exception]
   def searchTakeOverByEquipmentId(equipmentId:Int): util.ArrayList[TakeOver] = {
+
     val takeOverList = new util.ArrayList[TakeOver]()
     val sql = """
       SELECT tov.id,tov.equipment_id,e.device_id,e.name,tov.username,tov.take_over_time,tov.status,tov.verifier,tov.take_over_person,tov.metadata_info,tov.type
@@ -183,7 +184,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     val sql = """
       SELECT tov.id, e.device_id, e.name ,tov.equipment_id,tov.username,tov.take_over_time,tov.take_over_person,tov.status,tov.verifier,tov.metadata_info,tov.type,tov.message,tov.cost,tov.created_by,tov.updated_by,tov.created_time,tov.updated_time,tov.takeback_status
       FROM equipment_management.takeover_equipment_info as tov, equipment as e
-      WHERE  tov.id = ? and tov.equipment_id=e.id
+      WHERE  tov.id = ? and tov.equipment_id=e.id and tov.status!=-1
 				;"""
 
     var con = databaseConnection.getConnection()
@@ -290,35 +291,52 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   @throws[Exception]
   def add(e: TakeOver): Int = {
-    val sql =
-      """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
+    var lockObj=mPutDevice.get(e.deviceId)
+    if(lockObj == null) {
+      lockObj = new Object()
+      mPutDevice.put(e.deviceId,lockObj)
+
+    }
+    else{
+      return -1
+    }
+
+    try{
+      val sql =
+        """INSERT INTO takeover_equipment_info (equipment_id, username, take_over_time,status,verifier,
               take_over_person,metadata_info,type,
               message,cost,created_by,created_time,updated_by,updated_time,takeback_status)
               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
-    var con = databaseConnection.getConnection()
-    val pst = con.prepareStatement(sql)
-    pst.setString(1, e.equipmentId)
+      var con = databaseConnection.getConnection()
+      val pst = con.prepareStatement(sql)
+      pst.setString(1, e.equipmentId)
       pst.setString(2, e.username)
       pst.setString(3,e.takeOverTime )
       pst.setInt(4, 0)
       pst.setString(5,e.verifier)
       pst.setString(6,e.takeOverPerson )
-    pst.setString(7,
-      s"""
-         |{"files": ${JSON.write(e.metadataInfo)}}
-         |""".stripMargin)
-    pst.setString(8, e.typeTakeOver)
-    pst.setString(9, e.message)
+      pst.setString(7,
+        s"""
+           |{"files": ${JSON.write(e.metadataInfo)}}
+           |""".stripMargin)
+      pst.setString(8, e.typeTakeOver)
+      pst.setString(9, e.message)
       pst.setString(10,e.cost)
       pst.setString(11, e.createdBy)
       pst.setLong(12,System.currentTimeMillis())
       pst.setString(13, e.updatedBy)
       pst.setString(14,e.updatedTime)
-    pst.setInt(15,0)
+      pst.setInt(15,0)
       val rs = pst.executeUpdate()
       con.close();
       return rs
+    }catch {
+      case e: Exception => throw e
+    } finally {
+      mPutDevice.remove(e.deviceId)
+    }
+
 
   }
   @throws[Exception]
@@ -355,6 +373,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
   }
   @throws[Exception]
   def updateById(e:TakeOver):Int= {
+    print("cost 2 "+e.cost)
     var uploadFile: String = null
     if (e.metadataInfo != null)
       uploadFile =
@@ -368,7 +387,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
            take_over_time = if(? is not null, ?,take_over_time),status = if(? is not null, ?,status),
            verifier = if(? is not null, ?,verifier),take_over_person = if(? is not null, ?, take_over_person),
            type = if(? is not null, ?,type),
-           message = if(? is not null,?,message),cost = if(? is not null,?,cost),
+           message = if(? is not null,?,message),cost = if(? is null,?,cost),
            updated_by = ?,updated_time = ?,
            metadata_info = if(? is not null, ?,metadata_info)
            WHERE status != ? and id = ?;"""
