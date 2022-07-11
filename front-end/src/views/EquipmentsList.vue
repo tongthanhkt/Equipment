@@ -160,9 +160,10 @@
         >
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
+              {{ this.sumOfCompensationEquipment }}/
               {{ this.sumOfLostEquipment }}
             </h4>
-            <div class="text-gray-500">Tổng bị mất</div>
+            <div class="text-gray-500">Tổng chưa đền bù / bị mất</div>
           </div>
         </div>
       </div>
@@ -393,12 +394,12 @@ export default class Dashboard extends Vue {
   };
 
   public equipments: Equipment[] = [];
-
   public sumOfTakeOverEquipment: number = 0;
   public sumOfEquipments: number = 0;
   public sumOfInventoryEquipment: number = 0;
   public sumOfDamagedEquipment: number = 0;
   public sumOfLostEquipment: number = 0;
+  public sumOfCompensationEquipment: number = 0;
   public currentPage: number = 1;
   public currentLimit: number = 10;
   public currentCategoryId: number | null = null;
@@ -422,11 +423,13 @@ export default class Dashboard extends Vue {
   }
   async retrieveOverview() {
     EquipmentDataService.getCountTotal(this.getQueryParams()).then((res) => {
+      console.log(res);
       this.sumOfEquipments = res.data.total_equipments;
       this.sumOfDamagedEquipment = res.data.total_damaged_equipments;
       this.sumOfInventoryEquipment = res.data.total_inventory_equipments;
       this.sumOfTakeOverEquipment = res.data.total_take_over_equipments;
       this.sumOfLostEquipment = res.data.total_lost_equipments;
+      this.sumOfCompensationEquipment = res.data.total_compensation_equipments;
     });
   }
   async retrieveEquipments() {
@@ -452,10 +455,6 @@ export default class Dashboard extends Vue {
           this.equipments[i].import_date!
         );
       }
-
-      this.equipments[i].category_name = this.handleCategoryEquipment(
-        this.equipments[i].category_id!
-      );
     }
   }
   getQueryParams() {
@@ -563,21 +562,10 @@ export default class Dashboard extends Vue {
       return "Bị hư hỏng";
     }
   }
-  handleCategoryEquipment(category_id: string) {
-    if (category_id == "1") {
-      return "Máy tính";
-    } else if (category_id == "2") {
-      return "Màn hình";
-    } else if (category_id == "3") {
-      return "Phụ kiện";
-    }
-    return "null";
-  }
   handleImportDate(data: string) {
     var d = new Date(parseInt(data));
     return d.toLocaleString();
   }
-
   searchEquipments() {
     this.currentPage = 1;
     if (this.keyword == "") {

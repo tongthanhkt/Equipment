@@ -10,7 +10,7 @@
   <div class="flex justify-center relative">
     <div class="bg-white shadow rounded-3xl sm:p-10 mt-8">
       <h1 class="text-2xl leading-relaxed text-center font-bold">
-        THÊM MỚI THIẾT BỊ
+        CẬP NHẬT THIẾT BỊ
       </h1>
       <div>
         <div class="flex flex-row gap-6 mt-8">
@@ -204,13 +204,12 @@
         </div>
       </div>
       <div class="flex flex-row gap-6 mt-8 justify-center">
-        <a
-          href="/equipment"
+        <button
           @click="saveEquipment"
           class="bg-blue-500 font-bold flex justify-center w-48 items-center text-white px-4 py-3 rounded-md focus:outline-none font-bold"
         >
           Cập nhật thiết bị
-        </a>
+        </button>
         <a href="/equipment">
           <button
             class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none font-bold"
@@ -347,6 +346,9 @@ export default class AddEquipment extends Vue {
     ) {
       this.errors?.push("Compensation status required");
     }
+    if (this.equipment.device_status != "0") {
+      this.equipment.compensation_status = null;
+    }
   }
   async saveEquipment() {
     let errors = "";
@@ -388,11 +390,8 @@ export default class AddEquipment extends Vue {
           .catch((err) => {
             const errors = err.response.data.errors[0];
             console.log(errors);
-            let temp = "";
-            Object.values(errors).forEach((error) => {
-              temp = temp + error + "\n";
-            });
-            alert(temp);
+
+            alert(errors);
           });
       }
     }

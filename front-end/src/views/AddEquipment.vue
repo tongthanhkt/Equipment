@@ -251,7 +251,7 @@ import { numberLiteral } from "@babel/types";
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
     device_id: "",
-    compensation_status: "",
+    compensation_status: null,
     name: "",
     start_status: "",
     price: "",
@@ -380,11 +380,8 @@ export default class AddEquipment extends Vue {
         .catch((err) => {
           const errors = err.response.data.errors[0];
           console.log(errors);
-          let temp = "";
-          Object.values(errors).forEach((error) => {
-            temp = temp + error + "\n";
-          });
-          alert(temp);
+
+          alert(errors);
         });
       const a = this.allImageFile.forEach((imageFile) => {});
       await Promise.all([a]);
