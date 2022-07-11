@@ -70,15 +70,6 @@
             </select>
           </div>
           <div class="flex flex-col">
-            <p class="leading-loose font-medium text-xl">Giá tiền</p>
-            <input
-              input
-              type="number"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-              v-model="equipment.price"
-            />
-          </div>
-          <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Trạng thái thiết bị</p>
             <select
               @change="handleLostEquipment()"
@@ -109,12 +100,12 @@
         </div>
         <div class="flex flex-row gap-6 mt-8">
           <div class="flex flex-col">
-            <p class="leading-loose font-medium text-xl">Giá trị khấu hao</p>
+            <p class="leading-loose font-medium text-xl">Giá tiền</p>
             <input
+              input
               type="number"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-              placeholder=""
-              v-model="equipment.depreciated_value"
+              v-model="equipment.price"
             />
           </div>
           <div class="flex flex-col">
@@ -151,6 +142,17 @@
             ></Datepicker>
           </div>
           <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Giá trị khấu hao</p>
+            <input
+              type="number"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              placeholder=""
+              v-model="equipment.depreciated_value"
+            />
+          </div>
+        </div>
+        <div class="flex flex-row gap-6 mt-8 w-full">
+          <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Tệp đính kèm</p>
             <div class="row">
               <div class="col-8">
@@ -164,41 +166,6 @@
                   />
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex flex-row gap-6 mt-8 w-full">
-          <div>
-            <div v-if="currentImage" class="progress">
-              <div
-                class="progress-bar progress-bar-info w-80"
-                role="progressbar"
-                :aria-valuenow="progress"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                :style="{ width: progress + '%' }"
-              >
-                {{ progress }}%
-              </div>
-            </div>
-
-            <div v-if="message" class="alert alert-secondary" role="alert">
-              {{ message }}
-            </div>
-            <div class="card mt-3 w-80">
-              <div class="card-header">List of Images</div>
-              <ul class="list-group list-group-flush">
-                <div v-for="(image, index) in allImageCurrentURL">
-                  <div>
-                    <div class="img-wrap">
-                      <span class="close" @click="deleteImage(index)"
-                        >&times;</span
-                      >
-                      <img class="preview my-3 w-80" :src="image" alt="" />
-                    </div>
-                  </div>
-                </div>
-              </ul>
             </div>
           </div>
         </div>
@@ -323,7 +290,10 @@ export default class AddEquipment extends Vue {
       this.errors?.push("Price required");
     }
 
-    if (this.equipment.depreciated_value == null) {
+    if (
+      this.equipment.depreciated_value == null ||
+      this.equipment.depreciated_value.toString().length == 0
+    ) {
       this.errors?.push("Depreciated value id required");
     } else if (
       this.equipment.depreciated_value < 0 ||
