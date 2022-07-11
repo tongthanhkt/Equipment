@@ -112,6 +112,7 @@ export default class UpdateCategory extends Vue {
         .then(() => {
           alert("Cập nhật danh mục thành công !");
         })
+        .then(() => this.retrieveCategory())
         .catch((error) => alert("Cập nhật thất bại"));
     }
   }

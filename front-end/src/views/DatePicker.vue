@@ -1,5 +1,5 @@
 <template>
-  <Datepicker v-model="date" class="w-64"></Datepicker>
+  <Datepicker v-model="date"></Datepicker>
 </template>
 
 <script>

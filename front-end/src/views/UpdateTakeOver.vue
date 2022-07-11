@@ -103,12 +103,9 @@
             <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
           </select>
         </div>
-
         <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
-        <div class="p-1 col-span-2 font-medium text-gray-700">
-          Người xác nhận
-        </div>
-
+        <div class="p-1 font-medium text-gray-700">Người xác nhận</div>
+        <div class="p-1 font-medium text-gray-700">Trạng thái</div>
         <div>
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
@@ -157,8 +154,20 @@
             </template>
           </v-select>
         </div>
+        <div>
+          <select
+            v-model="record.status"
+            id="type"
+            name="type"
+            autocomplete="type-name"
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+          >
+            <option value="1">Đã xác nhận</option>
+            <option value="0">Chờ xác nhận</option>
+          </select>
+        </div>
       </div>
-      <div
+      <!-- <div
         class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
       >
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
@@ -172,7 +181,7 @@
           <option value="1">Đã xác nhận</option>
           <option value="0">Chờ xác nhận</option>
         </select>
-      </div>
+      </div> -->
       <div
         class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
       >
@@ -505,23 +514,20 @@ export default class UpdateTakeOver extends Vue {
 
       console.log(data);
       TakeOverService.update(data)
-      .then(()=>{
-        this.$emit('handleUpdate')
-        alert("Cập nhật thông tin bàn giao thành công !")
-        this.changeShow(false)
-      })
-      .catch((err) => {
-        const errors = err.response.data.errors[0];
-        console.log(errors);
-        let temp = "";
-        Object.values(errors).forEach((error) => {
-          temp = temp + error + "\n";
+        .then(() => {
+          this.$emit("handleUpdate");
+          alert("Cập nhật thông tin bàn giao thành công !");
+          this.changeShow(false);
+        })
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          let temp = "";
+          Object.values(errors).forEach((error) => {
+            temp = temp + error + "\n";
+          });
+          alert(temp);
         });
-        alert(temp);
-      });
-
-      
-
     }
   }
 

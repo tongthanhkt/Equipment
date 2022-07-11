@@ -9,11 +9,13 @@
 <template>
   <div class="flex justify-center relative">
     <div class="bg-white shadow rounded-3xl sm:p-10 mt-8">
-      <h1 class="text-2xl leading-relaxed text-center">THÊM MỚI THIẾT BỊ</h1>
+      <h1 class="text-2xl leading-relaxed text-center font-bold">
+        THÊM MỚI THIẾT BỊ
+      </h1>
       <div>
         <div class="flex flex-row gap-6 mt-8">
           <div class="flex flex-col">
-            <label class="leading-loose">Mã thiết bị</label>
+            <p class="leading-loose font-medium text-xl">Mã thiết bị</p>
             <input
               type="text"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
@@ -22,38 +24,41 @@
             />
           </div>
           <div class="flex flex-col">
-            <label class="leading-loose">Tên thiết bị</label>
+            <p class="leading-loose font-medium text-xl">Tên thiết bị</p>
             <input
               type="text"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
               placeholder=""
               v-model="equipment.name"
               required
             />
           </div>
           <div class="flex flex-col">
-            <label class="leading-loose">Danh mục</label>
+            <p class="leading-loose font-medium text-xl">Danh mục</p>
             <select
               v-model="equipment.category_id"
               id="country"
               name="country"
               autocomplete="country-name"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
             >
-              <option value="1">Máy tính</option>
-              <option value="2">Màn hình</option>
-              <option value="3">Phụ kiện</option>
+              <option
+                v-for="(category, index) in categories"
+                v-bind:value="category.id"
+              >
+                {{ category.name }}
+              </option>
             </select>
           </div>
         </div>
         <div class="flex flex-row gap-6 mt-8">
           <div class="flex flex-col">
-            <label class="leading-loose">Tình trạng mới nhập</label>
+            <p class="leading-loose font-medium text-xl">Tình trạng mới nhập</p>
             <select
               id="country"
               name="country"
               autocomplete="country-name"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
               v-model="equipment.start_status"
             >
               <option value="1">New</option>
@@ -65,57 +70,71 @@
             </select>
           </div>
           <div class="flex flex-col">
-            <label class="leading-loose">Trạng thái thiết bị</label>
+            <p class="leading-loose font-medium text-xl">Giá tiền</p>
+            <input
+              input
+              type="number"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              v-model="equipment.price"
+            />
+          </div>
+          <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Trạng thái thiết bị</p>
             <select
               @change="handleLostEquipment()"
               v-model="equipment.device_status"
               id="country"
               name="country"
               autocomplete="country-name"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
             >
               <option value="0">Bị mất</option>
               <option value="1">Sử dụng được</option>
               <option value="2">Bị hư hỏng</option>
             </select>
           </div>
-          <div class="flex flex-col">
-            <label class="leading-loose">Giá tiền</label>
-            <input
-              input
-              type="number"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-              v-model="equipment.price"
-            />
+
+          <div v-if="equipment.device_status == '0'" class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Đền bù</p>
+            <select
+              v-model="equipment.compensation_status"
+              id="country"
+              name="country"
+              autocomplete="country-name"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+            >
+              <option value="0">Chưa đền bù</option>
+              <option value="1">Đã đền bù</option>
+            </select>
           </div>
         </div>
         <div class="flex flex-row gap-6 mt-8">
           <div class="flex flex-col">
-            <label class="leading-loose">Giá trị khấu hao</label>
+            <p class="leading-loose font-medium text-xl">Giá trị khấu hao</p>
             <input
               type="number"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
               placeholder=""
               v-model="equipment.depreciated_value"
             />
           </div>
           <div class="flex flex-col">
-            <label class="leading-loose">Thời gian khấu hao</label>
+            <p class="leading-loose font-medium text-xl">Thời gian khấu hao</p>
             <input
               type="number"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
               placeholder=""
               v-model="equipment.depreciation_period"
             />
           </div>
           <div class="flex flex-col">
-            <label class="leading-loose">Tháng / Năm</label>
+            <p class="leading-loose font-medium text-xl">Tháng / Năm</p>
             <select
               v-model="equipment.period_type"
               id="country"
               name="country"
               autocomplete="country-name"
-              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-64 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
             >
               <option value="1">Tháng</option>
               <option value="2">Năm</option>
@@ -123,15 +142,17 @@
           </div>
         </div>
         <div class="flex flex-row gap-6 mt-8">
-          <label class="leading-loose">Thời gian nhập thiết bị</label>
-          <DatePicker class="" v-model="equipment.import_date" />
-        </div>
-        <div class="flex flex-row gap-6 mt-8">
-          <label class="leading-loose">Tệp đính kèm </label>
-          <div>
+          <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">
+              Thời gian nhập thiết bị
+            </p>
+            <DatePicker v-model="equipment.import_date" />
+          </div>
+          <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Tệp đính kèm</p>
             <div class="row">
               <div class="col-8">
-                <label class="btn btn-default p-0">
+                <p class="btn btn-default p-0">
                   <input
                     name="myImage"
                     accept="image/png, image/gif, image/jpeg"
@@ -139,12 +160,16 @@
                     ref="file"
                     @change="selectImage"
                   />
-                </label>
+                </p>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="flex flex-row gap-6 mt-8 w-full">
+          <div>
             <div v-if="currentImage" class="progress">
               <div
-                class="progress-bar progress-bar-info"
+                class="progress-bar progress-bar-info w-80"
                 role="progressbar"
                 :aria-valuenow="progress"
                 aria-valuemin="0"
@@ -158,7 +183,7 @@
             <div v-if="message" class="alert alert-secondary" role="alert">
               {{ message }}
             </div>
-            <div class="card mt-3">
+            <div class="card mt-3 w-80">
               <div class="card-header">List of Images</div>
               <ul class="list-group list-group-flush">
                 <div v-for="(image, index) in allImageCurrentURL">
@@ -167,7 +192,7 @@
                       <span class="close" @click="deleteImage(index)"
                         >&times;</span
                       >
-                      <img class="w-64 preview my-3" :src="image" alt="" />
+                      <img class="preview my-3 w-80" :src="image" alt="" />
                     </div>
                   </div>
                 </div>
@@ -211,6 +236,7 @@
 <script lang="ts">
 import UploadService from "../services/equipments/UploadFilesService";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import CategoryService from "../services/category/categoryService";
 import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options, Ref } from "vue-property-decorator";
@@ -246,12 +272,21 @@ export default class AddEquipment extends Vue {
     metadata_info: "",
     category_name: "",
   };
+  public categories = [];
   private errors: string[] = [];
   private importDate: string = "";
   @Ref("file") inpuFile!: HTMLInputElement;
   private allImageCurrentURL: String[] = [];
   private currentImage: File | null | undefined = null;
   private allImageFile: File[] = [];
+  mounted() {
+    this.retrieveCategories();
+  }
+  async retrieveCategories() {
+    CategoryService.getAllCategories("").then((res: any) => {
+      this.categories = res.data.categories;
+    });
+  }
   selectImage(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.currentImage = value?.files?.item(0);

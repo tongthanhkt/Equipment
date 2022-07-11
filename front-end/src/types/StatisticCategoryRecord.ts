@@ -5,5 +5,5 @@ export default interface StatisticRecord {
   total_take_back_equipments: string;
   total_fixed_equipment: string;
   name: string | null;
-  id: number | null;
+  id: string | null;
 }

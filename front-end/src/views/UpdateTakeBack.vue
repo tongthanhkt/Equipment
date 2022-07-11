@@ -106,9 +106,7 @@
           </select>
         </div>
         <div class="p-1 font-medium text-gray-700">Người thu hồi</div>
-        <div class="p-1  font-medium text-gray-700">
-          Người xác nhận
-        </div>
+        <div class="p-1 font-medium text-gray-700">Người xác nhận</div>
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
 
         <div>
@@ -135,7 +133,6 @@
             </template>
           </v-select>
         </div>
-   
 
         <div>
           <v-select
@@ -160,23 +157,20 @@
             </template>
           </v-select>
         </div>
-        <div
-       
-      >
-        
-        <select
-          v-model="record.status"
-          id="type"
-          name="type"
-          autocomplete="type-name"
-          class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-        >
-          <option value="1">Đã xác nhận</option>
-          <option value="0">Chờ xác nhận</option>
-        </select>
+        <div>
+          <select
+            v-model="record.status"
+            id="type"
+            name="type"
+            autocomplete="type-name"
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+          >
+            <option value="1">Đã xác nhận</option>
+            <option value="0">Chờ xác nhận</option>
+          </select>
+        </div>
       </div>
-      </div>
-     
+
       <div
         class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
       >
@@ -510,7 +504,7 @@ export default class UpdateTakeBack extends Vue {
       console.log(data);
       TakeBackService.update(data)
         .then(() => {
-          this.$emit('handleUpdate')
+          this.$emit("handleUpdate");
           alert("Cập nhật thông tin thu hồi thành công !");
           this.changeShow(false);
         })
