@@ -42,9 +42,12 @@
               autocomplete="country-name"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
             >
-              <option value="1">Máy tính</option>
-              <option value="2">Màn hình</option>
-              <option value="3">Phụ kiện</option>
+              <option
+                v-for="(category, index) in categories"
+                v-bind:value="category.id"
+              >
+                {{ category.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -67,6 +70,15 @@
             </select>
           </div>
           <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Giá tiền</p>
+            <input
+              input
+              type="number"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              v-model="equipment.price"
+            />
+          </div>
+          <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Trạng thái thiết bị</p>
             <select
               @change="handleLostEquipment()"
@@ -81,14 +93,18 @@
               <option value="2">Bị hư hỏng</option>
             </select>
           </div>
-          <div class="flex flex-col">
-            <p class="leading-loose font-medium text-xl">Giá tiền</p>
-            <input
-              input
-              type="number"
+          <div v-if="equipment.device_status == '0'" class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Đền bù</p>
+            <select
+              v-model="equipment.compensation_status"
+              id="country"
+              name="country"
+              autocomplete="country-name"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-              v-model="equipment.price"
-            />
+            >
+              <option value="0">Chưa đền bù</option>
+              <option value="1">Đã đền bù</option>
+            </select>
           </div>
         </div>
         <div class="flex flex-row gap-6 mt-8">
@@ -188,15 +204,16 @@
         </div>
       </div>
       <div class="flex flex-row gap-6 mt-8 justify-center">
-        <button
+        <a
+          href="/equipment"
           @click="saveEquipment"
-          class="bg-blue-500 font-bold flex justify-center w-48 items-center text-white px-4 py-3 rounded-md focus:outline-none"
+          class="bg-blue-500 font-bold flex justify-center w-48 items-center text-white px-4 py-3 rounded-md focus:outline-none font-bold"
         >
-          Thêm thiết bị
-        </button>
+          Cập nhật thiết bị
+        </a>
         <a href="/equipment">
           <button
-            class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none"
+            class="bg-red-500 font-bold flex justify-center items-center w-48 text-gray-900 px-4 py-3 rounded-md focus:outline-none font-bold"
           >
             <svg
               class="w-6 h-6 mr-3"
@@ -226,6 +243,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { Vue, Options } from "vue-property-decorator";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import UploadFilesService from "@/services/equipments/UploadFilesService";
+import CategoryService from "../services/category/categoryService";
 @Options({
   components: {
     Datepicker,
@@ -262,8 +280,15 @@ export default class AddEquipment extends Vue {
   private currentMetadataInfo: any;
   private oldMetadataInfo: any;
   private importDate: string = "";
+  public categories = [];
   async mounted() {
     this.retrieveEquipment();
+    this.retrieveCategories();
+  }
+  async retrieveCategories() {
+    CategoryService.getAllCategories("").then((res: any) => {
+      this.categories = res.data.categories;
+    });
   }
   async retrieveEquipment() {
     const idParam = this.$route.params.id;

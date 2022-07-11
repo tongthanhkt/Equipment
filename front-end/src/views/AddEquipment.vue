@@ -42,9 +42,12 @@
               autocomplete="country-name"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
             >
-              <option value="1">Máy tính</option>
-              <option value="2">Màn hình</option>
-              <option value="3">Phụ kiện</option>
+              <option
+                v-for="(category, index) in categories"
+                v-bind:value="category.id"
+              >
+                {{ category.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -67,6 +70,15 @@
             </select>
           </div>
           <div class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Giá tiền</p>
+            <input
+              input
+              type="number"
+              class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+              v-model="equipment.price"
+            />
+          </div>
+          <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Trạng thái thiết bị</p>
             <select
               @change="handleLostEquipment()"
@@ -81,14 +93,19 @@
               <option value="2">Bị hư hỏng</option>
             </select>
           </div>
-          <div class="flex flex-col">
-            <p class="leading-loose font-medium text-xl">Giá tiền</p>
-            <input
-              input
-              type="number"
+
+          <div v-if="equipment.device_status == '0'" class="flex flex-col">
+            <p class="leading-loose font-medium text-xl">Đền bù</p>
+            <select
+              v-model="equipment.compensation_status"
+              id="country"
+              name="country"
+              autocomplete="country-name"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-              v-model="equipment.price"
-            />
+            >
+              <option value="0">Chưa đền bù</option>
+              <option value="1">Đã đền bù</option>
+            </select>
           </div>
         </div>
         <div class="flex flex-row gap-6 mt-8">
@@ -219,6 +236,7 @@
 <script lang="ts">
 import UploadService from "../services/equipments/UploadFilesService";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import CategoryService from "../services/category/categoryService";
 import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options, Ref } from "vue-property-decorator";
@@ -254,12 +272,21 @@ export default class AddEquipment extends Vue {
     metadata_info: "",
     category_name: "",
   };
+  public categories = [];
   private errors: string[] = [];
   private importDate: string = "";
   @Ref("file") inpuFile!: HTMLInputElement;
   private allImageCurrentURL: String[] = [];
   private currentImage: File | null | undefined = null;
   private allImageFile: File[] = [];
+  mounted() {
+    this.retrieveCategories();
+  }
+  async retrieveCategories() {
+    CategoryService.getAllCategories("").then((res: any) => {
+      this.categories = res.data.categories;
+    });
+  }
   selectImage(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.currentImage = value?.files?.item(0);

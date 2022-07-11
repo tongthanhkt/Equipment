@@ -22,7 +22,7 @@
         <div class="flex flex-row">
           <router-link to="/category">
             <a
-              class="bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
+              class="transition duration-300 ease-in-out bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
             >
               Danh mục
             </a>
@@ -34,9 +34,10 @@
             @change="filterCategory(categoryId)"
             required
           >
+            <option v-bind:value="0">Tất cả</option>
             <option
               v-for="(category, index) in categories"
-              v-bind:value="category.value"
+              v-bind:value="category.id"
             >
               {{ category.name }}
             </option>
@@ -52,8 +53,8 @@
           </a>
         </router-link>
       </div>
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
-        <div class="btn-search relative mx-4 lg:mx-0 rounded-full">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div class="btn-search relative lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
               <path
@@ -75,8 +76,8 @@
           />
         </div>
       </div>
-      <div class="inline-block w-full sm:w-1/2 xl:w-1/5">
-        <div class="ml-10 btn-search relative mx-4 lg:mx-0 rounded-full">
+      <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
+        <div class="ml-10 btn-search relative lg:mx-0 rounded-full">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg class="h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
               <path
@@ -122,7 +123,7 @@
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfTakeOverEquipment }}
             </h4>
-            <div class="text-gray-500">Tổng bản giao</div>
+            <div class="text-gray-500">Tổng bàn giao</div>
           </div>
         </div>
       </div>
@@ -226,13 +227,28 @@
                   <td class="px-6 py-4">{{ equipment.import_date }}</td>
                   <td class="px-6 py-4">{{ equipment.updated_time }}</td>
                   <td class="px-6 py-4">{{ equipment.updated_by }}</td>
-                  <td class="px-6 py-4">
+                  <td class="px-6 py-4 font-bold">
                     <div class="flex items-center">
                       <div class="ml-4">
                         <div class="text-sm leading-5 text-gray-500">
-                          <div>
+                          <p
+                            class="text-orange-700"
+                            v-if="equipment.device_status == '0'"
+                          >
                             {{ this.deviceStatusEnum[equipment.device_status] }}
-                          </div>
+                          </p>
+                          <p
+                            class="text-green-500"
+                            v-else-if="equipment.device_status == '1'"
+                          >
+                            {{ this.deviceStatusEnum[equipment.device_status] }}
+                          </p>
+                          <p
+                            class="text-amber-500"
+                            v-else-if="equipment.device_status == '2'"
+                          >
+                            {{ this.deviceStatusEnum[equipment.device_status] }}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -355,6 +371,7 @@
 <script lang="ts">
 import Equipment from "@/types/Equipment";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
+import CategoryService from "../services/category/categoryService";
 import { Vue, Options } from "vue-property-decorator";
 import Pagination from "./Pagination.vue";
 @Options({
@@ -363,12 +380,7 @@ import Pagination from "./Pagination.vue";
   },
 })
 export default class Dashboard extends Vue {
-  public categories = [
-    { value: 0, name: "Tất cả" },
-    { value: 1, name: "Máy tính" },
-    { value: 2, name: "Màn hình" },
-    { value: 3, name: "Phụ kiện" },
-  ];
+  public categories = [];
   public deviceStatusEnum = {
     0: "Bị Mất",
     1: "Sử dụng được",
@@ -388,7 +400,7 @@ export default class Dashboard extends Vue {
   public sumOfDamagedEquipment: number = 0;
   public sumOfLostEquipment: number = 0;
   public currentPage: number = 1;
-  public currentLimit: number = 5;
+  public currentLimit: number = 10;
   public currentCategoryId: number | null = null;
   public keyword: string | null = null;
   public takeOverPerson: string | null = null;
@@ -401,6 +413,12 @@ export default class Dashboard extends Vue {
   async mounted() {
     this.retrieveEquipments();
     this.retrieveOverview();
+    this.retrieveCategories();
+  }
+  async retrieveCategories() {
+    CategoryService.getAllCategories(this.queryParams).then((res: any) => {
+      this.categories = res.data.categories;
+    });
   }
   async retrieveOverview() {
     EquipmentDataService.getCountTotal(this.getQueryParams()).then((res) => {

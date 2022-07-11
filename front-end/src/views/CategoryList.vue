@@ -54,7 +54,7 @@
                     </p>
                     <p
                       v-else-if="category.status == '1'"
-                      class="text-orange-700"
+                      class="text-green-500"
                     >
                       Available
                     </p>
