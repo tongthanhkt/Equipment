@@ -172,8 +172,6 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
     else{
       return -1
     }
-
-
     //      if(e.deviceId=="tesst1") {
     //        println("start sleep "+e.deviceId)
     //        sleep(20000000)
