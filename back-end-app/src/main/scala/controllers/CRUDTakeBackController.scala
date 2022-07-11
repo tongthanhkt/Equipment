@@ -141,7 +141,9 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             val result = takeBackService.updateById(request)
             if (result == 1) {
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
-              response.created.body(s"Update take over successfully !")
+              response.created.json(s"""{
+                                       |"msg" : Update take over successfully.
+                                       |}""".stripMargin)
             } else response.badRequest.json(
               s"""{
                  |"errors" : [${JSON.write()}]

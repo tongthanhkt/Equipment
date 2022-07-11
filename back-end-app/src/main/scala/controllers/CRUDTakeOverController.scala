@@ -148,7 +148,9 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           else{
             val result = takeOverService.updateById(request)
             if (result == 1)
-              response.created.body(s"Update take over successfully !")
+              response.created.json(s"""{
+                                       |"msg" : Update take over successfully.
+                                       |}""".stripMargin)
             else response.badRequest.json(
               s"""{
                  |"errors" : [${JSON.write()}]
