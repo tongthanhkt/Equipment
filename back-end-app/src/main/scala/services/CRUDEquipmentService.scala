@@ -421,7 +421,7 @@ class CRUDEquipmentService @Inject() (
     while (rs.next()) {
       result = Equipment(id = rs.getString("id"), deviceStatus = rs.getString("device_status"))
     }
-
+    con.close();
     if (result != null) {
       if (result.deviceStatus == "0")
       return 0
@@ -454,6 +454,7 @@ class CRUDEquipmentService @Inject() (
     while (rs.next()) {
       result = Equipment(id = rs.getString("id"), takeOverStatus = rs.getString("takeover_status"))
     }
+    con.close();
     if (result != null) {
       if (result.takeOverStatus == "0")
         return 0
@@ -489,6 +490,7 @@ object test {
     }
   }
   def main (args :Array[String]): Unit ={
-    println(toInt("12  "))
+    var mPutDevice1 = new util.HashMap[String,Object]()
+    println(mPutDevice1.get("mt4"))
   }
 }

@@ -67,8 +67,7 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
           if (equipmentService.searchById(convertString.toInt(request.equipmentId).get) != null){
               val deviceStatus = equipmentService.checkDeviceStatus(request.equipmentId)
               val takeOverStatus = equipmentService.checkTakeOverStatus(request.equipmentId)
-            println(deviceStatus)
-            println(takeOverStatus)
+
             if (takeOverStatus == 1)
               response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} has been taken over. Cannot fix! ")
             else if (takeOverStatus==0){
@@ -79,7 +78,8 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
               else if (deviceStatus == 3 )
                 response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} was sold. Cannot fix! ")
               else if (deviceStatus == 2){
-                if (request.status == "0" && fixEquipmentService.isFixingExits(request.equipmentId)){
+
+                if (request.status == "0" && fixEquipmentService.isFixingExists(request.equipmentId,request.id)){
                   response.badRequest.jsonError(s"Equipment is fixing. ")
                 }
                 else {
@@ -104,18 +104,6 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
             }
             else response.internalServerError.jsonError(s"Cannot fix equipment with id = ${request.equipmentId}. ")
 
-//            val result = equipmentService.add(request)
-//            if (result >0) {
-//
-//              response.created.json(
-//                s"""|id: $result
-//                    |""".stripMargin)
-//            }
-//            else if (result == -1) {
-//              response.badRequest.jsonError("Device_id of equipment already exists")
-//            }
-//            else
-//              response.internalServerError.jsonError("Can not add new equipment")
           }
           else
             response.badRequest.jsonError(s"Cannot find equipment with id = ${request.equipmentId}. ")
@@ -153,18 +141,24 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                     response.badRequest.jsonError(s"Equipment with id = ${request.equipmentId} was sold. Cannot fix! ")
                   else if (deviceStatus == 1 || deviceStatus == 2 )
                     {
-                    val result = fixEquipmentService.updateById(request)
-                    if (result >0) {
+                      println("debug")
+                      if (request.status == "0" && fixEquipmentService.isFixingExists(request.equipmentId,request.id)){
+                        response.badRequest.jsonError(s"Equipment is fixing. ")
+                      }
+                      else {
+                        val result = fixEquipmentService.updateById(request)
+                        if (result >0) {
 
-                      response.created.json(s"""{
-                                               |"msg" : Update equipment successfully.
-                                               |}""".stripMargin)
-                    }
-                    else if (result == -1) {
-                      response.badRequest.jsonError(s"Cannot update the fix_equipment record with equipment id = ${request.equipmentId}. Try again!!")
-                    }
-                    else
-                      response.internalServerError.jsonError(s"Cannot update the fix_equipment record with equipment id = ${request.equipmentId}. ")
+                          response.created.json(s"""{
+                                                   |"msg" : Update equipment successfully.
+                                                   |}""".stripMargin)
+                        }
+                        else if (result == -1) {
+                          response.badRequest.jsonError(s"Cannot update the fix_equipment record with equipment id = ${request.equipmentId}. Try again!!")
+                        }
+                        else
+                          response.internalServerError.jsonError(s"Cannot update the fix_equipment record with equipment id = ${request.equipmentId}. ")
+                      }
                   }
                   else
                     response.internalServerError.jsonError(s"Cannot update the fix_equipment record with equipment id = ${request.equipmentId}. ")

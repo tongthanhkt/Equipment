@@ -221,18 +221,20 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
   }
 
   @throws[Exception]
-  def isFixingExits(equipmentId: String): Boolean={
+  def isFixingExists(equipmentId: String,fixingId: String): Boolean={
     val sql = """
       SELECT count(*) as total
         FROM equipment_management.fixing_equipment_info as fix
 
-        where fix.equipment_id = ? and fix.status = ?
+        where fix.equipment_id = ? and fix.status = ? and (fix.id != ? or ? is null)
 				;"""
 
     var con = databaseConnection.getConnection()
     val pst = con.prepareStatement(sql)
     pst.setString(1, equipmentId)
     pst.setInt(2, 0)
+    pst.setString(3, fixingId)
+    pst.setString(4, fixingId)
     val rs = pst.executeQuery()
     var total = 0
     while ( rs.next) {
@@ -245,6 +247,8 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
     else false
 
   }
+
+
 
   @throws[Exception]
   def updateById(fix: FixEquipment): Int={
