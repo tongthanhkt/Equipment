@@ -595,25 +595,23 @@ import FixEquipmentHistory from "./FixEquipmentHistory.vue";
 import DetailFixEquipment from "./DetailFixEquipment.vue";
 import UpdateFixEquipment from "./UpdateFixEquipment.vue";
 
-
 @Options({
   components: {
     DetailTakeBack,
     DetailTakeOver,
     DetailFixEquipment,
-    
+
     UpdateTakeBack,
     UpdateTakeOver,
     UpdateFixEquipment,
-    
+
     TakeBackHistory,
     TakeOverHistory,
     FixEquipmentHistory,
-    
+
     AddTakeOver,
     AddTakeBack,
     AddFixEquipment,
-
   },
 })
 export default class DetailEquipment extends Vue {
@@ -623,38 +621,40 @@ export default class DetailEquipment extends Vue {
     2: "Bị hư hỏng",
     3: "Đã bán cho nhân viên",
   };
-  public categories={
-    1:"Máy tính",
-    2:"Màn hình",
-    3:"Phụ kiện",
-  }
-  public allImageCurrentURL: string[] = []; 
+  public categories = {
+    1: "Máy tính",
+    2: "Màn hình",
+    3: "Phụ kiện",
+  };
+  public allImageCurrentURL: string[] = [];
   public indexImage = 0;
-  equipment: Equipment= {category_id: "",
-  compensation_status: "",
-  category_name:"",
-  created_by: "",
-  created_time: "",
-  device_id: "",
-  id: "",
-  import_date: "",
-  name: "",
-  price: "",
-  start_status: "",
-  take_over_person_id: "",
-  take_over_person_name: "",
-  take_over_status: "",
-  updated_by: "",
-  updated_time: "",
-  device_status: "",
-  depreciated_value: null,
-  depreciation_period: "",
-  period_type: "",
-  metadata_info:""};
+  equipment: Equipment = {
+    category_id: "",
+    compensation_status: "",
+    category_name: "",
+    created_by: "",
+    created_time: "",
+    device_id: "",
+    id: "",
+    import_date: "",
+    name: "",
+    price: "",
+    start_status: "",
+    take_over_person_id: "",
+    take_over_person_name: "",
+    take_over_status: "",
+    updated_by: "",
+    updated_time: "",
+    device_status: "",
+    depreciated_value: null,
+    depreciation_period: "",
+    period_type: "",
+    metadata_info: "",
+  };
 
-  isDetailFixEquipmentShow:Boolean=false;
-  isAddFixEquipmentShow:Boolean=false;
-  isUpdateFixEquipmentShow:Boolean=false;
+  isDetailFixEquipmentShow: Boolean = false;
+  isAddFixEquipmentShow: Boolean = false;
+  isUpdateFixEquipmentShow: Boolean = false;
 
   isDetailTakeOverShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
@@ -672,13 +672,13 @@ export default class DetailEquipment extends Vue {
   keyUser: string | null = null;
   keyTakeOverPerson: string | null = null;
   totalPages: number = 0;
-  public recordTakeBackId :number = 0;
-  public recordTakeOverId :number = 0;
-  public recordFixEquipmentId:number=0;
-  keyTakeBack :number =0;
-  keyTakeOver :number=0;
-  keyFixEquipment :number=0;
- 
+  public recordTakeBackId: number = 0;
+  public recordTakeOverId: number = 0;
+  public recordFixEquipmentId: number = 0;
+  keyTakeBack: number = 0;
+  keyTakeOver: number = 0;
+  keyFixEquipment: number = 0;
+
   // type: any = {
   //   1: "Bàn giao thiết bị mới",
   //   2: "Bàn giao thiết bị sau khi sửa chữa",
@@ -686,19 +686,18 @@ export default class DetailEquipment extends Vue {
   async created() {
     const idParams = this.$route.params.id;
     this.retrieveDetailEquipment(idParams);
-    
   }
-  handlePreviousImage(){
-    if(this.indexImage==0){
-        return;
-    }else{
+  handlePreviousImage() {
+    if (this.indexImage == 0) {
+      return;
+    } else {
       this.indexImage--;
     }
   }
-  handleNextImage(){
-    if(this.indexImage+1==this.allImageCurrentURL.length){
-        return;
-    }else{
+  handleNextImage() {
+    if (this.indexImage + 1 == this.allImageCurrentURL.length) {
+      return;
+    } else {
       this.indexImage++;
     }
   }
@@ -707,52 +706,49 @@ export default class DetailEquipment extends Vue {
       .then((res) => {
         console.log(res.data);
         this.equipment = res.data;
-      this.equipment.price = parseFloat(this.equipment.price!).toString();
+        this.equipment.price = parseFloat(this.equipment.price!).toString();
         const allImage = Object.values(res.data.metadata_info);
-        let result = allImage.map((Image:any)=>Image.file_url);
-        result.forEach((URL,index)=>{
-          this.allImageCurrentURL[index]=URL;
-        })
-      }).then(()=>this.handleFieldEquipment())
+        let result = allImage.map((Image: any) => Image.file_url);
+        result.forEach((URL, index) => {
+          this.allImageCurrentURL[index] = URL;
+        });
+      })
+      .then(() => this.handleFieldEquipment())
       .catch((err) => console.log(err));
   }
-handleImportDate(data: string) {
+  handleImportDate(data: string) {
     var d = new Date(parseInt(data));
     return d.toLocaleString();
   }
   handleFieldEquipment() {
-      if (this.equipment.import_date != null) {
-        this.equipment.import_date = this.handleImportDate(
-          this.equipment.import_date
-        );
+    if (this.equipment.import_date != null) {
+      this.equipment.import_date = this.handleImportDate(
+        this.equipment.import_date
+      );
     }
     if (this.equipment.created_time != null) {
-        this.equipment.created_time = this.handleImportDate(
-          this.equipment.created_time
-        );
+      this.equipment.created_time = this.handleImportDate(
+        this.equipment.created_time
+      );
     }
-     if (this.equipment.updated_time != null) {
-        this.equipment.updated_time= this.handleImportDate(
-          this.equipment.updated_time
-        );
+    if (this.equipment.updated_time != null) {
+      this.equipment.updated_time = this.handleImportDate(
+        this.equipment.updated_time
+      );
     }
   }
   handleAddTakeOverShow(data: Boolean) {
-  
     this.isAddTakeOverShow = data;
     // this.isDetailTakeOverShow = false;
     // this.isUpdateTakeOverShow = false;
   }
   handleAddTakeBackShow(data: Boolean) {
-   
     this.isAddTakeBackShow = data;
     // this.isDetailTakeOverShow = false;
     // this.isUpdateTakeOverShow = false;
   }
-  handleAddFixEquipmentShow(data:Boolean){
-    
-    this.isAddFixEquipmentShow=data;
-    
+  handleAddFixEquipmentShow(data: Boolean) {
+    this.isAddFixEquipmentShow = data;
   }
 
   handleDetailTakeOverShow(data: Boolean) {
@@ -762,18 +758,15 @@ handleImportDate(data: string) {
   }
 
   handleUpdateTakeOverShow(data: Boolean) {
-   
     this.isDetailTakeOverShow = false;
     // this.isAddTakeOverShow = false;
     this.isUpdateTakeOverShow = data;
   }
 
-  handleDetailFixEquipmentShow(data:Boolean){
-    this.isDetailFixEquipmentShow=data;
+  handleDetailFixEquipmentShow(data: Boolean) {
+    this.isDetailFixEquipmentShow = data;
   }
   handleUpdateFixEquipmentShow(data: Boolean) {
-    
-    
     this.isDetailFixEquipmentShow = false;
     this.isUpdateFixEquipmentShow = data;
   }
@@ -786,57 +779,52 @@ handleImportDate(data: string) {
     this.isDetailTakeBackShow = false;
     this.isUpdateTakeBackShow = data;
   }
- 
 
-  handleRecordTakeOverId(id:number){
-        this.recordTakeOverId=id
-    }
-    handleRecordTakeBackId(id:number){
-        this.recordTakeBackId=id
-    }
-  handleRecordFixEquipmentId(id:number){
-        this.recordFixEquipmentId=id
-    }
- deleteTakeBackRecord(id: number) {
-   
+  handleRecordTakeOverId(id: number) {
+    this.recordTakeOverId = id;
+  }
+  handleRecordTakeBackId(id: number) {
+    this.recordTakeBackId = id;
+  }
+  handleRecordFixEquipmentId(id: number) {
+    this.recordFixEquipmentId = id;
+  }
+  deleteTakeBackRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
-    TakeBackService.deleteById(id)
+      TakeBackService.deleteById(id)
         .then(() => alert("Delete Successfully !!"))
-        .then(() => this.keyTakeBack+=1)
+        .then(() => (this.keyTakeBack += 1))
         .catch((err) => alert(err.response.data));
     }
   }
-   
 
-   handleTakeOverUpdate(){
-    this.keyTakeOver+=1
+  handleTakeOverUpdate() {
+    this.keyTakeOver += 1;
     this.retrieveDetailEquipment(this.$route.params.id);
-   }
+  }
 
-   handleTakeBackUpdate(){
-    this.keyTakeBack+=1
+  handleTakeBackUpdate() {
+    this.keyTakeBack += 1;
     this.retrieveDetailEquipment(this.$route.params.id);
-   }
+  }
 
-   handleFixingUpdate(){
-    this.keyFixEquipment+=1
+  handleFixingUpdate() {
+    this.keyFixEquipment += 1;
     this.retrieveDetailEquipment(this.$route.params.id);
-   }
+  }
 
-    deleteTakeOverRecord(id: number) {
-   
+  deleteTakeOverRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
-     TakeOverService.deleteById(id)
+      TakeOverService.deleteById(id)
         .then(() => {
-            this.keyTakeOver+=1
-            alert("Delete Successfully !!")
+          this.keyTakeOver += 1;
+          alert("Delete Successfully !!");
         })
-        
+
         .catch((err) => alert(err.response.data.errors[0]));
     }
   }
 
-  
   async retrieveRecordsOfEquipment(params: String) {
     await TakeOverService.getRecordsBySearch(params)
       .then((res) => {
@@ -849,31 +837,27 @@ handleImportDate(data: string) {
         alert(err.response.data);
       });
   }
-  editEquipment(){
-    const id:any = this.equipment.id;
-    this.$router.push({name:"update",params:{id:id}});
+  editEquipment() {
+    const id: any = this.equipment.id;
+    this.$router.push({ name: "update", params: { id: id } });
   }
   deleteEquipment() {
     const id = this.equipment.id;
-    const takeOverStatus=this.equipment.take_over_status;
-    if(takeOverStatus=="1"){
-      alert("Thiết bị đang được bàn giao hiện không thể xóa !!")
-    }else{
-       if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
-      EquipmentDataService.deleteEquipment(id!)
-      this.$router.push({name:"Home"})
+    const takeOverStatus = this.equipment.take_over_status;
+    if (takeOverStatus == "1") {
+      alert("Thiết bị đang được bàn giao hiện không thể xóa !!");
+    } else {
+      if (confirm("Bạn có chắc chắn muốn xóa thiết bị này ?")) {
+        EquipmentDataService.deleteEquipment(id!);
+        this.$router.push({ name: "Home" });
       }
     }
-   
   }
-  
+
   handleDate(data: string) {
     var d = new Date(Number(data));
     return d.toLocaleString();
   }
-  
-
-  
 }
 </script>
 
