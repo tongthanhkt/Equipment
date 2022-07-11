@@ -1,8 +1,8 @@
 <template>
   <div
-    class="px-1 mt-8 my-8 w-auto h-auto mx-8 bg-gray-50 shalow-lg rounded-xl"
+    class="py-16 px-1 my-8 w-auto h-auto mx-8 bg-gray-50 shalow-lg rounded-xl"
   >
-    <div class="flex flex-col mx-64 my-16">
+    <div class="flex flex-col mx-24">
       <h1 class="text-2xl leading-relaxed font-bold text-center">
         KIỂM KÊ DANH MỤC
       </h1>
@@ -17,7 +17,7 @@
               name="type"
               autocomplete="type-name"
               v-model="year"
-              class="block py-3 px-4 w-full text-base text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="block py-3 px-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="2022" selected disabled hidden>2022</option>
               <option v-for="item in years" :value="item.id">
@@ -32,7 +32,7 @@
               id="quater"
               name="type"
               autocomplete="type-name"
-              class="block py-3 px-4 w-full text-base text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="block py-3 px-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="0" selected disabled hidden>Quý</option>
               <option v-for="item in quaters" :value="item.id">
@@ -47,7 +47,7 @@
               id="month"
               name="type"
               autocomplete="type-name"
-              class="block py-3 px-4 w-full text-base text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="block py-3 px-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="0" selected disabled hidden>Tháng</option>
               <option v-for="item in months" :value="item.id">
