@@ -594,7 +594,8 @@ import TakeBackService from "@/services/takeback/TakeBackService";
 import FixEquipmentHistory from "./FixEquipmentHistory.vue";
 import DetailFixEquipment from "./DetailFixEquipment.vue";
 import UpdateFixEquipment from "./UpdateFixEquipment.vue";
-
+import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
+import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 @Options({
   components: {
     DetailTakeBack,
@@ -678,14 +679,15 @@ export default class DetailEquipment extends Vue {
   keyTakeBack: number = 0;
   keyTakeOver: number = 0;
   keyFixEquipment: number = 0;
-
+  currentFixEquipmentRecord :string|null=null;
   // type: any = {
   //   1: "Bàn giao thiết bị mới",
   //   2: "Bàn giao thiết bị sau khi sửa chữa",
   // };
   async created() {
     const idParams = this.$route.params.id;
-    this.retrieveDetailEquipment(idParams);
+   await this.retrieveDetailEquipment(idParams);
+
   }
   handlePreviousImage() {
     if (this.indexImage == 0) {
@@ -701,6 +703,7 @@ export default class DetailEquipment extends Vue {
       this.indexImage++;
     }
   }
+
   async retrieveDetailEquipment(id: any) {
     const response = await EquipmentDataService.getEquipmentDetail(id)
       .then((res) => {
@@ -749,8 +752,8 @@ export default class DetailEquipment extends Vue {
   }
   handleAddFixEquipmentShow(data: Boolean) {
     this.isAddFixEquipmentShow = data;
+    
   }
-
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
     // this.isAddTakeOverShow = false;

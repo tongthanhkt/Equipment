@@ -169,6 +169,41 @@
             </div>
           </div>
         </div>
+        <div class="flex flex-row gap-6 mt-8 w-full">
+          <div>
+            <div v-if="currentImage" class="progress">
+              <div
+                class="progress-bar progress-bar-info w-80"
+                role="progressbar"
+                :aria-valuenow="progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :style="{ width: progress + '%' }"
+              >
+                {{ progress }}%
+              </div>
+            </div>
+
+            <div v-if="message" class="alert alert-secondary" role="alert">
+              {{ message }}
+            </div>
+            <div class="card mt-3 w-80">
+              <div class="card-header">List of Images</div>
+              <ul class="list-group list-group-flush">
+                <div v-for="(image, index) in allImageCurrentURL">
+                  <div>
+                    <div class="img-wrap">
+                      <span class="close" @click="deleteImage(index)"
+                        >&times;</span
+                      >
+                      <img class="preview my-3 w-80" :src="image" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="flex flex-row gap-6 mt-8 justify-center">
         <button
@@ -252,7 +287,7 @@ export default class AddEquipment extends Vue {
     this.retrieveCategories();
   }
   async retrieveCategories() {
-    CategoryService.getAllCategories("").then((res: any) => {
+    CategoryService.getAllCategories("status=1").then((res: any) => {
       this.categories = res.data.categories;
     });
   }

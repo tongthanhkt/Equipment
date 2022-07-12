@@ -166,6 +166,41 @@
             </div>
           </div>
         </div>
+        <div class="flex flex-row gap-6 mt-8 w-full">
+          <div>
+            <div v-if="currentImage" class="progress">
+              <div
+                class="progress-bar progress-bar-info w-80"
+                role="progressbar"
+                :aria-valuenow="progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :style="{ width: progress + '%' }"
+              >
+                {{ progress }}%
+              </div>
+            </div>
+
+            <div v-if="message" class="alert alert-secondary" role="alert">
+              {{ message }}
+            </div>
+            <div class="card mt-3 w-80">
+              <div class="card-header">List of Images</div>
+              <ul class="list-group list-group-flush">
+                <div v-for="(image, index) in allImageCurrentURL">
+                  <div>
+                    <div class="img-wrap">
+                      <span class="close" @click="deleteImage(index)"
+                        >&times;</span
+                      >
+                      <img class="preview my-3 w-80" :src="image" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="flex flex-row gap-6 mt-8 justify-center">
         <button
@@ -229,7 +264,7 @@ export default class AddEquipment extends Vue {
     device_status: null,
     created_by: "tatthanh@rever.vn",
     created_time: "1655372446944",
-    updated_by: "tatthanh@rever.vn",
+    updated_by: null,
     updated_time: null,
     take_over_person_id: null,
     take_over_person_name: null,
@@ -248,7 +283,7 @@ export default class AddEquipment extends Vue {
     this.retrieveCategories();
   }
   async retrieveCategories() {
-    CategoryService.getAllCategories("").then((res: any) => {
+    CategoryService.getAllCategories("status=1").then((res: any) => {
       this.categories = res.data.categories;
     });
   }
@@ -267,12 +302,18 @@ export default class AddEquipment extends Vue {
   }
   async getImageFile() {
     let obj = {};
+    let temp;
     for (let i = 0; i < this.allImageFile.length; i++) {
       await UploadService.upload(this.allImageFile[i])
         .then((response) => {
           obj = Object.assign(response.data, obj);
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => {
+          temp = 0;
+        });
+    }
+    if (temp == 0) {
+      return 0;
     }
     return obj;
   }
@@ -303,6 +344,9 @@ export default class AddEquipment extends Vue {
     if (this.equipment.depreciation_period == null) {
       this.errors?.push("Depreciated period id required");
     }
+    if (this.equipment.period_type == null) {
+      this.errors?.push("Period type id required");
+    }
     if (this.equipment.import_date == null) {
       this.errors?.push(" Import date required");
     }
@@ -322,6 +366,7 @@ export default class AddEquipment extends Vue {
     if (this.errors.length == 0) {
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
+      this.equipment.metadata_info = await this.getImageFile();
       const data = {
         device_id: this.equipment.device_id,
         name: this.equipment.name,
@@ -337,18 +382,22 @@ export default class AddEquipment extends Vue {
         created_time: this.equipment.created_time,
         device_status: this.equipment.device_status,
         compensation_status: this.equipment.compensation_status,
-        metadata_info: await this.getImageFile(),
+        metadata_info: this.equipment.metadata_info,
       };
-      EquipmentDataService.addData(data)
-        .then(() => alert("Thêm thiết bị thành công"))
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          console.log(errors);
+      if (this.equipment.metadata_info == 0) {
+        alert("Only image can be selected !");
+      } else {
+        EquipmentDataService.addData(data)
+          .then(() => alert("Thêm thiết bị thành công"))
+          .catch((err) => {
+            const errors = err.response.data.errors[0];
+            console.log(errors);
 
-          alert(errors);
-        });
-      const a = this.allImageFile.forEach((imageFile) => {});
-      await Promise.all([a]);
+            alert(errors);
+          });
+        const a = this.allImageFile.forEach((imageFile) => {});
+        await Promise.all([a]);
+      }
     } else {
       for (let i = 0; i < this.errors.length; i++) {
         errors = errors + this.errors[i] + "\n";

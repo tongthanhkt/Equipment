@@ -175,6 +175,7 @@ export default class DetailFixEquipment extends Vue {
         let result = Object.values(res.data.metadata_info).map(
           (File: any) => File.file_name
         );
+        console.log(res.data);
         result.forEach((file_name, index) => {
           this.currentFileName[index] = `${file_name}`;
         });
