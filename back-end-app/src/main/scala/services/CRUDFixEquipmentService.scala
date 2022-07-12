@@ -271,7 +271,7 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
         """UPDATE fixing_equipment_info
           SET
            status = if(? is not null, ?,status),fixer = if(? is not null, ?,fixer),
-           cost = if(? is not null, ?,cost),message = if(? is not null, ?,message),
+           cost = ?,message = if(? is not null, ?,message),
            metadata_info = if(? is not null, ?,metadata_info),fixing_time = if(? is not null, ?,fixing_time),
            updated_by = ?,updated_time = ?
           WHERE  id = ?;"""
@@ -283,16 +283,15 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
       pst.setString(3,fix.fixer)
       pst.setString(4,fix.fixer)
       pst.setString(5,fix.cost)
-      pst.setString(6,fix.cost)
+      pst.setString(6,fix.message )
       pst.setString(7,fix.message )
-      pst.setString(8,fix.message )
+      pst.setString(8, uploadFile)
       pst.setString(9, uploadFile)
-      pst.setString(10, uploadFile)
+      pst.setString(10,fix.fixingTime )
       pst.setString(11,fix.fixingTime )
-      pst.setString(12,fix.fixingTime )
-      pst.setString(13,fix.updatedBy)
-      pst.setLong(14,System.currentTimeMillis())
-      pst.setString(15, fix.id)
+      pst.setString(12,fix.updatedBy)
+      pst.setLong(13,System.currentTimeMillis())
+      pst.setString(14, fix.id)
       val rs = pst.executeUpdate()
       con.close();
       rs
