@@ -108,9 +108,9 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           else {
             val result = takeOverService.add(request)
             if (result == 1) {
-              val takeOverId = takeOverService.getIdTakeOverDESC();
+
               response.created.json(
-                s"""|id: $takeOverId
+                s"""|Add take over successfully !!
                     |""".stripMargin)
             } else response.internalServerError.jsonError("Can not add new takeOver")
           }

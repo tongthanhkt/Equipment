@@ -102,9 +102,9 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
               //val takeOverId = takeBackService.getTakeOverIdForTackBack(request.equipmentId);
               val updateStatusTakeOver = takeBackService.updateTakeover(request.equipmentId);
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
-              val takeBackId = takeBackService.getIdTakeBackDESC();
+
               response.created.json(
-                s"""|id: $takeBackId
+                s"""|id: Add take back successfully !!
                     |""".stripMargin)
             } else response.internalServerError.jsonError("Can not add new take back")
           }

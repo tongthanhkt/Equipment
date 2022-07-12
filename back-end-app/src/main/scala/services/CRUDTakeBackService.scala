@@ -78,7 +78,7 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
         FROM equipment_management.takeback_equipment_info as tb
         LEFT JOIN equipment_management.equipment as e
         on e.id = tb.equipment_id
-        where tb.status!=?
+        where tb.status!=? and e.device_status!=-1
         and (? is null or tb.username LIKE CONCAT('%',?,'%'))
         and (? is null or tb.take_back_person LIKE CONCAT('%',?,'%'))
         and (? is null or tb.type = ?)

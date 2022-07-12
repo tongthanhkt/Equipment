@@ -81,7 +81,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
         FROM equipment_management.takeover_equipment_info as tov
         LEFT JOIN equipment_management.equipment as e
         on e.id = tov.equipment_id
-        where tov.status!=?
+        where tov.status!=? and e.device_status!=-1
         and (? is null or tov.username LIKE CONCAT('%',?,'%'))
         and (? is null or tov.take_over_person LIKE CONCAT('%',?,'%'))
         and (? is null or tov.type = ?)
