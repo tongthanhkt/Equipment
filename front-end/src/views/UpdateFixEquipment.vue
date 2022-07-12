@@ -115,12 +115,31 @@
         <!-- <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
 
        </div> -->
+       <div v-if="currentFileName.length != 0">
+          <ul class="list-group list-group-flush flex flex-row flex-wrap">
+            <div v-for="(file_name, index) in currentFileName" :key="index">
+              <div>
+                <div
+                  class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
+                >
+                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+                  <div class="py-1">{{ file_name }}</div>
+                  <span
+                    class="close px-2 py-1"
+                    @click="deleteCurrentFile(index)"
+                    >&times;</span
+                  >
+                </div>
+              </div>
+            </div>
+          </ul>
+        </div>
         <div class="mx-1 mt-2 mb-3">
           <div class="row">
-            <div class="col-5">
-              <label class="btn btn-default p-0">
-                <input type="file" ref="file" @change="selectFiles" multiple />
-              </label>
+            <div class="col-8">
+              <label class="px-2">Thêm tệp mới: </label>
+
+              <input type="file" ref="file" @change="selectFiles" multiple />
             </div>
           </div>
           <span
@@ -133,13 +152,13 @@
 
           <div class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
             <div
-              class="border-b-2 border-indigo-300 text-base text-orange-600 font-semibold flex flex-row"
+              class="border-b-2 border-indigo-300 text-sm text-orange-600 font-semibold flex flex-row"
             >
               <fa icon="folder" class="px-2 py-1"></fa>
-              <div>Selected Files</div>
+              <div class="p-1">Selected Files</div>
             </div>
             <ul class="list-group list-group-flush flex flex-row flex-wrap">
-              <div v-for="(file, index) in allFiles" :key="index">
+              <div v-for="(file, index) in allFiles">
                 <div>
                   <div
                     class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
