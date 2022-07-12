@@ -14,7 +14,7 @@ export default interface Equipment {
   take_over_status: string | null;
   updated_by: string | null;
   updated_time: string | null;
-  device_status: string;
+  device_status: string | null;
   depreciated_value: number | null;
   depreciation_period: string | null;
   period_type: string | null;

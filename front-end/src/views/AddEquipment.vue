@@ -136,7 +136,7 @@
             <p class="leading-loose font-medium text-xl">
               Thời gian nhập thiết bị
             </p>
-            <DatePicker v-model="equipment.import_date" />
+            <DatePicker v-model="equipment.import_date" class="w-48" />
           </div>
           <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Giá trị khấu hao</p>
@@ -207,7 +207,6 @@ import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
 import { Vue, Options, Ref } from "vue-property-decorator";
 import UploadImage from "./UploadImage.vue";
-import { numberLiteral } from "@babel/types";
 @Options({
   components: {
     DatePicker,
@@ -216,27 +215,27 @@ import { numberLiteral } from "@babel/types";
 })
 export default class AddEquipment extends Vue {
   private equipment: Equipment = {
-    device_id: "",
+    device_id: null,
     compensation_status: null,
-    name: "",
-    start_status: "",
-    price: "",
+    name: null,
+    start_status: null,
+    price: null,
     depreciated_value: null,
-    depreciation_period: "",
+    depreciation_period: null,
     period_type: "",
-    import_date: "",
+    import_date: null,
     take_over_status: "0",
-    category_id: "",
-    device_status: "",
+    category_id: null,
+    device_status: null,
     created_by: "tatthanh@rever.vn",
     created_time: "1655372446944",
-    updated_by: "",
-    updated_time: "",
-    take_over_person_id: "",
-    take_over_person_name: "",
-    id: "",
-    metadata_info: "",
-    category_name: "",
+    updated_by: "tatthanh@rever.vn",
+    updated_time: null,
+    take_over_person_id: null,
+    take_over_person_name: null,
+    id: null,
+    metadata_info: null,
+    category_name: null,
   };
   public categories = [];
   private errors: string[] = [];
@@ -262,7 +261,6 @@ export default class AddEquipment extends Vue {
       this.allImageCurrentURL.push(temp);
     }
   }
-  handleLostEquipment() {}
   deleteImage(index: number) {
     this.allImageCurrentURL.splice(index, 1);
     this.allImageFile.splice(index, 1);
@@ -279,19 +277,19 @@ export default class AddEquipment extends Vue {
     return obj;
   }
   checkValidateForm() {
-    if (this.equipment.name?.length == 0) {
+    if (this.equipment.name == null) {
       this.errors?.push("Name's device required");
     }
-    if (this.equipment.category_id?.length == 0) {
+    if (this.equipment.category_id == null) {
       this.errors?.push("Category's device required");
     }
-    if (this.equipment.start_status?.length == 0) {
+    if (this.equipment.start_status == null) {
       this.errors?.push("Start status device required");
     }
-    if (this.equipment.device_status?.length == 0) {
+    if (this.equipment.device_status == null) {
       this.errors?.push("Device status required");
     }
-    if (this.equipment.price?.length == 0) {
+    if (this.equipment.price == null) {
       this.errors?.push("Price required");
     }
     if (this.equipment.depreciated_value == null) {
@@ -302,18 +300,15 @@ export default class AddEquipment extends Vue {
     ) {
       this.errors?.push("Depreciated value id must be >0 and <1");
     }
-    if (this.equipment.depreciation_period?.length == 0) {
+    if (this.equipment.depreciation_period == null) {
       this.errors?.push("Depreciated period id required");
     }
-    if (
-      this.equipment.import_date?.length == 0 ||
-      this.equipment.import_date == null
-    ) {
+    if (this.equipment.import_date == null) {
       this.errors?.push(" Import date required");
     }
     if (
       this.equipment.device_status == "0" &&
-      this.equipment.compensation_status?.length == 0
+      this.equipment.compensation_status == null
     ) {
       this.errors?.push("Compensation status required");
     }

@@ -630,7 +630,7 @@ export default class DetailEquipment extends Vue {
   public indexImage = 0;
   equipment: Equipment = {
     category_id: "",
-    compensation_status: "",
+    compensation_status: null,
     category_name: "",
     created_by: "",
     created_time: "",

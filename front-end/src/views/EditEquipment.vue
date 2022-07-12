@@ -137,7 +137,7 @@
               Thời gian nhập thiết bị
             </p>
             <Datepicker
-              class="w-64 inline-block"
+              class="w-48"
               v-model="equipment.import_date"
             ></Datepicker>
           </div>
