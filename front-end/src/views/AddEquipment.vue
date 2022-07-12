@@ -257,7 +257,7 @@ export default class AddEquipment extends Vue {
     price: null,
     depreciated_value: null,
     depreciation_period: null,
-    period_type: "",
+    period_type: null,
     import_date: null,
     take_over_status: "0",
     category_id: null,

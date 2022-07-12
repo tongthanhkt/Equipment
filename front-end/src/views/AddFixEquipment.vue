@@ -302,7 +302,7 @@ export default class AddFixEquipment extends Vue {
       console.log(this.record);
       FixEquipmentService.add(this.record)
         .then(() => {
-          this.$emit('handleUpdate')
+          this.$emit("handleUpdate");
           alert("Thêm thông tin sửa chữa cho thiết bị thành công !");
           this.changeShow(false);
         })
