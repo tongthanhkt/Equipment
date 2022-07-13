@@ -6,10 +6,12 @@
 .pagination-item {
   display: inline-block;
 }
+
 .active {
   background-color: #4aae9b;
   color: #ffffff;
 }
+
 .action-hover:hover {
   background-color: beige !important;
   cursor: pointer;
@@ -22,23 +24,16 @@
         <div class="flex flex-row">
           <router-link to="/category">
             <a
-              class="transition duration-300 ease-in-out bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36"
-            >
+              class="transition duration-300 ease-in-out bg-stone-700 text-white font-bold py-2 px-4 rounded w-75px mt-1 block py-2 px-3 w-36">
               Danh mục
             </a>
           </router-link>
 
           <select
             class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            v-model="categoryId"
-            @change="filterCategory(categoryId)"
-            required
-          >
+            v-model="categoryId" @change="filterCategory(categoryId)" required>
             <option v-bind:value="0">Tất cả</option>
-            <option
-              v-for="(category, index) in categories"
-              v-bind:value="category.id"
-            >
+            <option v-for="(category, index) in categories" v-bind:value="category.id">
               {{ category.name }}
             </option>
           </select>
@@ -46,9 +41,7 @@
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
         <router-link to="/add-equipment">
-          <a
-            class="sm:w-48 bg-stone-700 text-white font-bold py-2 px-4 rounded mt-1 block py-2 px-3"
-          >
+          <a class="sm:w-48 bg-stone-700 text-white font-bold py-2 px-4 rounded mt-1 block py-2 px-3">
             Tạo mới thiết bị
           </a>
         </router-link>
@@ -59,21 +52,13 @@
             <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
               <path
                 d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
 
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-            type="text"
-            placeholder="Thiết bị"
-            v-model="this.keyword"
-            v-on:input="searchEquipments()"
-          />
+            type="text" placeholder="Thiết bị" v-model="this.keyword" v-on:input="searchEquipments()" />
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
@@ -82,30 +67,20 @@
             <svg class="h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
               <path
                 d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
 
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-            type="text"
-            placeholder="Người sử dụng"
-            v-model="this.takeOverPerson"
-            v-on:input="searchTakeOverPerson()"
-          />
+            type="text" placeholder="Người sử dụng" v-model="this.takeOverPerson" v-on:input="searchTakeOverPerson()" />
         </div>
       </div>
     </div>
     <div class="flex flex-wrap -mx-6">
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
-        <div
-          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
-          @click="filterOverView(null, null)"
-        >
+        <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
+          @click="filterOverView(null, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfEquipments }}
@@ -115,10 +90,7 @@
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
-        <div
-          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
-          @click="filterOverView(1, null)"
-        >
+        <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(1, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfTakeOverEquipment }}
@@ -128,10 +100,7 @@
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
-        <div
-          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
-          @click="filterOverView(0, null)"
-        >
+        <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(0, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfInventoryEquipment }}
@@ -141,10 +110,7 @@
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
-        <div
-          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
-          @click="filterOverView(null, 2)"
-        >
+        <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(null, 2)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfDamagedEquipment }}
@@ -154,10 +120,7 @@
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
-        <div
-          class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover"
-          @click="filterOverView(null, 0)"
-        >
+        <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(null, 0)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
               {{ this.sumOfCompensationEquipment }}/
@@ -170,16 +133,10 @@
     </div>
     <div class="flex flex-col mt-8">
       <div class="py-2 -my-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div
-          class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg"
-        >
+        <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
           <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table
-              class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-            >
-              <thead
-                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-              >
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" class="px-6 py-3">Mã thiết bị</th>
                   <th scope="col" class="px-6 py-3">Tên thiết bị</th>
@@ -194,30 +151,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  v-for="(equipment, index) in equipments"
-                  :key="index"
-                >
-                  <td
-                    scope="row"
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  v-for="(equipment, index) in equipments" :key="index">
+                  <td scope="row"
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap action-hover"
-                    @click.prevent="detailEquipment(equipment.id)"
-                  >
+                    @click.prevent="detailEquipment(equipment.id)">
                     {{ equipment.device_id }}
                   </td>
                   <td class="px-6 py-4">{{ equipment.name }}</td>
                   <td class="px-6 py-4 font-bold">
-                    <p
-                      class="text-orange-700"
-                      v-if="equipment.take_over_status == '0'"
-                    >
+                    <p class="text-orange-700" v-if="equipment.take_over_status == '0'">
                       {{ this.takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
-                    <p
-                      class="text-green-500"
-                      v-else="equipment.take_over_status == '0'"
-                    >
+                    <p class="text-green-500" v-else="equipment.take_over_status == '0'">
                       {{ this.takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
                   </td>
@@ -232,22 +178,15 @@
                     <div class="flex items-center">
                       <div class="ml-4">
                         <div class="text-sm leading-5 text-gray-500">
-                          <p
-                            class="text-orange-700"
-                            v-if="equipment.device_status == '0'"
-                          >
+                          <p class="text-orange-700" v-if="equipment.device_status == '0'">
+                            {{ this.deviceStatusEnum[equipment.device_status] }}
+                          <p v-if="equipment.compensation_status == '1'"> chưa đền bù</p>
+                          <p v-if="equipment.compensation_status == '0'"> đã đền bù</p>
+                          </p>
+                          <p class="text-green-500" v-else-if="equipment.device_status == '1'">
                             {{ this.deviceStatusEnum[equipment.device_status] }}
                           </p>
-                          <p
-                            class="text-green-500"
-                            v-else-if="equipment.device_status == '1'"
-                          >
-                            {{ this.deviceStatusEnum[equipment.device_status] }}
-                          </p>
-                          <p
-                            class="text-amber-500"
-                            v-else-if="equipment.device_status == '2'"
-                          >
+                          <p class="text-amber-500" v-else-if="equipment.device_status == '2'">
                             {{ this.deviceStatusEnum[equipment.device_status] }}
                           </p>
                         </div>
@@ -257,47 +196,27 @@
                   <td class="px-6 py-4 text-right">
                     <div>
                       <span class="flex justify-center">
-                        <a
-                          class="mx-2 px-2 rounded-md action-hover"
-                          @click.prevent="editEquipment(equipment.id)"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-green-700"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                            />
-                            <path
-                              fill-rule="evenodd"
+                        <a class="mx-2 px-2 rounded-md action-hover" @click.prevent="editEquipment(equipment.id)">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                            <path fill-rule="evenodd"
                               d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                              clip-rule="evenodd"
-                            />
+                              clip-rule="evenodd" />
                           </svg>
                         </a>
 
-                        <button
-                          class="mx-2 px-2 rounded-md list_equipments"
-                          @click="
-                            deleteEquipment(
-                              equipment.id,
-                              equipment.take_over_status
-                            )
-                          "
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-red-700"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fill-rule="evenodd"
+                        <button class="mx-2 px-2 rounded-md list_equipments" @click="
+                          deleteEquipment(
+                            equipment.id,
+                            equipment.take_over_status
+                          )
+                        ">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-700" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
                               d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clip-rule="evenodd"
-                            />
+                              clip-rule="evenodd" />
                           </svg>
                         </button>
                       </span>
@@ -311,54 +230,34 @@
             <nav class="flex justify-center inline-block">
               <ul class="flex -space-x-px">
                 <li>
-                  <a
-                    type="button"
-                    @click="onClickFirstPage"
-                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >First</a
-                  >
+                  <a type="button" @click="onClickFirstPage"
+                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">First</a>
                 </li>
                 <li>
-                  <a
-                    type="button"
-                    @click="onClickPreviousPage"
-                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >Preivous</a
-                  >
+                  <a type="button" @click="onClickPreviousPage"
+                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">Preivous</a>
                 </li>
 
                 <li>
-                  <a
-                    type="button"
-                    aria-current="page"
-                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >{{ currentPage }}</a
-                  >
+                  <a type="button" aria-current="page"
+                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{
+                        currentPage
+                    }}</a>
                 </li>
                 <li>
-                  <a
-                    type="button"
-                    @click="onClickNextPage"
-                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >Next</a
-                  >
+                  <a type="button" @click="onClickNextPage"
+                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">Next</a>
                 </li>
 
                 <li>
-                  <a
-                    type="button"
-                    @click="onClickLastPage"
-                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >Last</a
-                  >
+                  <a type="button" @click="onClickLastPage"
+                    class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">Last</a>
                 </li>
               </ul>
-              <ul
-                class="flex -space-x-px text-gray-500 m-2 text-sm inline-block"
-              >
+              <ul class="flex -space-x-px text-gray-500 m-2 text-sm inline-block">
                 Tổng số trang:
                 {{
-                  totalPages
+                    totalPages
                 }}
               </ul>
             </nav>
@@ -572,7 +471,7 @@ export default class Dashboard extends Vue {
       this.keyword = null;
     }
     this.retrieveEquipments()
-      .then((res) => {})
+      .then((res) => { })
       .catch((err) => alert("Lỗi tìm kiếm"));
   }
 
@@ -582,7 +481,7 @@ export default class Dashboard extends Vue {
       this.takeOverPerson = null;
     }
     this.retrieveEquipments()
-      .then((res) => {})
+      .then((res) => { })
       .catch((err) => alert("Lỗi tìm kiếm"));
   }
 }

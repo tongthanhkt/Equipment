@@ -4,8 +4,7 @@
       <div class="flex-1 container mx-auto px-6 py-8">
         <div class="p-1 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl">
           <div
-            class="text-center border-b-2 border-indigo-300 w-full block font-semibold text-base self-start text-black"
-          >
+            class="text-center border-b-2 border-indigo-300 w-full block font-semibold text-base self-start text-black">
             <h1 class="text-2xl leading-relaxed">
               Thông tin chi tiết thiết bị
             </h1>
@@ -18,36 +17,29 @@
               </div>
               <div class="flex flex-col">
               </div>
-      </div>
+            </div>
           </div>
           <div class="p-1 m-4 grid grid-rows-1 grid-flow-col">
-            <div
-              class="gap-px grid grid-cols-1 grid-flow-row place-items-center"
-            >
+            <div class="gap-px grid grid-cols-1 grid-flow-row place-items-center">
               <div class="gap-0.5 grid grid-rows-1 grid-flow-col">
                 <button @click="handlePreviousImage"
-                  class="sm:h-auto w-fit focus:outline-none transition-colors bg-gray-50 hover:bg-gray-200 text-gray-700"
-                >
+                  class="sm:h-auto w-fit focus:outline-none transition-colors bg-gray-50 hover:bg-gray-200 text-gray-700">
                   <fa icon="angle-left" class="h-7 w-7"></fa>
                 </button>
                 <img class="h-72 w-72" :src="allImageCurrentURL[indexImage]" />
-                <button  @click="handleNextImage"
-                  class="sm:h-auto w-fit transition-colors focus:outline-none bg-gray-50 hover:bg-gray-200 text-gray-700"
-                >
+                <button @click="handleNextImage"
+                  class="sm:h-auto w-fit transition-colors focus:outline-none bg-gray-50 hover:bg-gray-200 text-gray-700">
                   <fa icon="angle-right" class="h-7 w-7"></fa>
                 </button>
               </div>
-              <button 
-                class="sm:h-auto sm:w-auto px-4 py-1 my-1 text-center focus:outline-none transition-colors rounded-md border-b border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700"
-              >
+              <button
+                class="sm:h-auto sm:w-auto px-4 py-1 my-1 text-center focus:outline-none transition-colors rounded-md border-b border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700">
                 <fa icon="file-circle-plus"></fa>
                 Thêm ảnh mới
               </button>
             </div>
 
-            <div
-              class="grid grid-cols-1 grid-flow-row divide-y divide-gray-300"
-            >
+            <div class="grid grid-cols-1 grid-flow-row divide-y divide-gray-300">
               <span class="pl-2 grid grid-rows-1 grid-flow-col">
                 <div>
                   <div class="p-1 text-base font-medium text-gray-700">
@@ -58,7 +50,7 @@
                     Danh mục
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{this.categories[equipment.category_id]}}
+                    {{ this.categories[equipment.category_id] }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Giá tiền
@@ -68,8 +60,8 @@
                     Trạng thái bàn giao
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment.take_over_status=='1'">Đã được bàn giao</p>
-                    <p v-else-if="equipment.take_over_status=='0'">Đang tồn kho</p>
+                  <p v-if="equipment.take_over_status == '1'">Đã được bàn giao</p>
+                  <p v-else-if="equipment.take_over_status == '0'">Đang tồn kho</p>
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người thêm thông tin
@@ -89,19 +81,19 @@
                     Tình trạng khi mới nhập
                   </div>
                   <p class="pl-1 text-slate-500">
-                    <p v-if="equipment?.start_status=='1'">New</p>
-                    <p v-else-if="equipment?.start_status=='2'">like new loại S (99,99%)</p>
-                    <p v-else-if="equipment?.start_status=='3'">like new loại A (99%)</p>
-                    <p v-else-if="equipment?.start_status=='4'"> like New Loại B (97-98%)</p>
-                    <p v-else-if="equipment?.start_status=='5'">like New Loại C (Dưới 95%-90%)</p>
-                    <p v-else-if="equipment?.start_status=='6'">Thiết bị cũ (second-hand)</p>
-                    <p v-else-if="equipment?.start_status=='7'">Khác</p>
+                  <p v-if="equipment?.start_status == '1'">New</p>
+                  <p v-else-if="equipment?.start_status == '2'">like new loại S (99,99%)</p>
+                  <p v-else-if="equipment?.start_status == '3'">like new loại A (99%)</p>
+                  <p v-else-if="equipment?.start_status == '4'"> like New Loại B (97-98%)</p>
+                  <p v-else-if="equipment?.start_status == '5'">like New Loại C (Dưới 95%-90%)</p>
+                  <p v-else-if="equipment?.start_status == '6'">Thiết bị cũ (second-hand)</p>
+                  <p v-else-if="equipment?.start_status == '7'">Khác</p>
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Giá trị khấu hao
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{ equipment?.depreciated_value*100 }} %
+                    {{ equipment?.depreciated_value * 100 }} %
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Người đang sử dụng
@@ -127,11 +119,11 @@
                     Trạng thái thiết bị
                   </div>
                   <p class="pl-1 text-yellow-500 italic font-semibold">
-                   {{ this.deviceStatus[equipment.device_status] }} 
-                   <span v-if="equipment.compensation_status=='0'">chưa đền bù</span>
-                   <span v-if="equipment.compensation_status=='1'">đã đền bù</span>
+                    {{ this.deviceStatus[equipment.device_status] }}
+                    <span v-if="equipment.compensation_status == '0'">chưa đền bù</span>
+                    <span v-if="equipment.compensation_status == '1'">đã đền bù</span>
                   </p>
-                  
+
                   <div class="p-1 text-base font-medium text-gray-700">
                     Thời gian nhập thiết bị
                   </div>
@@ -142,9 +134,9 @@
                     Thời gian kì hạn
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{ equipment?.depreciation_period }} 
-                    <span v-if="equipment.period_type=='1'">Tháng</span>
-                    <span v-else-if="equipment.period_type =='2'">Năm</span>
+                    {{ equipment?.depreciation_period }}
+                    <span v-if="equipment.period_type == '1'">Tháng</span>
+                    <span v-else-if="equipment.period_type == '2'">Năm</span>
                   </p>
                 </div>
               </span>
@@ -152,36 +144,30 @@
                 <button
                   class="bg-green-500 hover:bg-green-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
                   v-on:click="handleAddTakeOverShow(true)"
-                  v-if="equipment?.take_over_status == '0' && equipment?.device_status == '1' "
-                >
+                  v-if="equipment?.take_over_status == '0' && equipment?.device_status == '1'">
                   <fa icon="rotate-right" class="pr-2"></fa>
                   Bàn giao
                 </button>
                 <button
                   class="bg-red-500 hover:bg-red-600 m-2 transition-colors flex justify-center w-auto items-center text-white px-1 py-2 rounded-md focus:outline-none"
-                  v-if="equipment?.take_over_status == '1'"
-                  v-on:click="handleAddTakeBackShow(true)"
-                >
+                  v-if="equipment?.take_over_status == '1'" v-on:click="handleAddTakeBackShow(true)">
                   <fa icon="rotate-left" class="pr-2"></fa>
                   Thu hồi
                 </button>
-                 <button
+                <button
                   class="bg-yellow-500 hover:bg-yellow-600 m-2 transition-colors flex justify-center w-auto-2 items-center text-white px-1 py-2 rounded-md focus:outline-none"
-                  v-if="equipment?.take_over_status == '0' && equipment.device_status=='2'"
-                  v-on:click="handleAddFixEquipmentShow(true)"
-                >
+                  v-if="equipment?.take_over_status == '0' && equipment.device_status == '2'"
+                  v-on:click="handleAddFixEquipmentShow(true)">
                   <fa icon="rotate-left" class="pr-2"></fa>
                   Sửa chữa
                 </button>
                 <button @click="editEquipment"
-                  class="bg-sky-500 hover:bg-sky-600 m-2 transition-colors flex justify-center items-center w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none"
-                >
+                  class="bg-sky-500 hover:bg-sky-600 m-2 transition-colors flex justify-center items-center w-auto text-gray-900 px-1 py-2 rounded-md focus:outline-none">
                   <fa icon="pen-to-square" class="pr-2"></fa>
                   Cập nhật
                 </button>
                 <button @click="deleteEquipment"
-                  class="absolute place-self-end bg-gray-50 hover:bg-gray-200 mt-2 transition-colors flex justify-center items-center w-auto text-red-500 p-2 rounded-md focus:outline-none"
-                >
+                  class="absolute place-self-end bg-gray-50 hover:bg-gray-200 mt-2 transition-colors flex justify-center items-center w-auto text-red-500 p-2 rounded-md focus:outline-none">
                   <fa icon="ban" class="pr-2"></fa>
                   Xóa
                 </button>
@@ -466,98 +452,50 @@
             </ul>
           </nav>
         </div> -->
-      
+
         <!-- <TakeOverHistory  v-bind:equipment_id="$route.params.id"/> -->
-    <TakeOverHistory 
-      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-      v-on:deleteRecord="deleteTakeOverRecord"
-      v-on:changeRecordTakeOverId="handleRecordTakeOverId"
-      :key="keyTakeOver"/>
-    <TakeBackHistory
-      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
-      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-      v-on:deleteRecord="deleteTakeBackRecord"
-      v-on:changeRecordTakeBackId="handleRecordTakeBackId"
-      :key="keyTakeBack"/>
-    <FixEquipmentHistory
-    v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
-    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-    v-on:changeRecordFixEquipmentId="handleRecordFixEquipmentId"
-    v-bind:takeOverStatus="equipment.take_over_status"
-    v-bind:key="keyFixEquipment"/>
+        <TakeOverHistory v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+          v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow" v-on:deleteRecord="deleteTakeOverRecord"
+          v-on:changeRecordTakeOverId="handleRecordTakeOverId" :key="keyTakeOver" />
+        <TakeBackHistory v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+          v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow" v-on:deleteRecord="deleteTakeBackRecord"
+          v-on:changeRecordTakeBackId="handleRecordTakeBackId" :key="keyTakeBack" />
+        <FixEquipmentHistory v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+          v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+          v-on:changeRecordFixEquipmentId="handleRecordFixEquipmentId"
+          v-bind:takeOverStatus="equipment.take_over_status" v-bind:key="keyFixEquipment" />
       </div>
     </div>
 
-     <DetailTakeOver
-      v-if="isDetailTakeOverShow"
-      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-       v-on:deleteRecord="deleteTakeOverRecord"
-      v-bind:id="recordTakeOverId"
-    />
-    <DetailTakeBack
-      v-if="isDetailTakeBackShow"
-      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
-      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-       v-on:deleteRecord="deleteTakeBackRecord"
-      v-bind:id="recordTakeBackId"
-    />
-    <DetailFixEquipment
-      v-if="isDetailFixEquipmentShow"
-      v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
-      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-      v-bind:id="recordFixEquipmentId"
+    <DetailTakeOver v-if="isDetailTakeOverShow" v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow" v-on:deleteRecord="deleteTakeOverRecord"
+      v-bind:id="recordTakeOverId" />
+    <DetailTakeBack v-if="isDetailTakeBackShow" v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow" v-on:deleteRecord="deleteTakeBackRecord"
+      v-bind:id="recordTakeBackId" />
+    <DetailFixEquipment v-if="isDetailFixEquipmentShow" v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow" v-bind:id="recordFixEquipmentId" />
 
-    />
 
-    
-    
-    
-    <UpdateTakeBack
-      v-if="isUpdateTakeBackShow"
-      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-      v-bind:id="recordTakeBackId"
-       v-on:handleUpdate="handleTakeBackUpdate"
-    />
-   
-    <UpdateTakeOver
-      v-if="isUpdateTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-      v-bind:id="recordTakeOverId"
-       v-on:handleUpdate="handleTakeOverUpdate"
-    />
-    <UpdateFixEquipment
-    v-if="isUpdateFixEquipmentShow"
-    v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-    v-bind:id="recordFixEquipmentId"
-     v-on:handleUpdate="handleFixingUpdate"
-    />
 
-    <AddTakeOver
-      v-if="isAddTakeOverShow"
-      v-on:changeAddTakeOverShow="handleAddTakeOverShow"
-      v-bind:device_id="equipment?.device_id"
-      v-bind:equipment_name="equipment?.name"
-       v-bind:equipment_id="equipment?.id"
-        v-on:handleUpdate="handleTakeOverUpdate"
-    />
-    <AddTakeBack
-      v-if="isAddTakeBackShow"
-      v-on:changeAddTakeBackShow="handleAddTakeBackShow"
-      v-bind:device_id="equipment?.device_id"
-      v-bind:equipment_name="equipment?.name"
-       v-bind:equipment_id="equipment?.id"
-        v-on:handleUpdate="handleTakeBackUpdate"
-    />
-    <AddFixEquipment
-      v-if="isAddFixEquipmentShow"
-      v-on:changeAddFixEquipmentShow="handleAddFixEquipmentShow"
-      v-bind:device_id="equipment.device_id"
-      v-bind:equipment_name="equipment.name"
-      v-bind:equipment_id="equipment.id"
-      v-on:handleUpdate="handleFixingUpdate"
-    />
+
+    <UpdateTakeBack v-if="isUpdateTakeBackShow" v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+      v-bind:id="recordTakeBackId" v-on:handleUpdate="handleTakeBackUpdate" />
+
+    <UpdateTakeOver v-if="isUpdateTakeOverShow" v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+      v-bind:id="recordTakeOverId" v-on:handleUpdate="handleTakeOverUpdate" />
+    <UpdateFixEquipment v-if="isUpdateFixEquipmentShow" v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+      v-bind:id="recordFixEquipmentId" v-on:handleUpdate="handleFixingUpdate" />
+
+    <AddTakeOver v-if="isAddTakeOverShow" v-on:changeAddTakeOverShow="handleAddTakeOverShow"
+      v-bind:device_id="equipment?.device_id" v-bind:equipment_name="equipment?.name"
+      v-bind:equipment_id="equipment?.id" v-on:handleUpdate="handleTakeOverUpdate" />
+    <AddTakeBack v-if="isAddTakeBackShow" v-on:changeAddTakeBackShow="handleAddTakeBackShow"
+      v-bind:device_id="equipment?.device_id" v-bind:equipment_name="equipment?.name"
+      v-bind:equipment_id="equipment?.id" v-on:handleUpdate="handleTakeBackUpdate" />
+    <AddFixEquipment v-if="isAddFixEquipmentShow" v-on:changeAddFixEquipmentShow="handleAddFixEquipmentShow"
+      v-bind:device_id="equipment.device_id" v-bind:equipment_name="equipment.name" v-bind:equipment_id="equipment.id"
+      v-on:handleUpdate="handleFixingUpdate" />
     <!-- <DetailTakeOver
       v-if="isDetailTakeOverShow"
       v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
@@ -630,27 +568,27 @@ export default class DetailEquipment extends Vue {
   public allImageCurrentURL: string[] = [];
   public indexImage = 0;
   equipment: Equipment = {
-    category_id: "",
+    category_id: null,
     compensation_status: null,
-    category_name: "",
-    created_by: "",
-    created_time: "",
-    device_id: "",
-    id: "",
-    import_date: "",
-    name: "",
-    price: "",
-    start_status: "",
-    take_over_person_id: "",
-    take_over_person_name: "",
-    take_over_status: "",
-    updated_by: "",
-    updated_time: "",
-    device_status: "",
+    category_name: null,
+    created_by: null,
+    created_time: null,
+    device_id: null,
+    id: null,
+    import_date: null,
+    name: null,
+    price: null,
+    start_status: null,
+    take_over_person_id: null,
+    take_over_person_name: null,
+    take_over_status: null,
+    updated_by: null,
+    updated_time: null,
+    device_status: null,
     depreciated_value: null,
-    depreciation_period: "",
-    period_type: "",
-    metadata_info: "",
+    depreciation_period: null,
+    period_type: null,
+    metadata_info: null,
   };
 
   isDetailFixEquipmentShow: Boolean = false;
@@ -679,14 +617,14 @@ export default class DetailEquipment extends Vue {
   keyTakeBack: number = 0;
   keyTakeOver: number = 0;
   keyFixEquipment: number = 0;
-  currentFixEquipmentRecord :string|null=null;
+  currentFixEquipmentRecord: string | null = null;
   // type: any = {
   //   1: "Bàn giao thiết bị mới",
   //   2: "Bàn giao thiết bị sau khi sửa chữa",
   // };
   async created() {
     const idParams = this.$route.params.id;
-   await this.retrieveDetailEquipment(idParams);
+    await this.retrieveDetailEquipment(idParams);
 
   }
   handlePreviousImage() {
@@ -752,7 +690,7 @@ export default class DetailEquipment extends Vue {
   }
   handleAddFixEquipmentShow(data: Boolean) {
     this.isAddFixEquipmentShow = data;
-    
+
   }
   handleDetailTakeOverShow(data: Boolean) {
     this.isDetailTakeOverShow = data;
@@ -864,4 +802,5 @@ export default class DetailEquipment extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+</style>
