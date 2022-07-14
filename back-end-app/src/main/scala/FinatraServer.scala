@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}
 import com.twitter.finatra.http.routing.HttpRouter
-import controllers.{CRUDCategoryController, CRUDEquipmentController, CRUDFixEquipmentController, CRUDTakeOverController, FileController}
+import controllers.{CRUDCategoryController, CRUDEquipmentController, CRUDFixEquipmentController, CRUDTakeOverController, FileController, HistoricalController}
 import filters.{CORSFilter, CommonExceptionMapping}
 import modules.{CustomJacksonModule, DependencyModule}
 
@@ -32,6 +32,7 @@ class FinatraServer extends HttpServer{
       .add[CRUDFixEquipmentController]
       .add[CRUDCategoryController]
       .add[StatisticController]
+      .add[HistoricalController]
       .exceptionMapper[CommonExceptionMapping]
 
   }

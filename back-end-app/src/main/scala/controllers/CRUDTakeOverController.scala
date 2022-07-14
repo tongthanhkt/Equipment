@@ -84,7 +84,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         print(request)
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
-          val checkEquipmentStatus = takeOverService.checkequipmentForTakeOver(request.equipmentId)
+          val checkEquipmentStatus = takeOverService.checkEquipmentForTakeOver(request.equipmentId)
           if (takeOverService.checkUserExist(request.username) == 0) {
             response.internalServerError.jsonError("Username not exists.")
           } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {

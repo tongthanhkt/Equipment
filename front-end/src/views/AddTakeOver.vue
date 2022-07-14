@@ -381,51 +381,7 @@ export default class AddTakeOver extends Vue {
           // });
           alert(errors);
         });
-      TakeOverService.add(this.record)
-        .then(() => {
-          this.$emit("handleUpdate");
-          alert("Thêm thông tin bàn giao cho thiết bị thành công !");
-          this.changeShow(false);
-        })
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          // console.log(errors);
-          // let temp = "";
-          // Object.values(errors).forEach((error) => {
-          //   temp = temp + error + "\n";
-          // });
-          alert(errors);
-        });
-      TakeOverService.add(this.record)
-        .then(() => {
-          this.$emit("handleUpdate");
-          alert("Thêm thông tin bàn giao cho thiết bị thành công !");
-          this.changeShow(false);
-        })
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          // console.log(errors);
-          // let temp = "";
-          // Object.values(errors).forEach((error) => {
-          //   temp = temp + error + "\n";
-          // });
-          alert(errors);
-        });
-      TakeOverService.add(this.record)
-        .then(() => {
-          this.$emit("handleUpdate");
-          alert("Thêm thông tin bàn giao cho thiết bị thành công !");
-          this.changeShow(false);
-        })
-        .catch((err) => {
-          const errors = err.response.data.errors[0];
-          // console.log(errors);
-          // let temp = "";
-          // Object.values(errors).forEach((error) => {
-          //   temp = temp + error + "\n";
-          // });
-          alert(errors);
-        });
+      
     }
   }
 }

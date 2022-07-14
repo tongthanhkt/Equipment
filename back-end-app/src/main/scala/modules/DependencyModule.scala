@@ -2,7 +2,7 @@ package modules
 
 import com.twitter.inject.TwitterModule
 import models.ConvertString
-import services.{CRUDCategoryService, CRUDEquipmentService, CRUDFixEquipmentService, FileService, StatisticService}
+import services.{CRUDCategoryService, CRUDEquipmentService, CRUDFixEquipmentService, FileService, HistoricalService, StatisticService}
 import utils.DatabaseConnection
 
 import javax.inject.Singleton
@@ -40,6 +40,11 @@ object DependencyModule extends TwitterModule{
   @Singleton
   def provideCategoryService (databaseConnection: DatabaseConnection):CRUDCategoryService  = {
     new CRUDCategoryService(databaseConnection )
+  }
+
+  @Singleton
+  def provideHistoricalService (databaseConnection: DatabaseConnection):HistoricalService  = {
+    new HistoricalService(databaseConnection )
   }
 
   @Singleton

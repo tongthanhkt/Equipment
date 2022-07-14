@@ -14,7 +14,7 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
 
   prefix("/fix_equipment"){
     get("/search"){request:SearchFixEquipmentRequest =>{
-      try {
+
         try {
           val totalFixEquipmentRecords  = fixEquipmentService.countBySearch(request)
           var nPages:Int = totalFixEquipmentRecords/request.limit;
@@ -38,7 +38,7 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
             response.internalServerError.jsonError(ex.getMessage)
           }
         }
-      }
+
     }}
 
     get("/:id"){request: SearchFixEquipmentByIdRequest =>{

@@ -258,7 +258,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
     else return -2;
   }
   @throws[Exception]
-  def checkequipmentForTakeOver(equipmentId: String): Int = {
+  def checkEquipmentForTakeOver(equipmentId: String): Int = {
     val sql =
       """
         |SELECT * from equipment
