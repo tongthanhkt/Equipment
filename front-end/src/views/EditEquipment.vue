@@ -3,6 +3,32 @@
   position: relative;
 }
 
+.hasImage:hover section {
+  background-color: rgba(5, 5, 5, 0.4);
+}
+
+.hasImage:hover button:hover {
+  background: rgba(5, 5, 5, 0.45);
+}
+
+#overlay p,
+i {
+  opacity: 0;
+}
+
+#overlay.draggedover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+#overlay.draggedover p,
+#overlay.draggedover i {
+  opacity: 1;
+}
+
+.group:hover .group-hover\:text-blue-800 {
+  color: #2b6cb0;
+}
+
 .img-wrap .close {
   position: absolute;
 }
@@ -106,43 +132,99 @@
               placeholder="" v-model="equipment.depreciated_value" />
           </div>
         </div>
+
+        <div class="flex flex-row  mt-4">
+          <div class="grid grid-cols-3 gap-6 mx-0">
+            <div class="grid grid-rows-2 gap-4 list-group-flush" v-for="(image, index) in allImageUrl">
+              <article tabindex="0"
+                class="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
+                <img alt="upload preview" class="img-preview w-48 h-full sticky object-cover rounded-md bg-fixed"
+                  :src="image.file_url" />
+                <section
+                  class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+                  <h1 class="flex-1"></h1>
+                  <div class="flex">
+                    <span class="p-1">
+                      <i>
+                        <svg class="fill-current w-4 h-4 ml-auto pt-" xmlns="http://www.w3.org/2000/svg" width="24"
+                          height="24" viewBox="0 0 24 24">
+                          <path
+                            d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z" />
+                        </svg>
+                      </i>
+                    </span>
+
+                    <p class="p-1 size text-xs"></p>
+                    <button class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md"
+                      @click="deleteImage(image.file_name, index)">
+                      <svg class="pointer-events-none fill-current w-4 h-4 ml-auto" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24">
+                        <path class="pointer-events-none"
+                          d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z" />
+                      </svg>
+                    </button>
+                  </div>
+                </section>
+              </article>
+              <div class="h-18">
+                <textarea id="message" rows="4"
+                  class="block p-2.5 w-full  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Image description..." v-model="image.file_description"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="flex flex-row gap-6 mt-8 w-full">
-          <div class="flex flex-col">
+          <div class="flex flex-col ">
             <p class="leading-loose font-medium text-xl">Tệp đính kèm</p>
             <div class="row">
               <div class="col-8">
                 <p class="btn btn-default p-0">
-                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file"
+                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file" multiple
                     @change="selectImage" />
                 </p>
               </div>
             </div>
           </div>
         </div>
-        <div class="flex flex-row gap-6 mt-8 w-full">
-          <div>
-            <div v-if="currentImage" class="progress">
-              <div class="progress-bar progress-bar-info w-80" role="progressbar" :aria-valuenow="progress"
-                aria-valuemin="0" aria-valuemax="100" :style="{ width: progress + '%' }">
-                {{ progress }}%
-              </div>
-            </div>
+        <div class="flex flex-row  mt-4">
+          <div class="grid grid-cols-3 gap-6 mx-0">
+            <div class="grid grid-rows-2 gap-4 list-group-flush" v-for="(image, index) in allNewImageInfo">
+              <article tabindex="0"
+                class="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
+                <img alt="upload preview" class="img-preview w-48 h-full sticky object-cover rounded-md bg-fixed"
+                  :src="image.file_url" />
+                <section
+                  class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+                  <h1 class="flex-1"></h1>
+                  <div class="flex">
+                    <span class="p-1">
+                      <i>
+                        <svg class="fill-current w-4 h-4 ml-auto pt-" xmlns="http://www.w3.org/2000/svg" width="24"
+                          height="24" viewBox="0 0 24 24">
+                          <path
+                            d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z" />
+                        </svg>
+                      </i>
+                    </span>
 
-            <div v-if="message" class="alert alert-secondary" role="alert">
-              {{ message }}
-            </div>
-            <div class="card mt-3 w-80">
-              <div class="card-header">List of Images</div>
-              <ul class="list-group list-group-flush">
-                <div v-for="(image, index) in allImageCurrentURL">
-                  <div>
-                    <div class="img-wrap">
-                      <span class="close" @click="deleteImage(index)">&times;</span>
-                      <img class="preview my-3 w-80" :src="image" alt="" />
-                    </div>
+                    <p class="p-1 size text-xs"></p>
+                    <button class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md"
+                      @click="deleteNewImage(index)">
+                      <svg class="pointer-events-none fill-current w-4 h-4 ml-auto" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24">
+                        <path class="pointer-events-none"
+                          d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z" />
+                      </svg>
+                    </button>
                   </div>
-                </div>
-              </ul>
+                </section>
+              </article>
+              <div class="h-18">
+                <textarea id="message" rows="4"
+                  class="block p-2.5 w-full  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Image description..." v-model="image.file_description"></textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -171,9 +253,11 @@ import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { Vue, Options } from "vue-property-decorator";
 import EquipmentDataService from "../services/equipments/EquipmentDataService";
-import UploadFilesService from "@/services/equipments/UploadFilesService";
+import UploadService from "../services/equipments/UploadFilesService";
 import CategoryService from "../services/category/categoryService";
 import { parse } from "date-fns";
+import ImageInfo from "../types/ImageInfo";
+import { fil } from "date-fns/locale";
 @Options({
   components: {
     Datepicker,
@@ -206,11 +290,14 @@ export default class AddEquipment extends Vue {
   private errors: string[] = [];
   private allImageCurrentURL: string[] = []; // Địa chỉ API của hình ảnh ;
   private currentImage: File | null | undefined = null;
-  private allNewImageFile: File[] = [];
+  public allImageInfo: any;
+  public allNewImageInfo: ImageInfo[] = [];
+  public allImageUrl: ImageInfo[] = [];
   private currentMetadataInfo: any;
   private oldMetadataInfo: any;
   private importDate: string = "";
   public categories = [];
+  private allImageFile: File[] = [];
   async mounted() {
     this.retrieveEquipment();
     this.retrieveCategories();
@@ -225,19 +312,13 @@ export default class AddEquipment extends Vue {
     const response = await EquipmentDataService.getEquipmentDetail(
       idParam
     ).then((response) => {
-      console.log(response.data);
       this.equipment = response.data;
       this.equipment.import_date = this.handleImportDate(
         this.equipment.import_date!
       );
       this.equipment.price = parseFloat(this.equipment.price!).toString();
-      const allImage = Object.values(response.data.metadata_info);
-      this.currentMetadataInfo = Object.entries(response.data.metadata_info);
-      this.oldMetadataInfo = Object.entries(response.data.metadata_info);
-      let result = allImage.map((Image: any) => Image.file_url);
-      result.forEach((URL, index) => {
-        this.allImageCurrentURL[index] = `${URL}`;
-      });
+      this.allImageInfo = response.data.metadata_info;
+      this.allImageUrl = Object.values(response.data.metadata_info);
     });
 
     //this.handleDate();
@@ -284,10 +365,9 @@ export default class AddEquipment extends Vue {
       this.equipment.compensation_status = null;
     }
   }
+
   async saveEquipment() {
     let errors = "";
-    this.equipment.metadata_info = await this.getUpdatedMetaData();
-    console.log(this.errors);
     this.checkValidateForm();
     if (this.errors.length != 0) {
       for (let i = 0; i < this.errors.length; i++) {
@@ -296,6 +376,9 @@ export default class AddEquipment extends Vue {
       alert(errors);
       this.errors = [];
     } else {
+      const newImageUpload = await this.getImageFile();
+      this.equipment.metadata_info = Object.assign(this.allImageInfo, newImageUpload);
+      console.log(this.equipment.metadata_info);
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
       const data = {
@@ -316,7 +399,7 @@ export default class AddEquipment extends Vue {
         updated_time: "13062022",
         updated_by: "tatthanh",
         compensation_status: this.equipment.compensation_status,
-        metadata_info: await this.getUpdatedMetaData(),
+        metadata_info: this.equipment.metadata_info,
       };
       if (this.errors.length == 0) {
         EquipmentDataService.updateEquipment(data)
@@ -330,74 +413,47 @@ export default class AddEquipment extends Vue {
       }
     }
   }
-  async getUpdatedMetaData() {
-    await this.getDeletedImage();
-    const newFile = await this.getNewImageFile();
-    const currentFile = this.getCurrentImageFile();
-    let result = Object.assign(currentFile, newFile);
-    if (result == null) {
-      return (result = { files: {} });
-    }
-    return result;
-  }
 
-  deleteImage(index: any) {
-    this.allImageCurrentURL.splice(index, 1);
-    this.currentMetadataInfo.splice(index, 1);
-  }
 
-  //
-  async getDeletedImage() {
-    for (let i = 0; i < this.oldMetadataInfo.length; i++) {
-      let temp = 0;
-      for (let j = 0; j < this.currentMetadataInfo.length; j++) {
-        if (
-          this.oldMetadataInfo[i][0] === this.currentMetadataInfo[j][0] &&
-          !(this.currentMetadataInfo[i] instanceof File)
-        ) {
-          temp = 1;
-        }
-      }
-      if (temp == 0) {
-        await UploadFilesService.deleteFile(
-          this.oldMetadataInfo[i][1].file_name
-        )
-          .then(() => console.log("Delete done!"))
-          .catch((err) => console.log(err));
-      }
-    }
+  deleteNewImage(index: number) {
+    this.allNewImageInfo.splice(index, 1);
+    this.allImageFile.splice(index, 1);
   }
-
-  async getNewImageFile() {
-    let obj = {};
-    for (let i = 0; i < this.currentMetadataInfo.length; i++) {
-      if (this.currentMetadataInfo[i] instanceof File) {
-        await UploadFilesService.upload(this.currentMetadataInfo[i])
-          .then((response) => {
-            obj = Object.assign(response.data, obj);
-          })
-          .catch((error) => this.errors.push(error.response.data.errors[0]));
-      }
-    }
-    return obj;
+  deleteImage(file_name: string, index: number) {
+    delete this.allImageInfo[`${file_name}`];
+    this.allImageUrl.splice(index, 1);
+    console.log(this.allImageInfo);
+    console.log(this.allImageUrl);
   }
-
-  getCurrentImageFile() {
-    let obj = Object.fromEntries(this.currentMetadataInfo);
-    Object.keys(obj).forEach((key) =>
-      obj[key] === undefined ? delete obj[key] : {}
-    );
-    return obj;
-  }
-
   selectImage(e: InputEvent) {
     const value = e!.target as HTMLInputElement;
     this.currentImage = value?.files?.item(0);
     if (this.currentImage != null) {
       const temp = URL.createObjectURL(this.currentImage);
-      this.allImageCurrentURL.push(temp);
-      this.currentMetadataInfo.push(this.currentImage);
+
+      this.allImageFile.push(this.currentImage);
+      this.allNewImageInfo.push({ file_url: temp, file_description: "", file_extention: "", file_name: "", size: "" })
     }
+  }
+  async getImageFile() {
+    let obj = {};
+    let temp;
+    for (let i = 0; i < this.allImageFile.length; i++) {
+      await UploadService.upload(this.allImageFile[i])
+        .then((response) => {
+          const key = Object.keys(response.data);
+          response.data[key[0]].file_description = this.allNewImageInfo[i].file_description;
+          console.log(response.data);
+          obj = Object.assign(response.data, obj);
+        })
+        .catch((error) => {
+          temp = 0;
+        });
+    }
+    if (temp == 0) {
+      return 0;
+    }
+    return obj;
   }
 }
 </script>
