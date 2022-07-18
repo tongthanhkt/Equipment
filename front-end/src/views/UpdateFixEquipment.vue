@@ -1,19 +1,48 @@
+<style scoped>
+.img-wrap {
+  position: relative;
+}
+
+.hasImage:hover section {
+  background-color: rgba(5, 5, 5, 0.4);
+}
+
+.hasImage:hover button:hover {
+  background: rgba(5, 5, 5, 0.45);
+}
+
+#overlay p,
+i {
+  opacity: 0;
+}
+
+#overlay.draggedover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+#overlay.draggedover p,
+#overlay.draggedover i {
+  opacity: 1;
+}
+
+.group:hover .group-hover\:text-blue-800 {
+  color: #2b6cb0;
+}
+
+.img-wrap .close {
+  position: absolute;
+}
+</style>
 <template>
-  <div
-    class="absolute h-screen top-0 right-0 w-1/2 shadow-2xl border-l-2 border-indigo-300 rounded-none"
-  >
+  <div class="absolute h-screen top-0 right-0 w-1/2 shadow-2xl border-l-2 border-indigo-300 rounded-none">
     <div
-      class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto font-semibold text-base self-start text-black bg-indigo-500"
-    >
-      <h1
-        class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
-      >
+      class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto font-semibold text-base self-start text-black bg-indigo-500">
+      <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto">
         Sửa chữa thiết bị
       </h1>
       <button
         class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors w-auto text-white rounded-md focus:outline-none"
-        v-on:click="changeShow(false)"
-      >
+        v-on:click="changeShow(false)">
         <fa icon="xmark" class="px-2 py-2"></fa>
       </button>
     </div>
@@ -25,15 +54,13 @@
 
         <div>
           <div
-            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
-          >
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
             {{ record.device_id }}
           </div>
         </div>
         <div class="col-span-2">
           <div
-            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
-          >
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
             {{ record.equipment_name }}
           </div>
         </div>
@@ -43,19 +70,14 @@
         </div>
 
         <div>
-          <input
-            type="number"
+          <input type="number"
             class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-            placeholder=""
-            v-model="record.cost"
-          />
+            placeholder="" v-model="record.cost" />
         </div>
         <div class="flex flex-row col-span-2 w-11/12">
           <Datepicker
             class="mx-1 w-11/12 border focus:ring-gray-500 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-            v-model="editDate"
-            :format="format"
-          />
+            v-model="editDate" :format="format" />
         </div>
 
         <div class="p-1 font-medium text-gray-700">Người sửa chữa</div>
@@ -65,18 +87,11 @@
         <div>
           <v-select
             class="mx-1 bg-white border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-sm sm:text-sm border-gray-300 rounded focus:outline-none text-black"
-            :options="options"
-            v-model="fixer"
-            :get-option-label="(option) => option.username"
-            :dropdown-should-open="dropdownShouldOpen"
-          >
+            :options="options" v-model="fixer" :get-option-label="(option) => option.username"
+            :dropdown-should-open="dropdownShouldOpen">
             <template #search="{ attributes, events }">
-              <input
-                class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
-                v-bind="attributes"
-                v-on="events"
-                @input="retrieveUser"
-              />
+              <input class="vs__search bg-white lg:text-base sm:text-sm focus:outline-none text-black"
+                v-bind="attributes" v-on="events" @input="retrieveUser" />
             </template>
             <template #option="{ username, fullname }">
               {{ fullname }}
@@ -86,54 +101,36 @@
           </v-select>
         </div>
         <div class="col-span-2">
-          <select
-            v-model="record.status"
-            id="type"
-            name="type"
-            autocomplete="type-name"
-            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-          >
+          <select v-model="record.status" id="type" name="type" autocomplete="type-name"
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black">
             <option value="-1">Không sửa được</option>
             <option value="0">Đang sửa</option>
             <option value="1">Sửa thành công</option>
           </select>
         </div>
       </div>
-      <div
-        class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
-      >
+      <div class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300">
         <div class="pl-1 font-medium text-gray-700">Message</div>
-        <textarea
-          id="w3review"
-          name="w3review"
-          rows="3"
-          cols="50"
-          class="mx-1 my-2 px-2 py-1.5 border rounded"
-          v-model="record.message"
-        ></textarea>
-        <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
-        <!-- <div class="mx-2 bg-gray-50 w-full h-24 my-2"> 
-
-       </div> -->
-       <div v-if="currentFileName.length != 0">
-          <ul class="list-group list-group-flush flex flex-row flex-wrap">
-            <div v-for="(file_name, index) in currentFileName" :key="index">
-              <div>
-                <div
-                  class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
-                >
-                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
-                  <div class="py-1">{{ file_name }}</div>
-                  <span
-                    class="close px-2 py-1"
-                    @click="deleteCurrentFile(index)"
-                    >&times;</span
-                  >
-                </div>
+        <textarea id="w3review" name="w3review" rows="3" cols="50" class="mx-1 my-2 px-2 py-1.5 border rounded"
+          v-model="record.message">
+        </textarea>
+        <div>
+          <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
+          <div v-if="allFileName.length != 0">
+            <div class="grid grid-rows-2 " v-for="(file, index) in allFileName" :key="index">
+              <div class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2">
+                <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+                <div class="py-1">{{ file.file_name }}</div>
+                <span class="close px-2 py-1" @click="deleteSelectedFile(file.file_name, index)">&times;</span>
               </div>
+              <textarea id="message"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Your message..." v-model="file.file_description"></textarea>
             </div>
-          </ul>
+
+          </div>
         </div>
+
         <div class="mx-1 mt-2 mb-3">
           <div class="row">
             <div class="col-8">
@@ -142,38 +139,25 @@
               <input type="file" ref="file" @change="selectFiles" multiple />
             </div>
           </div>
-          <span
-            v-if="msgError"
-            class="text-red-600 pb-2 text-base"
-            role="alert"
-          >
+          <span v-if="msgError" class="text-red-600 pb-2 text-base" role="alert">
             *{{ msgError }}
           </span>
 
-          <div class="bg-white h-36 overflow-y-auto border-2 border-indigo-300">
-            <div
-              class="border-b-2 border-indigo-300 text-sm text-orange-600 font-semibold flex flex-row"
-            >
+          <div class="bg-white h-64 overflow-y-auto border-2 border-indigo-300">
+            <div class="border-b-2 border-indigo-300 text-sm text-orange-600 font-semibold flex flex-row">
               <fa icon="folder" class="px-2 py-1"></fa>
               <div class="p-1">Selected Files</div>
             </div>
-            <ul class="list-group list-group-flush flex flex-row flex-wrap">
-              <div v-for="(file, index) in allFiles">
-                <div>
-                  <div
-                    class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2"
-                  >
-                    <fa icon="file-arrow-up" class="px-2 py-2"></fa>
-                    <div class="py-1">{{ file.name }}</div>
-                    <span
-                      class="close px-2 py-1"
-                      @click="deleteSelectedFile(index)"
-                      >&times;</span
-                    >
-                  </div>
-                </div>
+            <div class="grid grid-rows-2 " v-for="(file, index) in allNewFileInfo" :key="index">
+              <div class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2">
+                <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+                <div class="py-1">{{ file.file_name }}</div>
+                <span class="close px-2 py-1" @click="deleteNewSelectedFile(index)">&times;</span>
               </div>
-            </ul>
+              <textarea id="message"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Your message..." v-model="file.file_description"></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -183,15 +167,13 @@
       <div class="flex flex-row gap">
         <button
           class="bg-green-500 hover:bg-green-600 m-3.5 transition-colors text-base w-auto text-white p-2 rounded-md focus:outline-none"
-          @click="updateFixEquipmentRecord"
-        >
+          @click="updateFixEquipmentRecord">
           <fa icon="rotate-right" class="px-1"></fa>
           Cập nhật sửa chữa
         </button>
         <button
           class="bg-red-500 hover:bg-red-600 m-3.5 transition-colors w-auto text-white p-2 rounded-md focus:outline-none"
-          v-on:click="changeShow(false)"
-        >
+          v-on:click="changeShow(false)">
           <fa icon="xmark" class="px-1"></fa>
           Hủy
         </button>
@@ -211,7 +193,7 @@ import Fuse from "fuse.js";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadFilesService from "../services/equipments/UploadFilesService";
-
+import ImageInfo from "../types/ImageInfo";
 @Options({
   components: {
     Datepicker,
@@ -246,6 +228,9 @@ export default class UpdateFixEquipment extends Vue {
   editDate: any = null;
   currentMetaData: any;
   currentFileName: string[] = [];
+  public allFileName: ImageInfo[] = [];
+  public allFileInfo: any;
+  public allNewFileInfo: ImageInfo[] = [];
 
   @Emit("changeUpdateFixEquipmentShow")
   changeShow(data: boolean) {
@@ -276,20 +261,41 @@ export default class UpdateFixEquipment extends Vue {
 
           return;
         }
-        if (currentFile != null) this.allFiles.push(currentFile);
+        if (currentFile != null) {
+          console.log(currentFile);
+          this.allFiles.push(currentFile);
+          this.allNewFileInfo.push({ file_url: "", file_description: "", file_extention: "", file_name: currentFile.name, size: "" })
+        }
       }
       this.msgError = null;
     }
   }
-  deleteSelectedFile(index: number) {
+  deleteSelectedFile(file_name: string, index: number) {
+    console.log(this.allFileInfo);
+    delete this.allFileInfo[`${file_name}`];
+    this.allFileName.splice(index, 1);
+  }
+  deleteNewSelectedFile(index: number) {
+    this.allNewFileInfo.splice(index, 1);
     this.allFiles.splice(index, 1);
   }
-  async uploadFiles() {
+  async getUploadFile() {
     let obj = {};
+    let temp;
     for (let i = 0; i < this.allFiles.length; i++) {
-      await UploadService.uploadFile(this.allFiles[i]).then((response) => {
-        obj = Object.assign(response.data, obj);
-      });
+      await UploadService.uploadFile(this.allFiles[i])
+        .then((response) => {
+          const key = Object.keys(response.data);
+          response.data[key[0]].file_description = this.allNewFileInfo[i].file_description;
+          console.log(response.data);
+          obj = Object.assign(response.data, obj);
+        })
+        .catch((error) => {
+          temp = 0;
+        });
+    }
+    if (temp == 0) {
+      return 0;
     }
     return obj;
   }
@@ -299,16 +305,7 @@ export default class UpdateFixEquipment extends Vue {
     this.options.push(this.fixer);
   }
 
-  async getCurrentMetaData() {
-    await this.deleteOldFile();
-    const newMetaData = await this.uploadFiles();
-    let obj = Object.assign(
-      Object.fromEntries(this.currentMetaData),
-      newMetaData
-    );
-    if (obj === null || obj === undefined) return {};
-    return obj;
-  }
+
 
   deleteFiles: string[] = [];
   deleteCurrentFile(index: number) {
@@ -317,15 +314,7 @@ export default class UpdateFixEquipment extends Vue {
     this.currentMetaData.splice(index, 1);
   }
 
-  async deleteOldFile() {
-    for (let i = 0; i < this.deleteFiles.length; i++) {
-      await UploadFilesService.deleteFile(this.deleteFiles[i])
-        .then(() => {
-          console.log("Delete done!");
-        })
-        .catch((err) => console.log(err));
-    }
-  }
+
 
   dropdownShouldOpen(VueSelect: any) {
     console.log(this.editDate);
@@ -343,14 +332,8 @@ export default class UpdateFixEquipment extends Vue {
         if (this.record.cost != null)
           this.record.cost = parseFloat(this.record.cost).toString();
         this.editDate = ref(new Date(Number(this.record.fixing_time)));
-        this.currentMetaData = Object.entries(res.data.metadata_info);
-        let result = Object.values(res.data.metadata_info).map(
-          (File: any) => File.file_name
-        );
-        result.forEach((file_name, index) => {
-          this.currentFileName[index] = `${file_name}`;
-        });
-        console.log(this.editDate);
+        this.allFileInfo = res.data.metadata_info;
+        this.allFileName = Object.values(res.data.metadata_info);
 
         this.fixer = {
           username: this.record.fixer,
@@ -383,7 +366,8 @@ export default class UpdateFixEquipment extends Vue {
     //   alert("Chọn file <= 5MB");
     // }
     else {
-      console.log(this.editDate.getTime());
+      const newFileUpload = await this.getUploadFile();
+      this.record.metadata_info = Object.assign(this.allFileInfo, newFileUpload);
       const data = {
         id: this.record.id,
         equipment_id: this.record.equipment_id,
@@ -394,7 +378,7 @@ export default class UpdateFixEquipment extends Vue {
         message: this.record.message,
         cost: this.record.cost,
         updated_by: "tatthanh",
-        metadata_info: await this.getCurrentMetaData(),
+        metadata_info: this.record.metadata_info,
       };
       if (this.record.cost == "") data.cost = null;
 
@@ -435,4 +419,5 @@ export default class UpdateFixEquipment extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+</style>

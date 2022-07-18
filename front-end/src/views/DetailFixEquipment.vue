@@ -1,17 +1,13 @@
 <template>
   <div class="absolute h-screen top-0 right-1 w-5/12 drop-shadow-lg">
     <div
-      class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto font-semibold text-base self-start text-black bg-indigo-500"
-    >
-      <h1
-        class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
-      >
+      class="grid grid-cols-4 text-start border-b-2 border-indigo-300 w-auto font-semibold text-base self-start text-black bg-indigo-500">
+      <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto">
         Xem thông tin sửa chữa - {{ record?.id }}
       </h1>
       <button
         class="place-self-end bg-indigo-500 hover:bg-indigo-200 m-2 transition-colors w-auto text-white rounded-md focus:outline-none"
-        v-on:click="changeShow(false)"
-      >
+        v-on:click="changeShow(false)">
         <fa icon="xmark" class="px-2 py-1"></fa>
       </button>
     </div>
@@ -40,46 +36,42 @@
         <div></div>
         <p class="pl-1 text-slate-500">{{ record?.fixer }}</p>
         <div class="pl-1 pb-2 text-slate-500">
-          <div
-            v-if="record?.status == '-1'"
-            class="text-green-500 italic font-semibold"
-          >
+          <div v-if="record?.status == '-1'" class="text-green-500 italic font-semibold">
             Không sửa được
           </div>
-          <div
-            v-else-if="record?.status == '0'"
-            class="text-blue-500 italic font-semibold"
-          >
+          <div v-else-if="record?.status == '0'" class="text-blue-500 italic font-semibold">
             Đang sửa
           </div>
-          <div
-            v-else-if="record?.status == '1'"
-            class="text-blue-500 italic font-semibold"
-          >
+          <div v-else-if="record?.status == '1'" class="text-blue-500 italic font-semibold">
             Sửa thành công
           </div>
         </div>
       </div>
-      <div
-        class="px-3 pt-2 bg-indigo-100 grid grid-cols-1 text-sm w-full grid-flow-row border-t border-gray-300"
-      >
+      <div class="
+          px-3
+          pt-2
+          bg-indigo-100
+          grid grid-cols-1
+          text-sm
+          w-full
+          grid-flow-row
+          border-t border-gray-300
+        ">
         <div class="pl-1 font-medium text-gray-700">Message</div>
         <p class="pl-1 text-slate-500">{{ record?.message }}</p>
         <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
-        <div v-if="currentFileName.length != 0">
-          <ul class="list-group list-group-flush flex flex-row flex-wrap">
-            <div v-for="(file_name, index) in currentFileName" :key="index">
-              <div>
-                <div
-                  class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2 transition-colors hover:bg-gray-400"
-                  @click="downloadfile(index)"
-                >
-                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
-                  <div class="py-1 pr-2">{{ file_name }}</div>
-                </div>
-              </div>
+        <div v-if="allFileInfo.length != 0">
+          <div class="grid grid-rows-2 " v-for="(file, index) in allFileInfo" :key="index">
+            <div class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2">
+              <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+              <div class="py-1">{{ file.file_name }}</div>
+              <span class="close px-2 py-1">&times;</span>
             </div>
-          </ul>
+            <textarea id=" message" disabled
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Your message..." v-model="file.file_description"></textarea>
+          </div>
+
         </div>
       </div>
       <div class="px-3 pt-2 bg-indigo-100 w-full border-t border-gray-300">
@@ -118,7 +110,7 @@ import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-
+import ImageInfo from "../types/ImageInfo";
 export default class DetailFixEquipment extends Vue {
   record: FixEquipmentRecord = {
     id: "",
@@ -142,7 +134,7 @@ export default class DetailFixEquipment extends Vue {
     1: "Bàn giao thiết bị mới",
     2: "Bàn giao thiết bị sau khi sửa chữa",
   };
-
+  public allFileInfo: ImageInfo[] = [];
   currentMetaData: any;
   currentFileName: string[] = [];
 
@@ -171,14 +163,8 @@ export default class DetailFixEquipment extends Vue {
         this.record = res.data;
         if (this.record.cost != null)
           this.record.cost = parseFloat(this.record.cost).toString();
-        this.currentMetaData = Object.entries(res.data.metadata_info);
-        let result = Object.values(res.data.metadata_info).map(
-          (File: any) => File.file_name
-        );
-        console.log(res.data);
-        result.forEach((file_name, index) => {
-          this.currentFileName[index] = `${file_name}`;
-        });
+        this.allFileInfo = res.data.metadata_info;
+
       })
       .catch((err) => {
         alert(err.response.data);
@@ -210,4 +196,5 @@ export default class DetailFixEquipment extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+</style>
