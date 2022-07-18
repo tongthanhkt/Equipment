@@ -1,6 +1,6 @@
 package models
 
-import com.twitter.finatra.http.annotations.QueryParam
+import com.twitter.finatra.http.annotations.{QueryParam, RouteParam}
 
 import java.util
 
@@ -14,7 +14,7 @@ case class HistoricalRecord (
                               status: String = null,
                               verifier: String = null,
                               performer: String = null,
-                              actionType: Int,
+                              typeAction: Int,
                               message: String = null,
                               cost: String = null,
                               createdBy: String = null,
@@ -34,6 +34,11 @@ case class SearchHistoricalRequest(
                                       @QueryParam limit: Int = 10,
 
                                     )
+
+case class GetRecordByIdRequest(
+                                    @RouteParam idAction: Int,
+                                    @RouteParam typeAction: Int
+                                  )
 
 case class SearchHistoricalResponse(
                                        records: util.ArrayList[HistoricalRecord],

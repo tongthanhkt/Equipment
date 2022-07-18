@@ -114,7 +114,7 @@ class HistoricalService @Inject()(databaseConnection:DatabaseConnection) {
         updatedBy = rs.getString("updated_by"),
         updatedTime = rs.getString("updated_time"),
         metadataInfo = toMap(rs.getString("metadata_info")),
-        actionType = 1,
+        typeAction = 1,
         takeOverStatus =  rs.getString("takeover_status"),
       );
     }
@@ -153,7 +153,7 @@ class HistoricalService @Inject()(databaseConnection:DatabaseConnection) {
         updatedBy = rs.getString("updated_time"),
         updatedTime = rs.getString("updated_time"),
         metadataInfo = toMap(rs.getString("metadata_info")),
-        actionType = 2,
+        typeAction = 2,
         takeOverStatus =  rs.getString("takeover_status"));
     }
     con.close();
@@ -167,7 +167,7 @@ class HistoricalService @Inject()(databaseConnection:DatabaseConnection) {
         FROM equipment_management.fixing_equipment_info as fix
         JOIN equipment_management.equipment as e
         on e.id = fix.equipment_id
-        where fix.id = ? and e.device_status != ?
+        where fix.id = ? and e.device_status != ? and fix.status != -1
 				;"""
 
     var con = databaseConnection.getConnection()
@@ -192,7 +192,7 @@ class HistoricalService @Inject()(databaseConnection:DatabaseConnection) {
         updatedTime = rs.getString("updated_time"),
         takeOverStatus =  rs.getString("takeover_status"),
         metadataInfo = toMap(rs.getString("metadata_info")),
-        actionType = 3);
+        typeAction = 3);
     }
     con.close();
     result
