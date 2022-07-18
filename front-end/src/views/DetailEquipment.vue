@@ -179,18 +179,18 @@
         
       </div>
     </div>
-    <Historical class="mx-3"/>
+    <Historical class="mx-3" :key="keyHistorical" v-on:changeData="handleDataUpdate"/>
 
 
     <AddTakeOver v-if="isAddTakeOverShow" v-on:changeAddTakeOverShow="handleAddTakeOverShow"
       v-bind:device_id="equipment?.device_id" v-bind:equipment_name="equipment?.name"
-      v-bind:equipment_id="equipment?.id" v-on:handleUpdate="handleTakeOverUpdate" />
+      v-bind:equipment_id="equipment?.id" v-on:addsuccess="handleDataUpdate" />
     <AddTakeBack v-if="isAddTakeBackShow" v-on:changeAddTakeBackShow="handleAddTakeBackShow"
       v-bind:device_id="equipment?.device_id" v-bind:equipment_name="equipment?.name"
-      v-bind:equipment_id="equipment?.id" v-on:handleUpdate="handleTakeBackUpdate" />
+      v-bind:equipment_id="equipment?.id" v-on:addsuccess="handleDataUpdate" />
     <AddFixEquipment v-if="isAddFixEquipmentShow" v-on:changeAddFixEquipmentShow="handleAddFixEquipmentShow"
       v-bind:device_id="equipment.device_id" v-bind:equipment_name="equipment.name" v-bind:equipment_id="equipment.id"
-      v-on:handleUpdate="handleFixingUpdate" />
+      v-on:addsuccess="handleDataUpdate" />
    
   </div>
 </template>
@@ -257,6 +257,7 @@ export default class DetailEquipment extends Vue {
   isAddFixEquipmentShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isAddTakeBackShow: Boolean = false;
+  keyHistorical: number = 0;
 
   recordsOfEquipment: TakeOverRecord[] = [];
   currentPage: number = 1;
@@ -295,6 +296,12 @@ export default class DetailEquipment extends Vue {
     } else {
       this.indexImage++;
     }
+  }
+
+  async handleDataUpdate(){
+    this.keyHistorical+=1
+    const idParams = this.$route.params.id;
+    await this.retrieveDetailEquipment(idParams);
   }
 
   async retrieveDetailEquipment(id: any) {

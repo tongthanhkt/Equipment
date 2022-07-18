@@ -315,7 +315,7 @@ export default class AddTakeOver extends Vue {
 
       TakeOverService.add(this.record)
         .then(() => {
-          this.$emit("handleUpdate");
+          this.$emit("addsuccess");
           alert("Thêm thông tin bàn giao cho thiết bị thành công !");
           this.changeShow(false);
         })
