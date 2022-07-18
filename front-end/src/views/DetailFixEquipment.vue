@@ -28,15 +28,15 @@
 
         <p class="pl-1 text-slate-500">{{ record?.cost }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ handleDate(record?.fixing_time) }}
+          {{ handleDate(record?.action_time) }}
         </p>
 
         <div class="p-1 font-medium text-gray-700">Người sửa chữa</div>
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
         <div></div>
-        <p class="pl-1 text-slate-500">{{ record?.fixer }}</p>
+        <p class="pl-1 text-slate-500">{{ record?.performer }}</p>
         <div class="pl-1 pb-2 text-slate-500">
-          <div v-if="record?.status == '-1'" class="text-green-500 italic font-semibold">
+          <div v-if="record?.status == '2'" class="text-green-500 italic font-semibold">
             Không sửa được
           </div>
           <div v-else-if="record?.status == '0'" class="text-blue-500 italic font-semibold">
@@ -106,20 +106,20 @@
 
 <script lang="ts">
 import UploadFilesService from "@/services/equipments/UploadFilesService";
-import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
-import TakeOverService from "@/services/takeover/TakeOverService";
-import FixEquipmentRecord from "@/types/FixEquipmentRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import ImageInfo from "../types/ImageInfo";
 export default class DetailFixEquipment extends Vue {
-  record: FixEquipmentRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    device_id: "",
-    equipment_name: "",
-    fixer: "",
-    fixing_time: "",
+    user: "",
+    action_time: "",
     status: "",
+    verifier: "",
+    performer: "",
+    type_action: 1,
     message: "",
     cost: "",
     created_by: "",
@@ -127,12 +127,14 @@ export default class DetailFixEquipment extends Vue {
     updated_by: "",
     updated_time: "",
     metadata_info: "",
+    device_id: "",
+    equipment_name: "",
     take_over_status: "",
-    name: "",
+    reason: ""
   };
   type: any = {
-    1: "Bàn giao thiết bị mới",
-    2: "Bàn giao thiết bị sau khi sửa chữa",
+    "1": "Bàn giao thiết bị mới",
+    "2": "Bàn giao thiết bị sau khi sửa chữa",
   };
   public allFileInfo: ImageInfo[] = [];
   currentMetaData: any;
@@ -157,7 +159,7 @@ export default class DetailFixEquipment extends Vue {
 
   async retrieveRecord() {
     console.log(this.id);
-    await FixEquipmentService.getRecordById(this.id)
+    await HistoricalService.getRecordById(this.id, 3)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

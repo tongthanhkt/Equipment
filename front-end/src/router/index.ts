@@ -17,6 +17,8 @@ import History from "../views/History.vue";
 import FixEquipmentHistory from "../views/FixEquipmentHistory.vue";
 import CategoryList from "../views/CategoryList.vue";
 import StatisticCategory from "../views/StatisticCategory.vue";
+import Historical from "../views/Historical.vue"
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -62,6 +64,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/detail-equipment/:id",
     name: "DetailEquipment",
     component: DetailEquipment,
+  },
+  {
+    path: "/historical",
+    name: "Historical",
+    component: Historical,
   },
 
   {

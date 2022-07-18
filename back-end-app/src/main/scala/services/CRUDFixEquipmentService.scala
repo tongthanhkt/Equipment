@@ -162,6 +162,42 @@ class CRUDFixEquipmentService @Inject()(databaseConnection:DatabaseConnection,co
   }
 
   @throws[Exception]
+  def checkStatusById(id:Int):Int={
+    val sql="SELECT * FROM equipment_management.fixing_equipment_info where id = ? and status != -1 ;"
+    val con = databaseConnection.getConnection()
+    val pst=con.prepareStatement(sql)
+
+    pst.setInt(1,id)
+    val rs=pst.executeQuery()
+    var check : String = null
+    while (rs.next()) {
+     check = rs.getString("status")
+    }
+    con.close()
+    if (check == null)
+      return -2
+    if (check == "0")
+      return 0
+    if (check == "1")
+      return 1
+    if (check == "2")
+      return 2
+    else -2
+  }
+
+  @throws[Exception]
+  def deleteById(id:Int):Int={
+    val sql="UPDATE fixing_equipment_info SET status = ? WHERE  id = ? ;"
+    val con = databaseConnection.getConnection()
+    val pst=con.prepareStatement(sql)
+    pst.setInt(1,-1)
+    pst.setInt(2,id)
+    val rs=pst.executeUpdate()
+    con.close()
+    return rs
+  }
+
+  @throws[Exception]
   def add(fix: FixEquipment): Int={
     var lockObj = mPutDevice.get(fix.equipmentId)
     if(lockObj == null) {

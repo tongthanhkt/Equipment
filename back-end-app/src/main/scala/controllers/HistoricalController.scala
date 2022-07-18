@@ -1,7 +1,7 @@
 package controllers
 
 import com.twitter.finatra.http.Controller
-import models.{ConvertString, FixEquipment, HistoricalKey, HistoricalRecord, Page, SearchFixEquipmentResponse, SearchHistoricalRequest, SearchHistoricalResponse}
+import models.{ConvertString, FixEquipment, GetRecordByIdRequest,  HistoricalKey, HistoricalRecord, Page, SearchFixEquipmentResponse, SearchHistoricalRequest, SearchHistoricalResponse}
 import services.{CRUDEquipmentService, CRUDFixEquipmentService, HistoricalService}
 
 import java.util
@@ -11,7 +11,7 @@ class HistoricalController @Inject()(
                                      historicalService: HistoricalService,
                                      convertString: ConvertString) extends Controller{
   prefix("/historical"){
-  get("/search"){request : SearchHistoricalRequest =>{
+    get("/search"){request : SearchHistoricalRequest =>{
     try {
       val totalRecords  = historicalService.countBySearch(request)
       var nPages:Int = totalRecords/request.limit;
@@ -55,6 +55,31 @@ class HistoricalController @Inject()(
     }
   }}
 
+    get("/detail/:type_action/:id_action"){request:GetRecordByIdRequest=>{
+      try {
+        val typeAction = request.typeAction
+        val idAction = request.idAction
+        var record : HistoricalRecord = null
+        if(typeAction==1){
+          record = historicalService.getTakeOverRecord(idAction)
+        }
+        if(typeAction==2){
+          record = historicalService.getTakeBackRecord(idAction)
+        }
+        if(typeAction==3){
+          record = historicalService.getFixEquipmentRecord(idAction)
+        }
+        if (record != null)
+          response.ok.body(record)
+        else
+          response.internalServerError.jsonError(s"Cannot get record from id=$idAction and type=$typeAction")
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+    }}
   }
 
 }

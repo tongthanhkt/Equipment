@@ -61,7 +61,7 @@ i {
         <div class="col-span-2">
           <div
             class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
-            {{ record.name }}
+            {{ record.equipment_name }}
           </div>
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
@@ -107,7 +107,7 @@ i {
           </v-select>
         </div>
         <div class="col-span-2">
-          <select v-model="record.type_take_back" id="type" name="type" autocomplete="type-name"
+          <select v-model="record.reason" id="type" name="type" autocomplete="type-name"
             class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black">
             <option value="1">Hoàn trả thiết bị khi nghỉ việc</option>
             <option value="2">Thu hồi thiết bị hư hỏng để sửa chữa</option>
@@ -239,10 +239,10 @@ import Datepicker from "@vuepic/vue-datepicker";
 import { ref } from "vue";
 import UploadService from "../services/equipments/UploadFilesService";
 import TakeBackService from "@/services/takeback/TakeBackService";
-import TakeBackRecord from "@/types/TakeBackRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
-import Fuse from "fuse.js";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadFilesService from "../services/equipments/UploadFilesService";
@@ -253,15 +253,15 @@ import ImageInfo from "../types/ImageInfo";
   },
 })
 export default class UpdateTakeBack extends Vue {
-  record: TakeBackRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    username: "",
-    take_back_time: "",
+    user: "",
+    action_time: "",
     status: "",
     verifier: "",
-    take_back_person: "",
-    type_take_back: "",
+    performer: "",
+    type_action: 1,
     message: null,
     cost: null,
     created_by: "",
@@ -270,16 +270,19 @@ export default class UpdateTakeBack extends Vue {
     updated_time: "",
     metadata_info: "",
     device_id: "",
-    name: "",
+    equipment_name: "",
+    take_over_status: "",
+    reason: "",
+
   };
   @Prop() id!: number;
   options: User[] = [];
   user: User = {
-    username: this.record.username,
+    username: this.record.user,
     fullname: "",
   };
   take_back_person: User = {
-    username: this.record.take_back_person,
+    username: this.record.performer,
     fullname: "",
   };
   verifier: User = {
@@ -387,8 +390,9 @@ export default class UpdateTakeBack extends Vue {
   }
 
   async retrieveRecord() {
-    await TakeBackService.getRecordById(this.id)
+    await HistoricalService.getRecordById(this.id, 1)
       .then((res) => {
+        console.log(res.data);
         this.record = res.data;
         console.log(this.record);
         // this.record.take_back_time = this.handleDate(
@@ -399,13 +403,15 @@ export default class UpdateTakeBack extends Vue {
         this.editDate = ref(new Date(Number(this.record.take_back_time)));
         this.allFileInfo = res.data.metadata_info;
         this.allFileName = Object.values(res.data.metadata_info);
-        console.log(this.allFileInfo);
+
+
+        console.log(this.editDate);
         this.user = {
-          username: this.record.username,
+          username: this.record.user,
           fullname: "",
         };
         this.take_back_person = {
-          username: this.record.take_back_person,
+          username: this.record.performer,
           fullname: "",
         };
         this.verifier = {
@@ -424,7 +430,7 @@ export default class UpdateTakeBack extends Vue {
     )
       return "";
     var d = new Date((event.target as HTMLInputElement).value);
-    this.record.take_back_time = d.toLocaleString();
+    this.record.action_time = d.toLocaleString();
   }
 
   async updateTakeBackRecord() {
@@ -437,8 +443,8 @@ export default class UpdateTakeBack extends Vue {
     } else if (this.editDate === null || this.editDate === undefined) {
       alert("Hãy nhập thời gian thu hồi");
     } else if (
-      this.record.type_take_back == null ||
-      this.record.type_take_back == ""
+      this.record.reason == null ||
+      this.record.reason == ""
     ) {
       alert("Hãy chọn loại thu hồi");
     }
@@ -456,7 +462,7 @@ export default class UpdateTakeBack extends Vue {
         take_back_time: this.editDate.getTime(),
         verifier: this.verifier?.username,
         take_back_person: this.take_back_person?.username,
-        type_take_back: this.record.type_take_back,
+        type_take_back: this.record.reason,
         message: this.record.message,
         cost: this.record.cost,
         updated_by: "tatthanh",
@@ -479,7 +485,7 @@ export default class UpdateTakeBack extends Vue {
           Object.values(errors).forEach((error) => {
             temp = temp + error + "\n";
           });
-          alert(temp);
+          alert(errors);
         });
     }
   }

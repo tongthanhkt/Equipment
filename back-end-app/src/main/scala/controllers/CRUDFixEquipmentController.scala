@@ -2,7 +2,7 @@ package controllers
 
 import com.twitter.finatra.http.Controller
 import com.twitter.util.jackson.JSON
-import models.{ConvertString, Equipment, FixEquipment, Page, SearchEquipmentsResponse, SearchFixEquipmentByIdRequest, SearchFixEquipmentRequest, SearchFixEquipmentResponse}
+import models.{ConvertString, DeleteFixEquipmentRequest, Equipment, FixEquipment, Page, SearchEquipmentsResponse, SearchFixEquipmentByIdRequest, SearchFixEquipmentRequest, SearchFixEquipmentResponse}
 import services.{CRUDEquipmentService, CRUDFixEquipmentService}
 
 import java.util
@@ -13,51 +13,51 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                                            convertString: ConvertString) extends Controller{
 
   prefix("/fix_equipment"){
-    get("/search"){request:SearchFixEquipmentRequest =>{
-
-        try {
-          val totalFixEquipmentRecords  = fixEquipmentService.countBySearch(request)
-          var nPages:Int = totalFixEquipmentRecords/request.limit;
-          val currentPage = request.page
-          if(totalFixEquipmentRecords%request.limit>0)
-            nPages+=1
-          var pageNumbers = new util.ArrayList[Page]
-          for( i <- 1 to nPages){
-
-            pageNumbers.add(Page(i,i==currentPage));
-          }
-          val offset = (currentPage-1)*request.limit
-          val result:util.ArrayList[FixEquipment] =fixEquipmentService.search(request,offset);
-          response.ok.body(SearchFixEquipmentResponse(fixEquipmentList = result,
-            empty = result.isEmpty,nPages =nPages,
-            pageNumbers = pageNumbers,firstPage = +request.page==1,
-            lastPage = +currentPage == nPages,previousPage = +currentPage-1,nextPage = +currentPage+1))
-        } catch {
-          case ex: Exception =>{
-            println(ex)
-            response.internalServerError.jsonError(ex.getMessage)
-          }
-        }
-
-    }}
-
-    get("/:id"){request: SearchFixEquipmentByIdRequest =>{
-
-      try {
-        val result = fixEquipmentService.searchById(request.id)
-        if (result==null)
-          response.noContent
-        else response.ok.body(result)
-      } catch {
-        case ex: Exception =>{
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-
-        }
-      }
-
-    }
-    }
+//    get("/search"){request:SearchFixEquipmentRequest =>{
+//
+//        try {
+//          val totalFixEquipmentRecords  = fixEquipmentService.countBySearch(request)
+//          var nPages:Int = totalFixEquipmentRecords/request.limit;
+//          val currentPage = request.page
+//          if(totalFixEquipmentRecords%request.limit>0)
+//            nPages+=1
+//          var pageNumbers = new util.ArrayList[Page]
+//          for( i <- 1 to nPages){
+//
+//            pageNumbers.add(Page(i,i==currentPage));
+//          }
+//          val offset = (currentPage-1)*request.limit
+//          val result:util.ArrayList[FixEquipment] =fixEquipmentService.search(request,offset);
+//          response.ok.body(SearchFixEquipmentResponse(fixEquipmentList = result,
+//            empty = result.isEmpty,nPages =nPages,
+//            pageNumbers = pageNumbers,firstPage = +request.page==1,
+//            lastPage = +currentPage == nPages,previousPage = +currentPage-1,nextPage = +currentPage+1))
+//        } catch {
+//          case ex: Exception =>{
+//            println(ex)
+//            response.internalServerError.jsonError(ex.getMessage)
+//          }
+//        }
+//
+//    }}
+//
+//    get("/:id"){request: SearchFixEquipmentByIdRequest =>{
+//
+//      try {
+//        val result = fixEquipmentService.searchById(request.id)
+//        if (result==null)
+//          response.noContent
+//        else response.ok.body(result)
+//      } catch {
+//        case ex: Exception =>{
+//          println(ex)
+//          response.internalServerError.jsonError(ex.getMessage)
+//
+//        }
+//      }
+//
+//    }
+//    }
 
     post("/add"){request:FixEquipment =>{
       println(request)
@@ -185,5 +185,35 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
         }
       }
     }}
-  }
-}
+
+    delete("/delete") { request: DeleteFixEquipmentRequest => {
+      val id = request.id;
+      try {
+        val checkStatus = fixEquipmentService.checkStatusById(id)
+        if(checkStatus == -2){
+          response.badRequest.jsonError("Can not delete the fix equipment record. The fix equipment record id not exist.")
+
+        }
+        else if (checkStatus == 0 ){
+          response.badRequest.jsonError("Can not delete the fixing equipment record. ")
+        }
+        else  if (checkStatus == 1 || checkStatus == 2){
+          val result = fixEquipmentService.deleteById(id)
+          if (result == 1) {
+            response.created.body(s"Delete take over with id =$id successfully .")
+          }
+          else response.internalServerError.jsonError("Can not delete the fix equipment record. ")
+        }
+        else {
+          response.internalServerError.jsonError("Can not delete the fix equipment record. ")
+        }
+
+      } catch {
+        case ex: Exception => {
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+
+  }}
+}}

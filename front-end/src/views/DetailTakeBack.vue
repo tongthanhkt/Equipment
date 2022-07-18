@@ -35,7 +35,7 @@
         <div class="p-1 col-span-2 font-medium text-gray-700">Tên thiết bị</div>
 
         <p class="pl-1 text-slate-500">{{ record?.device_id }}</p>
-        <p class="pl-1 col-span-2 text-slate-500">{{ record?.name }}</p>
+        <p class="pl-1 col-span-2 text-slate-500">{{ record?.equipment_name }}</p>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
         <div class="p-1 col-span-2 font-medium text-gray-700">
           Thời gian thu hồi
@@ -43,21 +43,21 @@
 
         <p class="pl-1 text-slate-500">{{ record?.cost }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ handleDate(record?.take_back_time) }}
+          {{ handleDate(record?.action_time) }}
         </p>
 
         <div class="p-1 font-medium text-gray-700">Người trả thiết bị</div>
         <div class="pl-1 col-span-2 font-medium text-gray-700">
           Loại thu hồi
         </div>
-        <p class="pl-1 text-slate-500">{{ record?.username }}</p>
+        <p class="pl-1 text-slate-500">{{ record?.user }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ type[record.type_take_back] }}
+          {{ type[record.reason] }}
         </p>
         <div class="p-1 font-medium text-gray-700">Người thu hồi</div>
         <div class="p-1 font-medium text-gray-700">Người xác nhận</div>
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
-        <p class="pl-1 pb-2 text-slate-500">{{ record?.take_back_person }}</p>
+        <p class="pl-1 pb-2 text-slate-500">{{ record?.performer }}</p>
         <p class="pl-1 pb-2 text-slate-500">{{ record?.verifier }}</p>
 
         <div class="pl-1 pb-2 text-slate-500">
@@ -169,20 +169,20 @@ deleteDetailRecord(id);
 
 <script lang="ts">
 import UploadFilesService from "@/services/equipments/UploadFilesService";
-import TakeBackService from "@/services/takeback/TakeBackService";
-import TakeBackRecord from "@/types/TakeBackRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import ImageInfo from "../types/ImageInfo";
 export default class DetailTakeBack extends Vue {
-  record: TakeBackRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    username: "",
-    take_back_time: "",
+    user: "",
+    action_time: "",
     status: "",
     verifier: "",
-    take_back_person: "",
-    type_take_back: "",
+    performer: "",
+    type_action: 1,
     message: "",
     cost: "",
     created_by: "",
@@ -191,13 +191,15 @@ export default class DetailTakeBack extends Vue {
     updated_time: "",
     metadata_info: "",
     device_id: "",
-    name: "",
+    equipment_name: "",
+    take_over_status: "",
+    reason: ""
   };
   type: any = {
-    1: "Hoàn trả thiết bị khi nghỉ việc",
-    2: "Thu hồi thiết bị hư hỏng để sửa chữa",
-    3: "Đền bù thiết bị sử dụng bị mất",
-    4: "Nhân viên bù tiền mua thiết bị"
+    "1": "Hoàn trả thiết bị khi nghỉ việc",
+    "2": "Thu hồi thiết bị hư hỏng để sửa chữa",
+    "3": "Đền bù thiết bị sử dụng bị mất",
+    "4": "Nhân viên bù tiền mua thiết bị"
   };
 
   public allFileInfo: ImageInfo[] = [];
@@ -222,7 +224,7 @@ export default class DetailTakeBack extends Vue {
   }
 
   async retrieveRecord() {
-    await TakeBackService.getRecordById(this.id)
+    await HistoricalService.getRecordById(this.id, 2)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

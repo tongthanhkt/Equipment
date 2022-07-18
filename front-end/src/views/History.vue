@@ -77,9 +77,8 @@ import UpdateFixEquipment from "./UpdateFixEquipment.vue";
 import TakeOverService from "@/services/takeover/TakeOverService";
 import TakeBackService from "@/services/takeback/TakeBackService";
 import { Vue, Options } from "vue-property-decorator";
-import TakeBackRecord from "@/types/TakeBackRecord";
-import TakeOverRecord from "@/types/TakeOverRecord";
-import FixEquipmentRecord from "@/types/FixEquipmentRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
 
 @Options({
   components: {
@@ -101,7 +100,7 @@ export default class History extends Vue {
   isUpdateTakeOverShow: Boolean = false;
   isDetailFixEquipmentShow: Boolean = false;
   isUpdateFixEquipmentShow: Boolean = false;
-  public records: TakeBackRecord[] = [];
+  public records: HistoricalRecord[] = [];
   public currentPage: number = 1;
   public currentLimit: number = 10;
   public currentTakeBackStatus: string | null = null;
@@ -122,7 +121,6 @@ export default class History extends Vue {
   }
 
   handleUpdateTakeBackShow(data: Boolean) {
-    if (data == false) this.keyTakeBack += 1;
     this.isDetailTakeBackShow = false;
     this.isUpdateTakeBackShow = data;
   }
@@ -133,7 +131,6 @@ export default class History extends Vue {
   }
 
   handleUpdateTakeOverShow(data: Boolean) {
-    if (data == false) this.keyTakeOver += 1;
     this.isDetailTakeOverShow = false;
     this.isUpdateTakeOverShow = data;
   }
@@ -143,7 +140,6 @@ export default class History extends Vue {
   }
 
   handleUpdateFixEquipmentShow(data: Boolean) {
-    if (data == false) this.keyFixEquipment += 1;
     this.isDetailFixEquipmentShow = false;
     this.isUpdateFixEquipmentShow = data;
   }

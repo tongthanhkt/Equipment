@@ -11,33 +11,33 @@ import scala.services.CRUDTakeBackService
 
 class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,convertString:ConvertString) extends Controller{
   prefix("/take_back") {
-    get("/list") { request: SearchTakeBackRequest => {
-      print(request)
-      try {
-        val totalTakeBackList = takeBackService.countBySearchTakeBack(request.username, request.takeBackPerson, request.typeTakeBack, request.status, request.equipmentId)
-        var nPages: Int = totalTakeBackList / request.limit;
-        val currentPage = request.page;
-        if (totalTakeBackList % request.limit > 0) {
-          nPages += 1;
-        }
-        var pageNumbers = new util.ArrayList[Page]()
-        for (i <- 1 to nPages) {
-
-          pageNumbers.add(Page(i, i == currentPage));
-        }
-        val offset = (currentPage - 1) * request.limit
-        val result: util.ArrayList[TakeBack] = takeBackService.searchTakeBack(request, offset);
-        response.ok.body(SearchTakeBackResponse(takeBackList = result, empty = result.isEmpty, nPages = nPages,
-          pageNumbers = pageNumbers, firstPage = +request.page == 1,
-          lastPage = +currentPage == nPages, previousPage = +currentPage - 1, nextPage = +currentPage + 1));
-      } catch {
-        case ex: Exception => {
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-    }
-    }
+//    get("/list") { request: SearchTakeBackRequest => {
+//      print(request)
+//      try {
+//        val totalTakeBackList = takeBackService.countBySearchTakeBack(request.username, request.takeBackPerson, request.typeTakeBack, request.status, request.equipmentId)
+//        var nPages: Int = totalTakeBackList / request.limit;
+//        val currentPage = request.page;
+//        if (totalTakeBackList % request.limit > 0) {
+//          nPages += 1;
+//        }
+//        var pageNumbers = new util.ArrayList[Page]()
+//        for (i <- 1 to nPages) {
+//
+//          pageNumbers.add(Page(i, i == currentPage));
+//        }
+//        val offset = (currentPage - 1) * request.limit
+//        val result: util.ArrayList[TakeBack] = takeBackService.searchTakeBack(request, offset);
+//        response.ok.body(SearchTakeBackResponse(takeBackList = result, empty = result.isEmpty, nPages = nPages,
+//          pageNumbers = pageNumbers, firstPage = +request.page == 1,
+//          lastPage = +currentPage == nPages, previousPage = +currentPage - 1, nextPage = +currentPage + 1));
+//      } catch {
+//        case ex: Exception => {
+//          println(ex)
+//          response.internalServerError.jsonError(ex.getMessage)
+//        }
+//      }
+//    }
+//    }
     delete("/delete") { request: DeleteTakeBackRequest => {
       val takeBackId = request.id;
       try {
@@ -45,7 +45,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
         if (result == 1) {
           response.created.body(s"Delete take over with id =$takeBackId successfully .")
         }
-        else response.internalServerError.body("Can not delete take back. Take back id not exist.")
+        else response.internalServerError.jsonError("Can not delete take back. Take back id not exist.")
       } catch {
         case ex: Exception => {
           println(ex)
@@ -54,22 +54,22 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
       }
     }
     }
-    get("/:id") { request: SearchTakeBackByIdRequest => {
-      println(request)
-      val takeBackId = request.id;
-      try {
-        val result = takeBackService.searchTakeBackById(takeBackId)
-        if (result == null)
-          response.internalServerError.jsonError("Không tồn tại thu hồi")
-        else response.ok.body(result)
-      } catch {
-        case ex: Exception => {
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
-    }
-    }
+//    get("/:id") { request: SearchTakeBackByIdRequest => {
+//      println(request)
+//      val takeBackId = request.id;
+//      try {
+//        val result = takeBackService.searchTakeBackById(takeBackId)
+//        if (result == null)
+//          response.internalServerError.jsonError("Không tồn tại thu hồi")
+//        else response.ok.body(result)
+//      } catch {
+//        case ex: Exception => {
+//          println(ex)
+//          response.internalServerError.jsonError(ex.getMessage)
+//        }
+//      }
+//    }
+//    }
     post("/add") { request: TakeBack => {
       try {
         val check = request.checkDataInsert(convertString);

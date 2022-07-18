@@ -152,7 +152,7 @@ export default class AddFixEquipment extends Vue {
   @Prop(String) equipment_name!: string;
   @Prop(String) equipment_id!: string;
 
-  record = {
+  record :any = {
     equipment_id: "",
     fixing_time: "",
     fixer: "",

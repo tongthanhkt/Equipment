@@ -60,8 +60,9 @@ i {
         </div>
         <div class="col-span-2">
           <div
-            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
-            {{ record.name }}
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
+          >
+            {{ record.equipment_name }}
           </div>
         </div>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
@@ -107,8 +108,13 @@ i {
           </v-select>
         </div>
         <div class="col-span-2">
-          <select v-model="record.type_take_over" id="type" name="type" autocomplete="type-name"
-            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black">
+          <select
+            v-model="record.reason"
+            id="type"
+            name="type"
+            autocomplete="type-name"
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
+          >
             <option value="1">Bàn giao thiết bị mới</option>
             <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
           </select>
@@ -249,7 +255,8 @@ i {
 import Datepicker from "@vuepic/vue-datepicker";
 import { ref } from "vue";
 import TakeOverService from "@/services/takeover/TakeOverService";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
 import ImageInfo from "../types/ImageInfo";
@@ -263,15 +270,15 @@ import UploadService from "../services/equipments/UploadFilesService";
   },
 })
 export default class UpdateTakeOver extends Vue {
-  record: TakeOverRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    username: "",
-    take_over_time: "",
+    user: "",
+    action_time: "",
     status: "",
     verifier: "",
-    take_over_person: "",
-    type_take_over: "",
+    performer: "",
+    type_action: 1,
     message: null,
     cost: null,
     created_by: "",
@@ -280,17 +287,18 @@ export default class UpdateTakeOver extends Vue {
     updated_time: "",
     metadata_info: "",
     device_id: "",
-    name: "",
-    take_back_status: "",
+    equipment_name: "",
+    take_over_status: "",
+    reason: ""
   };
   @Prop() id!: number;
   options: User[] = [];
   user: User = {
-    username: this.record.username,
+    username: this.record.user,
     fullname: "",
   };
   take_over_person: User = {
-    username: this.record.take_over_person,
+    username: this.record.performer,
     fullname: "",
   };
   verifier: User = {
@@ -394,27 +402,27 @@ export default class UpdateTakeOver extends Vue {
   }
 
   async retrieveRecord() {
-    await TakeOverService.getRecordById(this.id)
+   await HistoricalService.getRecordById(this.id,1)
       .then((res) => {
+        console.log(res.data);
         this.record = res.data;
-        console.log("test");
         console.log(res.data);
         // this.record.take_over_time = this.handleDate(
         //   this.record.take_over_time
         // );
         if (this.record.cost != null)
           this.record.cost = parseFloat(this.record.cost).toString();
-        this.editDate = ref(new Date(Number(this.record.take_over_time)));
+        this.editDate = ref(new Date(Number(this.record.action_time)));
         this.allFileInfo = res.data.metadata_info;
         this.allFileName = Object.values(res.data.metadata_info);
         console.log(this.allFileInfo);
 
         this.user = {
-          username: this.record.username,
+          username: this.record.user,
           fullname: "",
         };
         this.take_over_person = {
-          username: this.record.take_over_person,
+          username: this.record.performer,
           fullname: "",
         };
         this.verifier = {
@@ -433,7 +441,7 @@ export default class UpdateTakeOver extends Vue {
     )
       return "";
     var d = new Date((event.target as HTMLInputElement).value);
-    this.record.take_over_time = d.toLocaleString();
+    this.record.action_time = d.toLocaleString();
   }
 
   async updateTakeOverRecord() {
@@ -446,8 +454,8 @@ export default class UpdateTakeOver extends Vue {
     } else if (this.editDate === null || this.editDate === undefined) {
       alert("Hãy nhập thời gian bàn giao");
     } else if (
-      this.record.type_take_over == null ||
-      this.record.type_take_over == ""
+      this.record.reason == null ||
+      this.record.reason == ""
     ) {
       alert("Hãy chọn loại bàn giao");
     }
@@ -464,7 +472,7 @@ export default class UpdateTakeOver extends Vue {
         take_over_time: this.editDate.getTime(),
         verifier: this.verifier?.username,
         take_over_person: this.take_over_person?.username,
-        type_take_over: this.record.type_take_over,
+        type_take_over: this.record.reason,
         message: this.record.message,
         cost: this.record.cost,
         updated_by: "tatthanh",
@@ -487,7 +495,7 @@ export default class UpdateTakeOver extends Vue {
           Object.values(errors).forEach((error) => {
             temp = temp + error + "\n";
           });
-          alert(temp);
+          alert(errors);
         });
     }
   }

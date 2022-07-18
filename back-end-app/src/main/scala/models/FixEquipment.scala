@@ -40,7 +40,7 @@ case class FixEquipment(
       check = check + (6 -> "The 'Status' field cannot be blank. ")
     else if (!convertString.isInt(status))
       check = check + (7 -> "The 'Status' field : type mismatch, required : Int. ")
-    else if (convertString.isInt(status) && (convertString.toInt(status).get > 1 || convertString.toInt(status).get < -1))
+    else if (convertString.isInt(status) && (convertString.toInt(status).get > 2 || convertString.toInt(status).get < 0))
       check = check + (8 -> "Fixing status is incorrect. ")
 
     if (cost!= null && !convertString.isDouble(cost))
@@ -68,7 +68,7 @@ case class FixEquipment(
       check = check + (6 -> "The 'Status' field cannot be blank. ")
     else if (!convertString.isInt(status))
       check = check + (7 -> "The 'Status' field : type mismatch, required : Int. ")
-    else if (convertString.isInt(status) && (convertString.toInt(status).get > 1 || convertString.toInt(status).get < -1))
+    else if (convertString.isInt(status) && (convertString.toInt(status).get > 2 || convertString.toInt(status).get < 0))
       check = check + (8 -> "Fixing status is incorrect. ")
 
     if (cost!= null && !convertString.isDouble(cost))
