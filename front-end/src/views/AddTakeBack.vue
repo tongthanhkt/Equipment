@@ -249,10 +249,10 @@ export default class AddTakeBack extends Vue {
 
   record = {
     equipment_id: "",
-    username: "",
+    username: null,
     take_back_time: "",
-    verifier: "",
-    take_back_person: "",
+    verifier: null,
+    take_back_person: null,
     type_take_back: "",
     message: null,
     cost: null,
