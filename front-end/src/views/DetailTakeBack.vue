@@ -1,7 +1,6 @@
 <template>
   <div class="absolute h-screen top-0 right-1 w-5/12 drop-shadow-lg">
-    <div
-      class="
+    <div class="
         grid grid-cols-4
         text-start
         border-b-2 border-indigo-300
@@ -11,15 +10,11 @@
         self-start
         text-black
         bg-indigo-500
-      "
-    >
-      <h1
-        class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto"
-      >
+      ">
+      <h1 class="px-2 pt-2 pb-1 col-span-3 text-lg font-medium text-white w-auto">
         Xem thông tin chi tiết thu hồi - {{ record?.id }}
       </h1>
-      <button
-        class="
+      <button class="
           place-self-end
           bg-indigo-500
           hover:bg-indigo-200
@@ -29,9 +24,7 @@
           text-white
           rounded-md
           focus:outline-none
-        "
-        v-on:click="changeShow(false)"
-      >
+        " v-on:click="changeShow(false)">
         <fa icon="xmark" class="px-2 py-1"></fa>
       </button>
     </div>
@@ -68,22 +61,15 @@
         <p class="pl-1 pb-2 text-slate-500">{{ record?.verifier }}</p>
 
         <div class="pl-1 pb-2 text-slate-500">
-          <div
-            v-if="record?.status == '1'"
-            class="text-green-500 italic font-semibold"
-          >
+          <div v-if="record?.status == '1'" class="text-green-500 italic font-semibold">
             Đã xác nhận
           </div>
-          <div
-            v-else-if="record?.status == '0'"
-            class="text-blue-500 italic font-semibold"
-          >
+          <div v-else-if="record?.status == '0'" class="text-blue-500 italic font-semibold">
             Chờ xác nhận
           </div>
         </div>
       </div>
-      <div
-        class="
+      <div class="
           px-3
           pt-2
           bg-indigo-100
@@ -92,35 +78,22 @@
           w-full
           grid-flow-row
           border-t border-gray-300
-        "
-      >
+        ">
         <div class="pl-1 font-medium text-gray-700">Message</div>
         <p class="pl-1 text-slate-500">{{ record?.message }}</p>
         <div class="pl-1 font-medium text-gray-700">Tệp đính kèm</div>
-        <div v-if="currentFileName.length != 0">
-          <ul class="list-group list-group-flush flex flex-row flex-wrap">
-            <div v-for="(file_name, index) in currentFileName" :key="index">
-              <div>
-                <div
-                  class="
-                    bg-gray-300
-                    w-fit
-                    h-fit
-                    border
-                    rounded
-                    flex flex-row
-                    m-2
-                    transition-colors
-                    hover:bg-gray-400
-                  "
-                  @click=" downloadfile(index)"
-                >
-                  <fa icon="file-arrow-up" class="px-2 py-2"></fa>
-                  <div class="py-1 pr-2">{{ file_name }}</div>
-                </div>
-              </div>
+        <div v-if="allFileInfo.length != 0">
+          <div class="grid grid-rows-2 " v-for="(file, index) in allFileInfo" :key="index">
+            <div class="bg-gray-300 w-fit h-fit border rounded flex flex-row m-2">
+              <fa icon="file-arrow-up" class="px-2 py-2"></fa>
+              <div class="py-1">{{ file.file_name }}</div>
+              <span class="close px-2 py-1">&times;</span>
             </div>
-          </ul>
+            <textarea id=" message" disabled
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Your message..." v-model="file.file_description"></textarea>
+          </div>
+
         </div>
       </div>
       <div class="px-3 pt-2 bg-indigo-100 w-full border-t border-gray-300">
@@ -150,8 +123,7 @@
     <div class="bg-indigo-100 w-full border-t border-gray-300">
       <!-- <div class="p-1 m-2 text-base  font-medium text-gray-700">Thông tin</div> -->
       <div class="grid grid-cols-2">
-        <button
-          class="
+        <button class="
             justify-self-start
             bg-sky-500
             hover:bg-sky-600
@@ -166,15 +138,11 @@
             focus:outline-none
             disabled:cursor-not-allowed
             disabled:opacity-50
-          "
-          :disabled="record.status == '1'"
-          v-on:click="showUpdateTakeBack"
-        >
+          " :disabled="record.status == '1'" v-on:click="showUpdateTakeBack">
           <fa icon="pen-to-square" class="px-2"></fa>
           Cập nhật
         </button>
-        <button
-          class="
+        <button class="
             justify-self-end
             bg-indigo-10
             hover:bg-gray-300
@@ -187,13 +155,10 @@
             focus:outline-none
             disabled:cursor-not-allowed
             disabled:opacity-50
-          "
-          :disabled="record.status == '1'"
-          v-on:click.stop="
-            changeShow(false);
-            deleteDetailRecord(id);
-          "
-        >
+          " :disabled="record.status == '1'" v-on:click.stop="
+  changeShow(false);
+deleteDetailRecord(id);
+          ">
           <fa icon="ban" class="px-2"></fa>
           Xóa
         </button>
@@ -207,9 +172,9 @@ import UploadFilesService from "@/services/equipments/UploadFilesService";
 import HistoricalService from "@/services/historical/HistoricalService";
 import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-
+import ImageInfo from "../types/ImageInfo";
 export default class DetailTakeBack extends Vue {
-record: HistoricalRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
     user: "",
@@ -234,9 +199,10 @@ record: HistoricalRecord = {
     "1": "Hoàn trả thiết bị khi nghỉ việc",
     "2": "Thu hồi thiết bị hư hỏng để sửa chữa",
     "3": "Đền bù thiết bị sử dụng bị mất",
-    "4":"Nhân viên bù tiền mua thiết bị"
+    "4": "Nhân viên bù tiền mua thiết bị"
   };
 
+  public allFileInfo: ImageInfo[] = [];
   currentMetaData: any;
   currentFileName: string[] = [];
 
@@ -258,19 +224,13 @@ record: HistoricalRecord = {
   }
 
   async retrieveRecord() {
-   await HistoricalService.getRecordById(this.id,2)
+    await HistoricalService.getRecordById(this.id, 2)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;
-        if(this.record.cost!=null)
-        this.record.cost=parseFloat(this.record.cost).toString()
-        this.currentMetaData = Object.entries(res.data.metadata_info);
-        let result = Object.values(res.data.metadata_info).map(
-          (File: any) => File.file_name
-        );
-        result.forEach((file_name, index) => {
-          this.currentFileName[index] = `${file_name}`;
-        });
+        if (this.record.cost != null)
+          this.record.cost = parseFloat(this.record.cost).toString()
+        this.allFileInfo = res.data.metadata_info;
       })
       .catch((err) => {
         alert(err.response.data);
@@ -283,20 +243,20 @@ record: HistoricalRecord = {
   }
   @Emit("deleteRecord")
   deleteDetailRecord(id: number) {
-    
+
     return id;
   }
 
-  downloadfile(index:number){
+  downloadfile(index: number) {
     UploadFilesService.getFile(this.currentMetaData[index][1].file_url)
-    .then((response) => {
-  const url = window.URL.createObjectURL(new Blob([response.data]));
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', this.currentMetaData[index][1].file_name);
-  document.body.appendChild(link);
-  link.click();
-});
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', this.currentMetaData[index][1].file_name);
+        document.body.appendChild(link);
+        link.click();
+      });
 
   }
 

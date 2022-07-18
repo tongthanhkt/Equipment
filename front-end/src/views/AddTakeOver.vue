@@ -246,6 +246,7 @@ export default class AddTakeOver extends Vue {
       }
       this.msgError = null;
     }
+    console.log(this.allFileInfo);
   }
   deleteSelectedFile(index: number) {
     this.allFiles.splice(index, 1);
