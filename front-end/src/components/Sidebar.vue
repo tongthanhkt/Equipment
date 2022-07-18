@@ -61,8 +61,8 @@
         </router-link>
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'History' ? activeClass : inactiveClass]"
-          to="/history"
+          :class="[$route.name === 'Historical' ? activeClass : inactiveClass]"
+          to="/historical"
         >
           <svg
             class="w-5 h-5"
@@ -87,61 +87,14 @@
               fill="currentColor"
             />
           </svg>
-          <span class="mx-4">Lịch sử bàn giao & thu hồi</span>
+          <span class="mx-4">Lịch sử hoạt động</span>
         </router-link>
+
+       
 
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[
-            $route.name === 'TakeBackHistory' ? activeClass : inactiveClass,
-          ]"
-          to="/takeback-history"
-        >
-          <svg
-            class="w-5 h-5"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7 3C6.44772 3 6 3.44772 6 4C6 4.55228 6.44772 5 7 5H13C13.5523 5 14 4.55228 14 4C14 3.44772 13.5523 3 13 3H7Z"
-              fill="currentColor"
-            />
-            <path
-              d="M4 7C4 6.44772 4.44772 6 5 6H15C15.5523 6 16 6.44772 16 7C16 7.55228 15.5523 8 15 8H5C4.44772 8 4 7.55228 4 7Z"
-              fill="currentColor"
-            />
-            <path
-              d="M2 11C2 9.89543 2.89543 9 4 9H16C17.1046 9 18 9.89543 18 11V15C18 16.1046 17.1046 17 16 17H4C2.89543 17 2 16.1046 2 15V11Z"
-              fill="currentColor"
-            />
-          </svg>
-
-          <span class="mx-4">Lịch sử thu hồi</span>
-        </router-link>
-
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Forms' ? activeClass : inactiveClass]"
-          to="/fix-equipment"
-        >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-            />
-            <path
-              fill-rule="evenodd"
-              d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-              clip-rule="evenodd"
-            />
-          </svg>
-
-          <span class="mx-4">Sửa chữa thiết bị</span>
-        </router-link>
-
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Cards' ? activeClass : inactiveClass]"
+          :class="[$route.name === 'StatisticCategory' ? activeClass : inactiveClass]"
           to="/statistic-category"
         >
           <svg
@@ -161,60 +114,7 @@
           <span class="mx-4">Kiểm kê danh mục</span>
         </router-link>
 
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Historical' ? activeClass : inactiveClass]"
-          to="/historical"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"
-            />
-            <path
-              d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"
-            />
-            <path
-              d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"
-            />
-          </svg>
-
-          <span class="mx-4">Tháng</span>
-        </router-link>
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Chart' ? activeClass : inactiveClass]"
-          to="/charts"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
-          </svg>
-
-          <span class="mx-4">Quý</span>
-        </router-link>
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Blank' ? activeClass : inactiveClass]"
-          to="/blank"
-        >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
-            />
-          </svg>
-
-          <span class="mx-4">Năm</span>
-        </router-link>
+        
       </nav>
     </div>
   </div>

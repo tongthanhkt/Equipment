@@ -204,10 +204,10 @@ import Datepicker from "@vuepic/vue-datepicker";
 import { ref } from "vue";
 import UploadService from "../services/equipments/UploadFilesService";
 import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
-import FixEquipmentRecord from "@/types/FixEquipmentRecord";
+import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
-import Fuse from "fuse.js";
+import HistoricalService from "@/services/historical/HistoricalService";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadFilesService from "../services/equipments/UploadFilesService";
@@ -218,14 +218,15 @@ import UploadFilesService from "../services/equipments/UploadFilesService";
   },
 })
 export default class UpdateFixEquipment extends Vue {
-  record: FixEquipmentRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    device_id: "",
-    equipment_name: "",
-    fixing_time: "",
+    user: "",
+    action_time: "",
     status: "",
-    fixer: "",
+    verifier: "",
+    performer: "",
+    type_action: 1,
     message: null,
     cost: null,
     created_by: "",
@@ -233,13 +234,15 @@ export default class UpdateFixEquipment extends Vue {
     updated_by: "",
     updated_time: "",
     metadata_info: "",
+    device_id: "",
+    equipment_name: "",
     take_over_status: "",
-    name: ""
+    reason: ""
   };
   @Prop() id!: number;
   options: User[] = [];
   fixer: User = {
-    username: this.record.fixer,
+    username: this.record.performer,
     fullname: "",
   };
   timeOut: any;
@@ -333,7 +336,7 @@ export default class UpdateFixEquipment extends Vue {
   }
 
   async retrieveRecord() {
-    await FixEquipmentService.getRecordById(this.id)
+    await HistoricalService.getRecordById(this.id,3)
       .then((res) => {
         this.record = res.data;
         console.log(this.record);
@@ -342,7 +345,7 @@ export default class UpdateFixEquipment extends Vue {
         // );
         if (this.record.cost != null)
           this.record.cost = parseFloat(this.record.cost).toString();
-        this.editDate = ref(new Date(Number(this.record.fixing_time)));
+        this.editDate = ref(new Date(Number(this.record.action_time)));
         this.currentMetaData = Object.entries(res.data.metadata_info);
         let result = Object.values(res.data.metadata_info).map(
           (File: any) => File.file_name
@@ -353,7 +356,7 @@ export default class UpdateFixEquipment extends Vue {
         console.log(this.editDate);
 
         this.fixer = {
-          username: this.record.fixer,
+          username: this.record.performer,
           fullname: "",
         };
       })
@@ -368,7 +371,7 @@ export default class UpdateFixEquipment extends Vue {
     )
       return "";
     var d = new Date((event.target as HTMLInputElement).value);
-    this.record.fixing_time = d.toLocaleString();
+    this.record.action_time = d.toLocaleString();
   }
 
   async updateFixEquipmentRecord() {
@@ -401,7 +404,7 @@ export default class UpdateFixEquipment extends Vue {
       console.log(data);
       FixEquipmentService.update(data)
         .then(() => {
-          this.$emit('handleUpdate')
+          this.$emit('changeData')
           alert("Cập nhật thông tin sửa chữa thành công !");
           this.changeShow(false);
         })

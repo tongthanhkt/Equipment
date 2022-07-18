@@ -484,7 +484,7 @@ export default class UpdateTakeOver extends Vue {
       console.log(data);
       TakeOverService.update(data)
         .then(() => {
-          this.$emit("handleUpdate");
+          this.$emit('changeData');
           alert("Cập nhật thông tin bàn giao thành công !");
           this.changeShow(false);
         })

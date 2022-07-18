@@ -4,7 +4,7 @@
         <div class="relative flex bg-gray-200">
       <div class="flex-1 container mx-auto p-2">
         <div
-          class="p-1 mt-8 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
+          class="p-1 mt-4 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
         >
           <div
             class="
@@ -22,18 +22,17 @@
             <h1 class="text-2xl leading-relaxed">Lịch sử hoạt động</h1>
           </div>
           <div class="grid grid-flow-col grid-rows-1">
-            <div class="p-2 flex place-items-end w-auto">
+            <div class="p-2  w-auto">
               <span class="flex justify-start">
                 <div
                   class="
-                    px-1
-                    py-2
+                    p-1
                     m-2
                     text-base
-                    grid grid-rows-1 grid-flow-col
+                    flex flex-row
                     rounded-md
                     h-fit
-                    w-fit
+                    w-80
                     border-2 border-blue-400
                     focus:border-blue-600
                     focus:ring
@@ -43,10 +42,10 @@
                 >
                   <fa
                     icon="magnifying-glass"
-                    class="text-gray-400 px-2 py-1"
+                    class="text-gray-400 p-2"
                   ></fa>
                   <input
-                    class="text-base bg-gray-50 w-5/6 focus:outline-none"
+                    class="text-base bg-gray-50 w-11/12 focus:outline-none text-left p-1"
                     type="text"
                     placeholder="Nhập username của người thực hiện"
                     v-model="keyPerformer"
@@ -87,13 +86,12 @@
             </div>
           </div>
 
-          <div class="p-1 mx-1 my-2">
+          <div class="p-1 m-3">
             <div class="min-w-full align-middle flex justify-center">
               <table
                 class="
                   hover:border-collapse
-                  min
-                  -w-full
+                  w-full
                   bg-gray-100
                   rounded-xl
                   place-content-center
@@ -101,35 +99,33 @@
               >
                 <thead>
                   <tr class="border-b border-gray-500">
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Mã
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700" v-if=" this.$route.params.id === undefined">
                       Mã thiết bị
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700" v-if=" this.$route.params.id === undefined">
                       Tên thiết bị
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Người sử dụng
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Người thực hiện
                     </th>
 
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Loại hoạt động
                     </th>
-                     <th class="p-2 text-sm font-medium text-left text-gray-700">
-                      Lí do
-                    </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Trạng thái
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Người tạo
                     </th>
-                    <th class="p-2 text-sm font-medium text-left text-gray-700">
+                    <th class="p-2 text-sm font-medium text-center text-gray-700">
                       Thời gian tạo
                     </th>
 
@@ -153,13 +149,13 @@
                         {{ record.id }}
                       </div>
                     </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
+                    <td v-if=" this.$route.params.id === undefined">
+                      <div class="p-1 text-sm text-center text-gray-500" >
                         {{ record.device_id }}
                       </div>
                     </td>
 
-                    <td>
+                    <td v-if=" this.$route.params.id === undefined">
                       <div class="p-1 text-sm text-center text-gray-500">
                         {{ record.equipment_name }}
                       </div>
@@ -197,14 +193,12 @@
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.reason }}
-                      </div>
-                    </td>
+                    
                     <td>
                       <div class="p-1 text-sm text-center">
                         <div
+                        v-if="record.type_action == 1 || record.type_action == 2 ">
+                          <div
                           v-if="record.status == '1'"
                           class="text-green-500 italic font-semibold"
                         >
@@ -215,6 +209,28 @@
                           class="text-blue-500 italic font-semibold"
                         >
                           Chờ xác nhận
+                        </div>
+                        </div>
+                        <div
+                        v-if="record.type_action == 3 ">
+                          <div
+                          v-if="record.status == '1'"
+                          class="text-green-500 italic font-semibold"
+                        >
+                          Sửa thành công
+                        </div>
+                        <div
+                          v-else-if="record.status == '0'"
+                          class="text-blue-500 italic font-semibold"
+                        >
+                          Đang sửa
+                        </div>
+                        <div
+                          v-else-if="record.status == '2'"
+                          class="text-yellow-600 italic font-semibold"
+                        >
+                          Không sửa được
+                        </div>
                         </div>
                       </div>
                     </td>
@@ -251,7 +267,7 @@
                             v-on:click.stop="
                               handleRecordIdByType(record.type_action,parseInt(record.id)), handleUpdateShowByType(record.type_action,true)
                             "
-                            :disabled="record.status == '1'"
+                            :disabled="checkRecord(record)"
                           >
                             <fa icon="pen-to-square"></fa>
                           </button>
@@ -440,7 +456,7 @@
       v-if="isUpdateTakeBackShow"
       v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
       v-bind:id="recordTakeBackId"
-       v-on:changeData="handleDataUpdate"
+      v-on:changeData="handleDataUpdate"
     />
     <DetailTakeOver
       v-if="isDetailTakeOverShow"
@@ -548,9 +564,9 @@ export default class Historical extends Vue {
 
   deleteTakeBackRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi thu hồi này ?")) {
-      TakeOverService.deleteById(id)
+      TakeBackService.deleteById(id)
         .then(() => {
-          this.tableKey += 1;
+          this.handleDataUpdate();
           alert("Delete Successfully !!");
         })
         .catch((err) => alert(err.response.data));
@@ -560,9 +576,9 @@ export default class Historical extends Vue {
   deleteTakeOverRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
       
-       TakeBackService.deleteById(id)
+       TakeOverService.deleteById(id)
         .then(() => {
-          this.tableKey += 1;
+          this.handleDataUpdate()
           alert("Delete Successfully !!");
         })
         
@@ -574,7 +590,7 @@ export default class Historical extends Vue {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
       FixEquipmentService.deleteById(id)
         .then(() => {
-          this.tableKey += 1;
+          this. handleDataUpdate()
           alert("Delete Successfully !!");
         })
         
@@ -583,8 +599,11 @@ export default class Historical extends Vue {
   }
 
   async created() {
-    this.retrieveRecords(this.getQueryParams());
+    await this.handleDataUpdate()
+    
   }
+
+  
 
   async retrieveRecords(params: String) {
     await HistoricalService.getRecordsBySearch(params)
@@ -603,7 +622,7 @@ export default class Historical extends Vue {
     if (this.keyPerformer == "") this.keyPerformer = null;
     
     this.currentPage = 1;
-    this.retrieveRecords(this.getQueryParams());
+   this. handleDataUpdate()
   }
 
   getQueryParams() {
@@ -696,6 +715,7 @@ export default class Historical extends Vue {
     }
 
     deleteRecordByType(type: number,id:number){
+      console.log(type)
         if (type == 1)
             this.deleteTakeOverRecord(id)
         if(type == 2)

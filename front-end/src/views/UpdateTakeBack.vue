@@ -422,7 +422,7 @@ export default class UpdateTakeBack extends Vue {
   }
 
   async retrieveRecord() {
-   await HistoricalService.getRecordById(this.id,1)
+   await HistoricalService.getRecordById(this.id,2)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;
@@ -508,7 +508,7 @@ export default class UpdateTakeBack extends Vue {
       console.log(data);
       TakeBackService.update(data)
         .then(() => {
-          this.$emit("handleUpdate");
+          this.$emit('changeData');
           alert("Cập nhật thông tin thu hồi thành công !");
           this.changeShow(false);
         })
