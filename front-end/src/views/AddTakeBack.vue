@@ -247,7 +247,7 @@ export default class AddTakeBack extends Vue {
   @Prop(String) equipment_name!: string
   @Prop(String) equipment_id!: string
 
-  record = {
+  record :TakeBackRecord= {
     equipment_id: "",
     username: "",
     take_back_time: "",
@@ -381,7 +381,7 @@ export default class AddTakeBack extends Vue {
       console.log(this.record)
       TakeBackService.add(this.record)
         .then(() => {
-          this.$emit('handleUpdate')
+          this.$emit('addsuccess')
           alert("Thêm thông tin thu hồi cho thiết bị thành công !")
           this.changeShow(false)
         })

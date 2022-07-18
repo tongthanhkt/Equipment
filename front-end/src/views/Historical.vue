@@ -599,7 +599,7 @@ export default class Historical extends Vue {
   }
 
   async created() {
-    await this.handleDataUpdate()
+    await this.retrieveRecords(this.getQueryParams());
     
   }
 
@@ -659,6 +659,7 @@ export default class Historical extends Vue {
 
     handleDataUpdate(){
     this.retrieveRecords(this.getQueryParams());
+    this.$emit('changeData')
     }
 
     async onClickFirstPage() {
