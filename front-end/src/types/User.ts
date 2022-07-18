@@ -1,5 +1,5 @@
 export default interface User {
-    username: string,
-    fullname: string
+    username: string|null,
+    fullname: string|null
   }
   

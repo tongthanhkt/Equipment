@@ -250,7 +250,7 @@ export default class AddTakeOver extends Vue {
   @Prop(String) equipment_name!: string;
   @Prop(String) equipment_id!: string;
 
-  record = {
+  record :any = {
     equipment_id: "",
     username: "",
     take_over_time: "",

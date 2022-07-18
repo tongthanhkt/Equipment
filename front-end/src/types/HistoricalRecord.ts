@@ -1,12 +1,12 @@
-export default interface TakeBackRecord {
+export default interface HistoricalRecord {
     id: string;
     equipment_id: string;
-    username: string|null;
-    take_back_time: string;
+    user: string|null;
+    action_time: string;
     status: string;
     verifier: string|null;
-    take_back_person: string|null;
-    type_take_back: string;
+    performer: string;
+    type_action: number;
     message: string|null;
     cost: string|null;
     created_by: string;
@@ -15,5 +15,7 @@ export default interface TakeBackRecord {
     updated_time: string;
     metadata_info: Object;
     device_id: string,
-    name: string
+    equipment_name: string,
+    take_over_status : string|null,
+    reason : string,
   }

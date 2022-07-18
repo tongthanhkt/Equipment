@@ -3,7 +3,7 @@ export default interface FixEquipmentRecord {
   equipment_id: string;
   device_id: string;
   equipment_name: string;
-  fixer: string;
+  fixer: string|null;
   fixing_time: string;
   status: string;
   message: string | null;

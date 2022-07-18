@@ -42,7 +42,7 @@
         <div class="p-1 col-span-2 font-medium text-gray-700">Tên thiết bị</div>
 
         <p class="pl-1 text-slate-500">{{ record?.device_id }}</p>
-        <p class="pl-1 col-span-2 text-slate-500">{{ record?.name }}</p>
+        <p class="pl-1 col-span-2 text-slate-500">{{ record?.equipment_name }}</p>
         <div class="p-1 font-medium text-gray-700">Chi phí</div>
         <div class="p-1 col-span-2 font-medium text-gray-700">
           Thời gian bàn giao
@@ -50,21 +50,21 @@
 
         <p class="pl-1 text-slate-500">{{ record?.cost }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ handleDate(record?.take_over_time) }}
+          {{ handleDate(record?.action_time) }}
         </p>
 
         <div class="p-1 font-medium text-gray-700">Người bàn giao</div>
         <div class="pl-1 col-span-2 font-medium text-gray-700">
           Loại bàn giao
         </div>
-        <p class="pl-1 text-slate-500">{{ record?.take_over_person }}</p>
+        <p class="pl-1 text-slate-500">{{ record?.performer }}</p>
         <p class="pl-1 col-span-2 text-slate-500">
-          {{ type[record.type_take_over] }}
+          {{ type[record.reason] }}
         </p>
         <div class="p-1 font-medium text-gray-700">Người nhận thiết bị</div>
         <div class="p-1 font-medium text-gray-700">Người xác nhận</div>
         <div class="p-1 font-medium text-gray-700">Trạng thái</div>
-        <p class="pl-1 pb-2 text-slate-500">{{ record?.username }}</p>
+        <p class="pl-1 pb-2 text-slate-500">{{ record?.user }}</p>
         <p class="pl-1 pb-2 text-slate-500">{{ record?.verifier }}</p>
 
         <div class="pl-1 pb-2 text-slate-500">
@@ -186,7 +186,7 @@
             focus:outline-none
             disabled:cursor-not-allowed disabled:opacity-50
           "
-          :disabled="record.status == '1' || record.take_back_status == '0'"
+          :disabled="record.status == '1' "
           v-on:click.stop="
             changeShow(false);
             deleteDetailRecord(id);
@@ -202,20 +202,21 @@
 
 <script lang="ts">
 import UploadFilesService from "@/services/equipments/UploadFilesService";
-import TakeOverService from "@/services/takeover/TakeOverService";
-import TakeOverRecord from "@/types/TakeOverRecord";
+import HistoricalService from "@/services/historical/HistoricalService";
+import HistoricalRecord from "@/types/HistoricalRecord";
+
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 
 export default class DetailTakeOver extends Vue {
-  record: TakeOverRecord = {
+  record: HistoricalRecord = {
     id: "",
     equipment_id: "",
-    username: "",
-    take_over_time: "",
+    user: "",
+    action_time: "",
     status: "",
     verifier: "",
-    take_over_person: "",
-    type_take_over: "",
+    performer: "",
+    type_action: 1,
     message: "",
     cost: "",
     created_by: "",
@@ -224,12 +225,13 @@ export default class DetailTakeOver extends Vue {
     updated_time: "",
     metadata_info: "",
     device_id: "",
-    name: "",
-    take_back_status: "",
+    equipment_name: "",
+    take_over_status: "",
+    reason: ""
   };
   type: any = {
-    1: "Bàn giao thiết bị mới",
-    2: "Bàn giao thiết bị sau khi sửa chữa",
+    "1": "Bàn giao thiết bị mới",
+    "2": "Bàn giao thiết bị sau khi sửa chữa",
   };
 
   currentMetaData: any;
@@ -253,7 +255,7 @@ export default class DetailTakeOver extends Vue {
   }
 
   async retrieveRecord() {
-    await TakeOverService.getRecordById(this.id)
+    await HistoricalService.getRecordById(this.id,1)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

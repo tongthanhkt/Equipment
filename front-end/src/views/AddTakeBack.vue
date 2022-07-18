@@ -310,7 +310,7 @@ export default class AddTakeBack extends Vue {
   @Prop(String)  equipment_name! : string
   @Prop(String)  equipment_id! :string
   
-  record   = {
+  record  :any = {
   equipment_id: "",
   username: "",
   take_back_time: "",
