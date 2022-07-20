@@ -1,7 +1,13 @@
 package models
 
 class ConvertString {
-
+  def toBigInt(s: String): Option[Long] = {
+    try {
+      Some(s.toLong)
+    } catch {
+      case e: Exception => None
+    }
+  }
   def toInt(s: String): Option[Int] = {
     try {
       Some(s.toInt)

@@ -363,6 +363,14 @@ class CRUDTakeBackService @Inject()(databaseConnection:DatabaseConnection,conver
       con.close();
       return rs
   }
+
+  def toInt(s: String): Int = {
+    try {
+      s.toInt
+    } catch {
+      case e: Exception => 0
+    }
+  }
   @throws[Exception]
   def getIdTakeBackDESC():Int = {
     val sql = """
