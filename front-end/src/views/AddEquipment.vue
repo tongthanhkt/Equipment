@@ -79,8 +79,7 @@ i {
           </div>
           <div class="flex flex-col">
             <p class="leading-loose font-medium text-xl">Trạng thái thiết bị</p>
-            <select @change="handleLostEquipment()" v-model="equipment.device_status" id="country" name="country"
-              autocomplete="country-name"
+            <select v-model="equipment.device_status" id="country" name="country" autocomplete="country-name"
               class="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-48 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600">
               <option value="0">Bị mất</option>
               <option value="1">Sử dụng được</option>
@@ -138,7 +137,7 @@ i {
             <div class="row">
               <div class="col-8">
                 <p class="btn btn-default p-0">
-                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file" multiple
+                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file"
                     @change="selectImage" />
                 </p>
               </div>
@@ -147,7 +146,7 @@ i {
         </div>
         <div class="flex flex-row  mt-4">
           <div class="grid grid-cols-3 gap-6 mx-0">
-            <div class="grid grid-rows-2 gap-4 list-group-flush" v-for="(image, index) in allImageInfo">
+            <div class="grid grid-rows-2 gap-4 list-group-flush" v-for="(image, index) in allFileInfo">
               <article tabindex="0"
                 class="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
                 <img alt="upload preview" class="img-preview w-48 h-full sticky object-cover rounded-md bg-fixed"
@@ -212,9 +211,11 @@ import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import CategoryService from "../services/category/categoryService";
 import DatePicker from "./DatePicker.vue";
 import Equipment from "../types/Equipment";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 import { Vue, Options, Ref } from "vue-property-decorator";
 import UploadImage from "./UploadImage.vue";
+import router from "@/router";
+import Category from "@/types/Category";
 @Options({
   components: {
     DatePicker,
@@ -222,7 +223,7 @@ import UploadImage from "./UploadImage.vue";
   },
 })
 export default class AddEquipment extends Vue {
-  private equipment: Equipment = {
+  equipment: Equipment = {
     device_id: null,
     compensation_status: null,
     name: null,
@@ -236,7 +237,7 @@ export default class AddEquipment extends Vue {
     category_id: null,
     device_status: null,
     created_by: "tatthanh@rever.vn",
-    created_time: "1655372446944",
+    created_time: null,
     updated_by: null,
     updated_time: null,
     take_over_person_id: null,
@@ -245,11 +246,9 @@ export default class AddEquipment extends Vue {
     metadata_info: null,
     category_name: null,
   };
-  public categories = [];
+  categories: Category[] = [];
   private errors: string[] = [];
-  private importDate: string = "";
-  @Ref("file") inpuFile!: HTMLInputElement;
-  public allImageInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   private currentImage: File | null | undefined = null;
   private allImageFile: File[] = [];
   mounted() {
@@ -264,34 +263,39 @@ export default class AddEquipment extends Vue {
     const value = e!.target as HTMLInputElement;
     this.currentImage = value?.files?.item(0);
     if (this.currentImage != null) {
-      const temp = URL.createObjectURL(this.currentImage);
+      if (this.currentImage.type != "image/jpeg") {
+        this.errors?.push("Only image file be selected ");
+        return;
+      }
+      else if (this.currentImage.size > 5000000) {
+        this.errors?.push("Size file <=5MB ");
+      }
+      else {
+        this.allImageFile.push(this.currentImage);
+        const fileUrl = URL.createObjectURL(this.currentImage);
+        this.allFileInfo.push({ file_url: fileUrl, file_description: "", file_extention: "", file_name: "", size: "" })
+      }
 
-      this.allImageFile.push(this.currentImage);
-      this.allImageInfo.push({ file_url: temp, file_description: "", file_extention: "", file_name: "", size: "" })
     }
   }
   deleteImage(index: number) {
-    this.allImageInfo.splice(index, 1);
+    this.allFileInfo.splice(index, 1);
     this.allImageFile.splice(index, 1);
   }
   async getImageFile() {
     let obj = {};
-    let temp;
     for (let i = 0; i < this.allImageFile.length; i++) {
       await UploadService.upload(this.allImageFile[i])
         .then((response) => {
           const key = Object.keys(response.data);
-          response.data[key[0]].file_description = this.allImageInfo[i].file_description;
-          console.log(response.data);
+          response.data[key[0]].file_description = this.allFileInfo[i].file_description;
           obj = Object.assign(response.data, obj);
         })
         .catch((error) => {
-          temp = 0;
+          alert(error);
         });
     }
-    if (temp == 0) {
-      return 0;
-    }
+
     return obj;
   }
   checkValidateForm() {
@@ -336,11 +340,11 @@ export default class AddEquipment extends Vue {
     if (this.equipment.device_status != "0") {
       this.equipment.compensation_status = null;
     }
-    console.log(typeof this.equipment.name);
   }
   async saveEquipment() {
+
     let errors = "";
-    //this.checkValidateForm();
+    this.checkValidateForm();
     if (this.errors.length == 0) {
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
@@ -362,21 +366,19 @@ export default class AddEquipment extends Vue {
         compensation_status: this.equipment.compensation_status,
         metadata_info: this.equipment.metadata_info,
       };
+      EquipmentDataService.addData(data)
+        .then(() => {
+          alert("Thêm thiết bị thành công");
+          router.push({ path: "/" })
+        }
+        )
+        .catch((err) => {
+          const errors = err.response.data.errors[0];
+          console.log(errors);
+          alert(errors);
+        });
 
-      if (this.equipment.metadata_info == 0) {
-        alert("Only image can be selected !");
-      } else {
-        EquipmentDataService.addData(data)
-          .then(() => alert("Thêm thiết bị thành công"))
-          .catch((err) => {
-            const errors = err.response.data.errors[0];
-            console.log(errors);
 
-            alert(errors);
-          });
-        const a = this.allImageFile.forEach((imageFile) => { });
-        await Promise.all([a]);
-      }
     }
     else {
       for (let i = 0; i < this.errors.length; i++) {

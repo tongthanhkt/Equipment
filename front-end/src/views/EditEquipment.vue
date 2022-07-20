@@ -180,7 +180,7 @@ i {
             <div class="row">
               <div class="col-8">
                 <p class="btn btn-default p-0">
-                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file" multiple
+                  <input name="myImage" accept="image/png, image/gif, image/jpeg" type="file" ref="file"
                     @change="selectImage" />
                 </p>
               </div>
@@ -256,7 +256,7 @@ import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import UploadService from "../services/equipments/UploadFilesService";
 import CategoryService from "../services/category/categoryService";
 import { parse } from "date-fns";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 import { fil } from "date-fns/locale";
 @Options({
   components: {
@@ -264,7 +264,7 @@ import { fil } from "date-fns/locale";
   },
 })
 export default class AddEquipment extends Vue {
-  private equipment: Equipment = {
+  equipment: Equipment = {
     device_id: null,
     name: null,
     start_status: null,
@@ -288,14 +288,10 @@ export default class AddEquipment extends Vue {
     compensation_status: null,
   };
   private errors: string[] = [];
-  private allImageCurrentURL: string[] = []; // Địa chỉ API của hình ảnh ;
   private currentImage: File | null | undefined = null;
   public allImageInfo: any;
-  public allNewImageInfo: ImageInfo[] = [];
-  public allImageUrl: ImageInfo[] = [];
-  private currentMetadataInfo: any;
-  private oldMetadataInfo: any;
-  private importDate: string = "";
+  public allNewImageInfo: FileInfo[] = [];
+  public allImageUrl: FileInfo[] = [];
   public categories = [];
   private allImageFile: File[] = [];
   async mounted() {
@@ -334,7 +330,6 @@ export default class AddEquipment extends Vue {
     if (this.equipment.price?.length == 0) {
       this.errors?.push("Price required");
     }
-
     if (
       this.equipment.depreciated_value == null ||
       this.equipment.depreciated_value.toString().length == 0
@@ -378,7 +373,6 @@ export default class AddEquipment extends Vue {
     } else {
       const newImageUpload = await this.getImageFile();
       this.equipment.metadata_info = Object.assign(this.allImageInfo, newImageUpload);
-      console.log(this.equipment.metadata_info);
       var temp = new Date(this.equipment.import_date!);
       var milliseconds = temp.getTime().toString();
       const data = {

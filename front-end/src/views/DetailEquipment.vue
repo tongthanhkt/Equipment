@@ -176,10 +176,10 @@
             </div>
           </div>
         </div>
-        
+
       </div>
     </div>
-    <Historical class="mx-3" :key="keyHistorical" v-on:changeData="handleDataUpdate"/>
+    <Historical class="mx-3" :key="keyHistorical" v-on:changeData="handleDataUpdate" />
 
 
     <AddTakeOver v-if="isAddTakeOverShow" v-on:changeAddTakeOverShow="handleAddTakeOverShow"
@@ -191,7 +191,7 @@
     <AddFixEquipment v-if="isAddFixEquipmentShow" v-on:changeAddFixEquipmentShow="handleAddFixEquipmentShow"
       v-bind:device_id="equipment.device_id" v-bind:equipment_name="equipment.name" v-bind:equipment_id="equipment.id"
       v-on:addsuccess="handleDataUpdate" />
-   
+
   </div>
 </template>
 
@@ -208,7 +208,7 @@ import Equipment from "@/types/Equipment";
 import Historical from "./Historical.vue";
 @Options({
   components: {
-   
+
     AddTakeOver,
     AddTakeBack,
     AddFixEquipment,
@@ -253,7 +253,7 @@ export default class DetailEquipment extends Vue {
     metadata_info: null,
   };
 
-  
+
   isAddFixEquipmentShow: Boolean = false;
   isAddTakeOverShow: Boolean = false;
   isAddTakeBackShow: Boolean = false;
@@ -298,8 +298,8 @@ export default class DetailEquipment extends Vue {
     }
   }
 
-  async handleDataUpdate(){
-    this.keyHistorical+=1
+  async handleDataUpdate() {
+    this.keyHistorical += 1
     const idParams = this.$route.params.id;
     await this.retrieveDetailEquipment(idParams);
   }
@@ -342,20 +342,20 @@ export default class DetailEquipment extends Vue {
   }
   handleAddTakeOverShow(data: Boolean) {
     this.isAddTakeOverShow = data;
-    
+
   }
   handleAddTakeBackShow(data: Boolean) {
     this.isAddTakeBackShow = data;
-    
+
   }
   handleAddFixEquipmentShow(data: Boolean) {
     this.isAddFixEquipmentShow = data;
 
   }
-  
 
-  
-  
+
+
+
   editEquipment() {
     const id: any = this.equipment.id;
     this.$router.push({ name: "update", params: { id: id } });

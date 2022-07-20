@@ -109,7 +109,7 @@ import UploadFilesService from "@/services/equipments/UploadFilesService";
 import HistoricalService from "@/services/historical/HistoricalService";
 import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 export default class DetailFixEquipment extends Vue {
   record: HistoricalRecord = {
     id: "",
@@ -136,7 +136,7 @@ export default class DetailFixEquipment extends Vue {
     "1": "Bàn giao thiết bị mới",
     "2": "Bàn giao thiết bị sau khi sửa chữa",
   };
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   currentMetaData: any;
   currentFileName: string[] = [];
 

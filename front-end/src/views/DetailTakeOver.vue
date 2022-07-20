@@ -153,13 +153,10 @@
             rounded-md
             focus:outline-none
             disabled:cursor-not-allowed disabled:opacity-50
-          "
-          :disabled="record.status == '1' "
-          v-on:click.stop="
-            changeShow(false);
-            deleteDetailRecord(id);
-          "
-        >
+          " :disabled="record.status == '1'" v-on:click.stop="
+  changeShow(false);
+deleteDetailRecord(id);
+          ">
           <fa icon="ban" class="px-2"></fa>
           Xóa
         </button>
@@ -174,7 +171,7 @@ import HistoricalService from "@/services/historical/HistoricalService";
 import HistoricalRecord from "@/types/HistoricalRecord";
 
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 export default class DetailTakeOver extends Vue {
   record: HistoricalRecord = {
     id: "",
@@ -201,7 +198,7 @@ export default class DetailTakeOver extends Vue {
     "1": "Bàn giao thiết bị mới",
     "2": "Bàn giao thiết bị sau khi sửa chữa",
   };
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   currentMetaData: any;
   currentFileName: string[] = [];
 
@@ -223,7 +220,7 @@ export default class DetailTakeOver extends Vue {
   }
 
   async retrieveRecord() {
-    await HistoricalService.getRecordById(this.id,1)
+    await HistoricalService.getRecordById(this.id, 1)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

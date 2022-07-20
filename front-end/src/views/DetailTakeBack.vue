@@ -172,7 +172,7 @@ import UploadFilesService from "@/services/equipments/UploadFilesService";
 import HistoricalService from "@/services/historical/HistoricalService";
 import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 export default class DetailTakeBack extends Vue {
   record: HistoricalRecord = {
     id: "",
@@ -202,7 +202,7 @@ export default class DetailTakeBack extends Vue {
     "4": "Nhân viên bù tiền mua thiết bị"
   };
 
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   currentMetaData: any;
   currentFileName: string[] = [];
 

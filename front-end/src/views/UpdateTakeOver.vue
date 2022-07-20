@@ -60,8 +60,7 @@ i {
         </div>
         <div class="col-span-2">
           <div
-            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700"
-          >
+            class="mx-1 px-2 py-1.5 border bg-gray-200 focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded focus:outline-none text-gray-700">
             {{ record.equipment_name }}
           </div>
         </div>
@@ -108,13 +107,8 @@ i {
           </v-select>
         </div>
         <div class="col-span-2">
-          <select
-            v-model="record.reason"
-            id="type"
-            name="type"
-            autocomplete="type-name"
-            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black"
-          >
+          <select v-model="record.reason" id="type" name="type" autocomplete="type-name"
+            class="mx-1 px-2 py-1.5 border focus:ring-gray-500 w-11/12 hover:border-gray-900 lg:text-base sm:text-sm border-gray-300 rounded-md focus:outline-none text-black">
             <option value="1">Bàn giao thiết bị mới</option>
             <option value="2">Bàn giao thiết bị sau khi sửa chữa</option>
           </select>
@@ -205,7 +199,7 @@ i {
             <div class="col-8">
               <label class="px-2">Thêm tệp mới: </label>
 
-              <input type="file" ref="file" @change="selectFiles" multiple />
+              <input type="file" ref="file" @change="selectFiles" />
             </div>
           </div>
           <span v-if="msgError" class="text-red-600 pb-2 text-base" role="alert">
@@ -259,7 +253,7 @@ import HistoricalService from "@/services/historical/HistoricalService";
 import HistoricalRecord from "@/types/HistoricalRecord";
 import { Vue, Options, Prop, Emit, Ref } from "vue-property-decorator";
 import "vue-select/dist/vue-select.css";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadService from "../services/equipments/UploadFilesService";
@@ -309,9 +303,9 @@ export default class UpdateTakeOver extends Vue {
   editDate: any = null;
   currentMetaData: any;
   currentFileName: string[] = [];
-  public allFileName: ImageInfo[] = [];
+  public allFileName: FileInfo[] = [];
   public allFileInfo: any;
-  public allNewFileInfo: ImageInfo[] = [];
+  public allNewFileInfo: FileInfo[] = [];
 
   @Emit("changeUpdateTakeOverShow")
   changeShow(data: boolean) {
@@ -402,7 +396,7 @@ export default class UpdateTakeOver extends Vue {
   }
 
   async retrieveRecord() {
-   await HistoricalService.getRecordById(this.id,1)
+    await HistoricalService.getRecordById(this.id, 1)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

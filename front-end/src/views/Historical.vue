@@ -1,13 +1,10 @@
 <template>
   <div>
     <div>
-        <div class="relative flex bg-gray-200">
-      <div class="flex-1 container mx-auto p-2">
-        <div
-          class="p-1 mt-4 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl"
-        >
-          <div
-            class="
+      <div class="relative flex bg-gray-200">
+        <div class="flex-1 container mx-auto p-2">
+          <div class="p-1 mt-4 w-auto h-auto mx-auto bg-gray-50 shalow-lg rounded-xl">
+            <div class="
               text-center
               p-2
               border-b-2 border-indigo-300
@@ -17,15 +14,13 @@
               text-base
               self-start
               text-black
-            "
-          >
-            <h1 class="text-2xl leading-relaxed">Lịch sử hoạt động</h1>
-          </div>
-          <div class="grid grid-flow-col grid-rows-1">
-            <div class="p-2  w-auto">
-              <span class="flex justify-start">
-                <div
-                  class="
+            ">
+              <h1 class="text-2xl leading-relaxed">Lịch sử hoạt động</h1>
+            </div>
+            <div class="grid grid-flow-col grid-rows-1">
+              <div class="p-2  w-auto">
+                <span class="flex justify-start">
+                  <div class="
                     p-1
                     m-2
                     text-base
@@ -38,217 +33,170 @@
                     focus:ring
                     focus:ring-opacity-40
                     focus:ring-indigo-500
-                  "
-                >
-                  <fa
-                    icon="magnifying-glass"
-                    class="text-gray-400 p-2"
-                  ></fa>
-                  <input
-                    class="text-base bg-gray-50 w-11/12 focus:outline-none text-left p-1"
-                    type="text"
-                    placeholder="Nhập username của người thực hiện"
-                    v-model="keyPerformer"
-                    @input="retrieveRecordsBySearch"
-                  />
-                </div>
-                
-              </span>
-            </div>
-            <div class="p-2 flex justify-end w-auto">
-              <select
-                v-model="currentActionType"
-                @change="retrieveRecordsBySearch"
-                name="takeover_status"
-                id="takeover_status"
-                class="bg-blue-500 m-2 text-white p-2 rounded w-auto"
-              >
-                <option value="null" disabled selected hidden>
-                  Loại hoạt động
-                </option>
-                <option
-                  value="-1"
-                  class="bg-white text-black hover:bg-blue-700"
-                >
-                  Tất cả
-                </option>
-                <option value="1" class="bg-white text-black hover:bg-blue-700">
-                  Bàn giao
-                </option>
-                <option value="2" class="bg-white text-black hover:bg-blue-700">
-                  Tồn kho
-                </option>
-                <option value="3" class="bg-white text-black hover:bg-blue-700">
-                  Sửa chữa
-                </option>
-              </select>
-              
-            </div>
-          </div>
+                  ">
+                    <fa icon="magnifying-glass" class="text-gray-400 p-2"></fa>
+                    <input class="text-base bg-gray-50 w-11/12 focus:outline-none text-left p-1" type="text"
+                      placeholder="Nhập username của người thực hiện" v-model="keyPerformer"
+                      @input="retrieveRecordsBySearch" />
+                  </div>
 
-          <div class="p-1 m-3">
-            <div class="min-w-full align-middle flex justify-center">
-              <table
-                class="
+                </span>
+              </div>
+              <div class="p-2 flex justify-end w-auto">
+                <select v-model="currentActionType" @change="retrieveRecordsBySearch" name="takeover_status"
+                  id="takeover_status" class="bg-blue-500 m-2 text-white p-2 rounded w-auto">
+                  <option value="null" disabled selected hidden>
+                    Loại hoạt động
+                  </option>
+                  <option value="-1" class="bg-white text-black hover:bg-blue-700">
+                    Tất cả
+                  </option>
+                  <option value="1" class="bg-white text-black hover:bg-blue-700">
+                    Bàn giao
+                  </option>
+                  <option value="2" class="bg-white text-black hover:bg-blue-700">
+                    Tồn kho
+                  </option>
+                  <option value="3" class="bg-white text-black hover:bg-blue-700">
+                    Sửa chữa
+                  </option>
+                </select>
+
+              </div>
+            </div>
+
+            <div class="p-1 m-3">
+              <div class="min-w-full align-middle flex justify-center">
+                <table class="
                   hover:border-collapse
                   w-full
                   bg-gray-100
                   rounded-xl
                   place-content-center
-                "
-              >
-                <thead>
-                  <tr class="border-b border-gray-500">
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Mã
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700" v-if=" this.$route.params.id === undefined">
-                      Mã thiết bị
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700" v-if=" this.$route.params.id === undefined">
-                      Tên thiết bị
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Người sử dụng
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Người thực hiện
-                    </th>
+                ">
+                  <thead>
+                    <tr class="border-b border-gray-500">
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Mã
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700"
+                        v-if="this.$route.params.id === undefined">
+                        Mã thiết bị
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700"
+                        v-if="this.$route.params.id === undefined">
+                        Tên thiết bị
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Người sử dụng
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Người thực hiện
+                      </th>
 
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Loại hoạt động
-                    </th>
-                    
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Trạng thái
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Người tạo
-                    </th>
-                    <th class="p-2 text-sm font-medium text-center text-gray-700">
-                      Thời gian tạo
-                    </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Loại hoạt động
+                      </th>
 
-                    <th></th>
-                  </tr>
-                </thead>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Trạng thái
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Người tạo
+                      </th>
+                      <th class="p-2 text-sm font-medium text-center text-gray-700">
+                        Thời gian tạo
+                      </th>
 
-                <tbody>
-                  <tr
-                    class="
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr class="
                       hover:bg-gray-200
                       transition-colors
                       border-b border-gray-200
-                    "
-                    v-on:click="handleRecordIdByType(record.type_action,parseInt(record.id)), handleDetailShowByType(record.type_action,true)"
-                    v-for="(record, index) in records"
-                    :key="index"
-                  >
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.id }}
-                      </div>
-                    </td>
-                    <td v-if=" this.$route.params.id === undefined">
-                      <div class="p-1 text-sm text-center text-gray-500" >
-                        {{ record.device_id }}
-                      </div>
-                    </td>
+                    " v-on:click="handleRecordIdByType(record.type_action, parseInt(record.id)), handleDetailShowByType(record.type_action, true)"
+                      v-for="(record, index) in records" :key="index">
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.id }}
+                        </div>
+                      </td>
+                      <td v-if="this.$route.params.id === undefined">
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.device_id }}
+                        </div>
+                      </td>
 
-                    <td v-if=" this.$route.params.id === undefined">
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.equipment_name }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.user }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.performer }}
-                      </div>
-                    </td>
-                    
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                       <div
-                          v-if="record.type_action == 1"
-                          class="text-green-500  font-semibold"
-                        >
-                          Bàn giao
+                      <td v-if="this.$route.params.id === undefined">
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.equipment_name }}
                         </div>
-                        <div
-                          v-else-if="record.type_action == 2"
-                          class="text-red-500 font-semibold"
-                        >
-                          Thu hồi
+                      </td>
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.user }}
                         </div>
-                        <div
-                          v-else-if="record.type_action == 3"
-                          class="text-yellow-600 font-semibold"
-                        >
-                          Sửa chữa
+                      </td>
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.performer }}
                         </div>
-                      </div>
-                    </td>
-                    
-                    <td>
-                      <div class="p-1 text-sm text-center">
-                        <div
-                        v-if="record.type_action == 1 || record.type_action == 2 ">
-                          <div
-                          v-if="record.status == '1'"
-                          class="text-green-500 italic font-semibold"
-                        >
-                          Đã xác nhận
+                      </td>
+
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          <div v-if="record.type_action == 1" class="text-green-500  font-semibold">
+                            Bàn giao
+                          </div>
+                          <div v-else-if="record.type_action == 2" class="text-red-500 font-semibold">
+                            Thu hồi
+                          </div>
+                          <div v-else-if="record.type_action == 3" class="text-yellow-600 font-semibold">
+                            Sửa chữa
+                          </div>
                         </div>
-                        <div
-                          v-else-if="record.status == '0'"
-                          class="text-blue-500 italic font-semibold"
-                        >
-                          Chờ xác nhận
+                      </td>
+
+                      <td>
+                        <div class="p-1 text-sm text-center">
+                          <div v-if="record.type_action == 1 || record.type_action == 2">
+                            <div v-if="record.status == '1'" class="text-green-500 italic font-semibold">
+                              Đã xác nhận
+                            </div>
+                            <div v-else-if="record.status == '0'" class="text-blue-500 italic font-semibold">
+                              Chờ xác nhận
+                            </div>
+                          </div>
+                          <div v-if="record.type_action == 3">
+                            <div v-if="record.status == '1'" class="text-green-500 italic font-semibold">
+                              Sửa thành công
+                            </div>
+                            <div v-else-if="record.status == '0'" class="text-blue-500 italic font-semibold">
+                              Đang sửa
+                            </div>
+                            <div v-else-if="record.status == '2'" class="text-yellow-600 italic font-semibold">
+                              Không sửa được
+                            </div>
+                          </div>
                         </div>
+                      </td>
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ record.created_by }}
                         </div>
-                        <div
-                        v-if="record.type_action == 3 ">
-                          <div
-                          v-if="record.status == '1'"
-                          class="text-green-500 italic font-semibold"
-                        >
-                          Sửa thành công
+                      </td>
+                      <td>
+                        <div class="p-1 text-sm text-center text-gray-500">
+                          {{ handleDate(record.created_time) }}
                         </div>
-                        <div
-                          v-else-if="record.status == '0'"
-                          class="text-blue-500 italic font-semibold"
-                        >
-                          Đang sửa
-                        </div>
-                        <div
-                          v-else-if="record.status == '2'"
-                          class="text-yellow-600 italic font-semibold"
-                        >
-                          Không sửa được
-                        </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ record.created_by }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="p-1 text-sm text-center text-gray-500">
-                        {{ handleDate(record.created_time) }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex justify-around w-auto">
-                        <span class="flex justify-center">
-                          <button
-                            class="
+                      </td>
+                      <td>
+                        <div class="flex justify-around w-auto">
+                          <span class="flex justify-center">
+                            <button class="
                               bg-gray-100
                               hover:bg-gray-300
                               m-1
@@ -263,17 +211,12 @@
                               rounded-md
                               focus:outline-none
                               disabled:cursor-not-allowed disabled:opacity-50
-                            "
-                            v-on:click.stop="
-                              handleRecordIdByType(record.type_action,parseInt(record.id)), handleUpdateShowByType(record.type_action,true)
-                            "
-                            :disabled="checkRecord(record)"
-                          >
-                            <fa icon="pen-to-square"></fa>
-                          </button>
-                          <button
-                            :disabled="checkRecord(record)"
-                            class="
+                            " v-on:click.stop="
+                              handleRecordIdByType(record.type_action, parseInt(record.id)), handleUpdateShowByType(record.type_action, true)
+                            " :disabled="checkRecord(record)">
+                              <fa icon="pen-to-square"></fa>
+                            </button>
+                            <button :disabled="checkRecord(record)" class="
                               disabled:cursor-not-allowed disabled:opacity-50
                               bg-gray-100
                               hover:bg-gray-300
@@ -288,27 +231,23 @@
                               py-2
                               rounded-md
                               focus:outline-none
-                            "
-                            v-on:click.stop="
-                              deleteRecordByType(record.type_action,parseInt(record.id))
-                            "
-                          >
-                            <fa icon="trash-can"></fa>
-                          </button>
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                            " v-on:click.stop="
+                              deleteRecordByType(record.type_action, parseInt(record.id))
+                            ">
+                              <fa icon="trash-can"></fa>
+                            </button>
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-          <nav class="flex justify-center">
-            <ul class="flex -space-x-px">
-              <li>
-                <button
-                  @click="onClickFirstPage"
-                  class="
+            <nav class="flex justify-center">
+              <ul class="flex -space-x-px">
+                <li>
+                  <button @click="onClickFirstPage" class="
                     py-2
                     px-3
                     ml-0
@@ -324,16 +263,12 @@
                     dark:text-gray-400
                     dark:hover:bg-gray-700
                     dark:hover:text-white
-                  "
-                  :disabled="currentPage == 1"
-                >
-                  First
-                </button>
-              </li>
-              <li>
-                <button
-                  @click="onClickPreviousPage"
-                  class="
+                  " :disabled="currentPage == 1">
+                    First
+                  </button>
+                </li>
+                <li>
+                  <button @click="onClickPreviousPage" class="
                     py-2
                     px-3
                     leading-tight
@@ -347,16 +282,13 @@
                     dark:text-gray-400
                     dark:hover:bg-gray-700
                     dark:hover:text-white
-                  "
-                  :disabled="currentPage == 1"
-                >
-                  Preivous
-                </button>
-              </li>
+                  " :disabled="currentPage == 1">
+                    Preivous
+                  </button>
+                </li>
 
-              <li>
-                <a
-                  class="
+                <li>
+                  <a class="
                     pb-3
                     leading-tight
                     px-3
@@ -366,14 +298,10 @@
                     bg-blue-500
                     border border-gray-300
                     dark:border-gray-700 dark:bg-gray-700 dark:text-white
-                  "
-                  >{{ currentPage }}</a
-                >
-              </li>
-              <li>
-                <button
-                  @click="onClickNextPage"
-                  class="
+                  ">{{ currentPage }}</a>
+                </li>
+                <li>
+                  <button @click="onClickNextPage" class="
                     py-2
                     px-3
                     leading-tight
@@ -387,17 +315,13 @@
                     dark:text-gray-400
                     dark:hover:bg-gray-700
                     dark:hover:text-white
-                  "
-                  :disabled="currentPage == totalPages"
-                >
-                  Next
-                </button>
-              </li>
+                  " :disabled="currentPage == totalPages">
+                    Next
+                  </button>
+                </li>
 
-              <li>
-                <button
-                  @click="onClickLastPage"
-                  class="
+                <li>
+                  <button @click="onClickLastPage" class="
                     py-2
                     px-3
                     leading-tight
@@ -412,65 +336,39 @@
                     dark:text-gray-400
                     dark:hover:bg-gray-700
                     dark:hover:text-white
-                  "
-                  :disabled="currentPage == totalPages"
-                >
-                  Last
-                </button>
-              </li>
-            </ul>
-            <ul class="flex -space-x-px text-gray-500 m-2 text-sm">
-              Tổng số trang:
-              {{
-                totalPages
-              }}
-            </ul>
-          </nav>
+                  " :disabled="currentPage == totalPages">
+                    Last
+                  </button>
+                </li>
+              </ul>
+              <ul class="flex -space-x-px text-gray-500 m-2 text-sm">
+                Tổng số trang:
+                {{
+                    totalPages
+                }}
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
     </div>
-    </div>
 
-    <DetailFixEquipment
-      v-if="isDetailFixEquipmentShow"
-      v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
-      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-      v-bind:id="recordFixEquipmentId"
-    />
-    <UpdateFixEquipment
-      v-if="isUpdateFixEquipmentShow"
-      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
-      v-bind:id="recordFixEquipmentId"
-       v-on:changeData="handleDataUpdate"
-    />
+    <DetailFixEquipment v-if="isDetailFixEquipmentShow" v-on:changeDetailFixEquipmentShow="handleDetailFixEquipmentShow"
+      v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow" v-bind:id="recordFixEquipmentId" />
+    <UpdateFixEquipment v-if="isUpdateFixEquipmentShow" v-on:changeUpdateFixEquipmentShow="handleUpdateFixEquipmentShow"
+      v-bind:id="recordFixEquipmentId" v-on:changeData="handleDataUpdate" />
 
-    <DetailTakeBack
-      v-if="isDetailTakeBackShow"
-      v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
-      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-      v-on:deleteRecord="deleteTakeBackRecord"
-      v-bind:id="recordTakeBackId"
-    />
+    <DetailTakeBack v-if="isDetailTakeBackShow" v-on:changeDetailTakeBackShow="handleDetailTakeBackShow"
+      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow" v-on:deleteRecord="deleteTakeBackRecord"
+      v-bind:id="recordTakeBackId" />
 
-    <UpdateTakeBack
-      v-if="isUpdateTakeBackShow"
-      v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
-      v-bind:id="recordTakeBackId"
-      v-on:changeData="handleDataUpdate"
-    />
-    <DetailTakeOver
-      v-if="isDetailTakeOverShow"
-      v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-      v-on:deleteRecord="deleteTakeOverRecord"
-      v-bind:id="recordTakeOverId"
-    />
-    <UpdateTakeOver
-      v-if="isUpdateTakeOverShow"
-      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
-      v-bind:id="recordTakeOverId"
-       v-on:changeData="handleDataUpdate"
-    />
+    <UpdateTakeBack v-if="isUpdateTakeBackShow" v-on:changeUpdateTakeBackShow="handleUpdateTakeBackShow"
+      v-bind:id="recordTakeBackId" v-on:changeData="handleDataUpdate" />
+    <DetailTakeOver v-if="isDetailTakeOverShow" v-on:changeDetailTakeOverShow="handleDetailTakeOverShow"
+      v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow" v-on:deleteRecord="deleteTakeOverRecord"
+      v-bind:id="recordTakeOverId" />
+    <UpdateTakeOver v-if="isUpdateTakeOverShow" v-on:changeUpdateTakeOverShow="handleUpdateTakeOverShow"
+      v-bind:id="recordTakeOverId" v-on:changeData="handleDataUpdate" />
   </div>
 </template>
 
@@ -521,7 +419,7 @@ export default class Historical extends Vue {
   public recordTakeOverId: number = 0;
   public recordFixEquipmentId: number = 0;
   tableKey: number = 0;
-  
+
 
   handleDetailTakeBackShow(data: Boolean) {
     this.isDetailTakeBackShow = data;
@@ -575,13 +473,13 @@ export default class Historical extends Vue {
 
   deleteTakeOverRecord(id: number) {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
-      
-       TakeOverService.deleteById(id)
+
+      TakeOverService.deleteById(id)
         .then(() => {
           this.handleDataUpdate()
           alert("Delete Successfully !!");
         })
-        
+
         .catch((err) => alert(err.response.data.errors[0]));
     }
   }
@@ -590,20 +488,20 @@ export default class Historical extends Vue {
     if (confirm("Bạn có chắc chắn muốn xóa bản ghi bàn giao này ?")) {
       FixEquipmentService.deleteById(id)
         .then(() => {
-          this. handleDataUpdate()
+          this.handleDataUpdate()
           alert("Delete Successfully !!");
         })
-        
+
         .catch((err) => alert(err.response.data.errors[0]));
     }
   }
 
   async created() {
     await this.retrieveRecords(this.getQueryParams());
-    
+
   }
 
-  
+
 
   async retrieveRecords(params: String) {
     await HistoricalService.getRecordsBySearch(params)
@@ -618,11 +516,12 @@ export default class Historical extends Vue {
   }
 
   retrieveRecordsBySearch() {
+    console.log(this.keyPerformer);
     if (this.currentActionType == "-1") this.currentActionType = null;
     if (this.keyPerformer == "") this.keyPerformer = null;
-    
+
     this.currentPage = 1;
-   this. handleDataUpdate()
+    this.handleDataUpdate()
   }
 
   getQueryParams() {
@@ -657,12 +556,12 @@ export default class Historical extends Vue {
     return d.toLocaleString();
   }
 
-    handleDataUpdate(){
+  handleDataUpdate() {
     this.retrieveRecords(this.getQueryParams());
-    this.$emit('changeData')
-    }
+    //this.$emit('changeData')
+  }
 
-    async onClickFirstPage() {
+  async onClickFirstPage() {
     this.currentPage = 1;
     this.retrieveRecords(this.getQueryParams());
   }
@@ -683,59 +582,59 @@ export default class Historical extends Vue {
     this.retrieveRecords(this.getQueryParams());
   }
 
-  checkRecord(record:HistoricalRecord){
-    if(record.type_action == 1 || record.type_action == 2)
-    {
-        if(record.status=="1")
-            return true
-        else
+  checkRecord(record: HistoricalRecord) {
+    if (record.type_action == 1 || record.type_action == 2) {
+      if (record.status == "1")
+        return true
+      else
         return false
     }
-    else if (record.type_action == 3 && record.take_over_status=="1")
-        return true
-    else 
-    return false
+    else if (record.type_action == 3 && record.take_over_status == "1")
+      return true
+    else
+      return false
   }
 
-  handleDetailShowByType(type: number,data:boolean){
+  handleDetailShowByType(type: number, data: boolean) {
     if (type == 1)
-        this.handleDetailTakeOverShow(data)
-    if(type == 2)
-        this.handleDetailTakeBackShow(data)
-    if(type == 3)
-        this.handleDetailFixEquipmentShow(data)
+      this.handleDetailTakeOverShow(data)
+    if (type == 2)
+      this.handleDetailTakeBackShow(data)
+    if (type == 3)
+      this.handleDetailFixEquipmentShow(data)
   }
 
-  handleUpdateShowByType(type: number,data:boolean){
+  handleUpdateShowByType(type: number, data: boolean) {
     if (type == 1)
-        this.handleUpdateTakeOverShow(data)
-    if(type == 2)
-        this.handleUpdateTakeBackShow(data)
-    if(type == 3)
-        this.handleUpdateFixEquipmentShow(data)
-    }
+      this.handleUpdateTakeOverShow(data)
+    if (type == 2)
+      this.handleUpdateTakeBackShow(data)
+    if (type == 3)
+      this.handleUpdateFixEquipmentShow(data)
+  }
 
-    deleteRecordByType(type: number,id:number){
-      console.log(type)
-        if (type == 1)
-            this.deleteTakeOverRecord(id)
-        if(type == 2)
-            this.deleteTakeBackRecord(id)
-        if(type == 3)
-            this.deleteFixEquipmentRecord(id)
-    }
+  deleteRecordByType(type: number, id: number) {
+    console.log(type)
+    if (type == 1)
+      this.deleteTakeOverRecord(id)
+    if (type == 2)
+      this.deleteTakeBackRecord(id)
+    if (type == 3)
+      this.deleteFixEquipmentRecord(id)
+  }
 
-    handleRecordIdByType(type: number,id: number){
-        if (type == 1)
-            this.handleRecordTakeOverId(id)
-        if(type == 2)
-            this.handleRecordTakeBackId(id)
-        if(type == 3)
-            this.handleRecordFixEquipmentId(id)
-    }
-    
-   
+  handleRecordIdByType(type: number, id: number) {
+    if (type == 1)
+      this.handleRecordTakeOverId(id)
+    if (type == 2)
+      this.handleRecordTakeBackId(id)
+    if (type == 3)
+      this.handleRecordFixEquipmentId(id)
+  }
+
+
 }
 </script>
 
-<style></style>
+<style>
+</style>

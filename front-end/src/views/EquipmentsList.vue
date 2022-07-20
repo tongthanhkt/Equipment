@@ -28,7 +28,6 @@
               Danh mục
             </a>
           </router-link>
-
           <select
             class="mt-1 block py-2 px-3 w-48 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             v-model="categoryId" @change="filterCategory(categoryId)" required>
@@ -58,7 +57,7 @@
 
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-            type="text" placeholder="Thiết bị" v-model="this.keyword" v-on:input="searchEquipments()" />
+            type="text" placeholder="Thiết bị" v-model="keyword" v-on:input="searchEquipments()" />
         </div>
       </div>
       <div class="w-full px-6 sm:w-1/2 xl:w-1/5">
@@ -73,7 +72,7 @@
 
           <input
             class="pl-10 pr-4 py-2 border-gray-200 rounded-md sm:w-48 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-            type="text" placeholder="Người sử dụng" v-model="this.takeOverPerson" v-on:input="searchTakeOverPerson()" />
+            type="text" placeholder="Người sử dụng" v-model="takeOverPerson" v-on:input="searchTakeOverPerson()" />
         </div>
       </div>
     </div>
@@ -83,7 +82,7 @@
           @click="filterOverView(null, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
-              {{ this.sumOfEquipments }}
+              {{ sumOfEquipments }}
             </h4>
             <div class="text-gray-500">Tổng thiết bị</div>
           </div>
@@ -93,7 +92,7 @@
         <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(1, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
-              {{ this.sumOfTakeOverEquipment }}
+              {{ sumOfTakeOverEquipment }}
             </h4>
             <div class="text-gray-500">Tổng bàn giao</div>
           </div>
@@ -103,7 +102,7 @@
         <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(0, null)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
-              {{ this.sumOfInventoryEquipment }}
+              {{ sumOfInventoryEquipment }}
             </h4>
             <div class="text-gray-500">Tổng tồn kho</div>
           </div>
@@ -113,7 +112,7 @@
         <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(null, 2)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
-              {{ this.sumOfDamagedEquipment }}
+              {{ sumOfDamagedEquipment }}
             </h4>
             <div class="text-gray-500">Tổng hư hỏng</div>
           </div>
@@ -123,8 +122,8 @@
         <div class="flex items-center py-6 bg-white rounded-md shadow-sm action-hover" @click="filterOverView(null, 0)">
           <div class="mx-5">
             <h4 class="text-2xl font-semibold text-gray-700">
-              {{ this.sumOfCompensationEquipment }}/
-              {{ this.sumOfLostEquipment }}
+              {{ sumOfCompensationEquipment }}/
+              {{ sumOfLostEquipment }}
             </h4>
             <div class="text-gray-500">Tổng chưa đền bù / bị mất</div>
           </div>
@@ -161,10 +160,10 @@
                   <td class="px-6 py-4">{{ equipment.name }}</td>
                   <td class="px-6 py-4 font-bold">
                     <p class="text-orange-700" v-if="equipment.take_over_status == '0'">
-                      {{ this.takeOverStatusEnum[equipment.take_over_status] }}
+                      {{ takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
-                    <p class="text-green-500" v-else="equipment.take_over_status == '0'">
-                      {{ this.takeOverStatusEnum[equipment.take_over_status] }}
+                    <p class="text-green-500" v-else-if="equipment.take_over_status == '1'">
+                      {{ takeOverStatusEnum[equipment.take_over_status] }}
                     </p>
                   </td>
                   <td class="px-6 py-4">
@@ -179,15 +178,15 @@
                       <div class="ml-4">
                         <div class="text-sm leading-5 text-gray-500">
                           <p class="text-orange-700" v-if="equipment.device_status == '0'">
-                            {{ this.deviceStatusEnum[equipment.device_status] }}
-                          <p v-if="equipment.compensation_status == '1'"> chưa đền bù</p>
-                          <p v-if="equipment.compensation_status == '0'"> đã đền bù</p>
+                            {{ deviceStatusEnum[equipment.device_status] }}
+                          <p v-if="equipment.compensation_status == '0'"> chưa đền bù</p>
+                          <p v-if="equipment.compensation_status == '1'"> đã đền bù</p>
                           </p>
                           <p class="text-green-500" v-else-if="equipment.device_status == '1'">
-                            {{ this.deviceStatusEnum[equipment.device_status] }}
+                            {{ deviceStatusEnum[equipment.device_status] }}
                           </p>
                           <p class="text-amber-500" v-else-if="equipment.device_status == '2'">
-                            {{ this.deviceStatusEnum[equipment.device_status] }}
+                            {{ deviceStatusEnum[equipment.device_status] }}
                           </p>
                         </div>
                       </div>
@@ -208,8 +207,8 @@
 
                         <button class="mx-2 px-2 rounded-md list_equipments" @click="
                           deleteEquipment(
-                            equipment.id,
-                            equipment.take_over_status
+                            equipment.id!,
+                            equipment.take_over_status!
                           )
                         ">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-700" viewBox="0 0 20 20"
@@ -274,13 +273,14 @@ import EquipmentDataService from "../services/equipments/EquipmentDataService";
 import CategoryService from "../services/category/categoryService";
 import { Vue, Options } from "vue-property-decorator";
 import Pagination from "./Pagination.vue";
+import Category from "@/types/Category";
 @Options({
   components: {
     Pagination,
   },
 })
 export default class Dashboard extends Vue {
-  public categories = [];
+  public categories: Category[] = [];
   public deviceStatusEnum = {
     0: "Bị Mất",
     1: "Sử dụng được",
@@ -302,12 +302,11 @@ export default class Dashboard extends Vue {
   public currentPage: number = 1;
   public currentLimit: number = 10;
   public currentCategoryId: number | null = null;
-  public keyword: string | null = null;
+  public keyword?: string | null = null;
   public takeOverPerson: string | null = null;
   public deviceStatus: number | null = null;
   public takeOverStatus: number | null = null;
   public totalPages: number = 0;
-  public valueCategory: number = 1;
   public queryParams: any;
   public categoryId = 0;
   async mounted() {
@@ -336,9 +335,9 @@ export default class Dashboard extends Vue {
       .then((res: any) => {
         this.totalPages = res.data.n_pages;
         this.equipments = res.data.equipments;
+        console.log(this.equipments);
       })
       .then(() => {
-        console.log(this.equipments);
         this.handleFieldEquipment();
       });
   }
@@ -452,15 +451,7 @@ export default class Dashboard extends Vue {
     this.retrieveEquipments();
   }
 
-  handleDeviceStatus(device_status: String) {
-    if (device_status == "0") {
-      return "Bị mất";
-    } else if (device_status == "1") {
-      return "Sử dụng được";
-    } else if (device_status == "2") {
-      return "Bị hư hỏng";
-    }
-  }
+
   handleImportDate(data: string) {
     var d = new Date(parseInt(data));
     return d.toLocaleString();

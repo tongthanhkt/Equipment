@@ -173,7 +173,7 @@
           <div class="row">
             <div class="col-5">
               <label class="btn btn-default p-0">
-                <input type="file" ref="file" @change="selectFiles" multiple />
+                <input type="file" ref="file" @change="selectFiles" />
               </label>
             </div>
           </div>
@@ -235,7 +235,7 @@ import TakeBackRecord from "@/types/TakeBackRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import TakeBackService from "@/services/takeback/TakeBackService";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 @Options({
   components: {
     Datepicker
@@ -247,7 +247,7 @@ export default class AddTakeBack extends Vue {
   @Prop(String) equipment_name!: string
   @Prop(String) equipment_id!: string
 
-  record :TakeBackRecord= {
+  record: TakeBackRecord = {
     equipment_id: "",
     username: null,
     take_back_time: "",
@@ -261,7 +261,7 @@ export default class AddTakeBack extends Vue {
   }
   timeOut: any
   private options: User[] = [];
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   user: User | null = null
   take_back_person: User | null = null
   verifier: User | null = null

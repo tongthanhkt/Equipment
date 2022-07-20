@@ -188,7 +188,7 @@ i {
             <div class="col-8">
               <label class="px-2">Thêm tệp mới: </label>
 
-              <input type="file" ref="file" @change="selectFiles" multiple />
+              <input type="file" ref="file" @change="selectFiles" />
             </div>
           </div>
           <span v-if="msgError" class="text-red-600 pb-2 text-base" role="alert">
@@ -246,7 +246,7 @@ import "vue-select/dist/vue-select.css";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import UploadFilesService from "../services/equipments/UploadFilesService";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 @Options({
   components: {
     Datepicker,
@@ -293,9 +293,9 @@ export default class UpdateTakeBack extends Vue {
   editDate: any = null;
   currentMetaData: any;
   currentFileName: string[] = [];
-  public allFileName: ImageInfo[] = [];
+  public allFileName: FileInfo[] = [];
   public allFileInfo: any;
-  public allNewFileInfo: ImageInfo[] = [];
+  public allNewFileInfo: FileInfo[] = [];
 
   @Emit("changeUpdateTakeBackShow")
   changeShow(data: boolean) {
@@ -390,7 +390,7 @@ export default class UpdateTakeBack extends Vue {
   }
 
   async retrieveRecord() {
-   await HistoricalService.getRecordById(this.id,2)
+    await HistoricalService.getRecordById(this.id, 2)
       .then((res) => {
         console.log(res.data);
         this.record = res.data;

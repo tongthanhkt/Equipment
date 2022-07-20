@@ -1,23 +1,14 @@
 <template>
   <div class="mx-60">
-    <button
-      class="bg-stone-700 text-white font-bold py-2 px-4 rounded"
-      @click="isAddCategory = !isAddCategory"
-    >
+    <button class="bg-stone-700 text-white font-bold py-2 px-4 rounded" @click="isAddCategory = !isAddCategory">
       Tạo mới danh mục
     </button>
     <div class="flex flex-col mt-8">
       <div class="py-2 -my-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div
-          class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg"
-        >
+        <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
           <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table
-              class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-            >
-              <thead
-                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-              >
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" class="px-6 py-3">Mã danh mục</th>
                   <th scope="col" class="px-6 py-3">Tên danh mục</th>
@@ -30,15 +21,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  v-for="(category, index) in categories"
-                  :key="index"
-                >
-                  <td
-                    scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap action-hover"
-                  >
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  v-for="(category, index) in categories" :key="index">
+                  <td scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap action-hover">
                     {{ category.id }}
                   </td>
                   <td class="px-6 py-4">{{ category.name }}</td>
@@ -46,16 +32,10 @@
                     <p v-if="category.status == '-1'" class="text-orange-700">
                       Deleted
                     </p>
-                    <p
-                      v-else-if="category.status == '0'"
-                      class="text-orange-700"
-                    >
+                    <p v-else-if="category.status == '0'" class="text-orange-700">
                       Disable
                     </p>
-                    <p
-                      v-else-if="category.status == '1'"
-                      class="text-green-500"
-                    >
+                    <p v-else-if="category.status == '1'" class="text-green-500">
                       Available
                     </p>
                   </td>
@@ -67,45 +47,25 @@
                   <td class="px-6 py-4 text-right">
                     <div>
                       <span class="flex justify-center">
-                        <button
-                          class="mx-2 px-2 rounded-md list_equipments"
-                          @click="
-                            (isUpdateCategory = !isUpdateCategory),
-                              getCategoryId(category.id)
-                          "
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-green-700"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                            />
-                            <path
-                              fill-rule="evenodd"
+                        <button class="mx-2 px-2 rounded-md list_equipments" @click="
+                          (isUpdateCategory = !isUpdateCategory),
+                          getCategoryId(category.id)
+                        ">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                            <path fill-rule="evenodd"
                               d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                              clip-rule="evenodd"
-                            />
+                              clip-rule="evenodd" />
                           </svg>
                         </button>
 
-                        <button
-                          class="mx-2 px-2 rounded-md list_equipments"
-                          @click="deleteCategory(category.id)"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-red-700"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fill-rule="evenodd"
+                        <button class="mx-2 px-2 rounded-md list_equipments" @click="deleteCategory(category.id)">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-700" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
                               d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clip-rule="evenodd"
-                            />
+                              clip-rule="evenodd" />
                           </svg>
                         </button>
                       </span>
@@ -119,15 +79,8 @@
       </div>
     </div>
   </div>
-  <AddCategory
-    v-if="isAddCategory"
-    v-on:changeAddCategoryShow="changeAddCategoryShow"
-  />
-  <UpdateCategory
-    v-if="isUpdateCategory"
-    v-on:changeUpdateCategoryShow="changeUpdateCategoryShow"
-    :id="categoryId"
-  />
+  <AddCategory v-if="isAddCategory" v-on:changeAddCategoryShow="changeAddCategoryShow" />
+  <UpdateCategory v-if="isUpdateCategory" v-on:changeUpdateCategoryShow="changeUpdateCategoryShow" :id="categoryId" />
 </template>
 <script lang="ts">
 import Category from "@/types/Category";
@@ -189,7 +142,6 @@ export default class CategoryList extends Vue {
     CategoryService.getAllCategories(this.queryParams)
       .then((res: any) => {
         this.categories = res.data.categories;
-        console.log(this.categories);
       })
       .then(() => this.handleFieldCategory());
   }
@@ -198,7 +150,6 @@ export default class CategoryList extends Vue {
     return d.toLocaleString();
   }
   deleteCategory(id: number) {
-    console.log("delete");
     if (confirm("Bạn có chắc chắn muốn xóa danh mục này ?")) {
       CategoryService.deleteCategory(id)
         .then((res) => alert("Delete Successfully !!"))

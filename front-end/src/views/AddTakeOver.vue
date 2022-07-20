@@ -122,7 +122,7 @@
           <div class="row">
             <div class="col-5">
               <label class="btn btn-default p-0">
-                <input type="file" ref="file" @change="selectFiles" multiple />
+                <input type="file" ref="file" @change="selectFiles" />
               </label>
             </div>
           </div>
@@ -176,7 +176,7 @@ import { Vue, Options, Emit, Ref, Prop } from "vue-property-decorator";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import TakeOverService from "@/services/takeover/TakeOverService";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 @Options({
   components: {
     Datepicker,
@@ -187,7 +187,7 @@ export default class AddTakeOver extends Vue {
   @Prop(String) equipment_name!: string;
   @Prop(String) equipment_id!: string;
 
-  record :any = {
+  record: any = {
     equipment_id: "",
     username: "",
     take_over_time: "",
@@ -204,7 +204,7 @@ export default class AddTakeOver extends Vue {
   user: User | null = null;
   take_over_person: User | null = null;
   verifier: User | null = null;
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   @Emit("changeAddTakeOverShow")
   changeShow(data: boolean) {
     return data;

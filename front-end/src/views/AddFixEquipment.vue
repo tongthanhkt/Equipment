@@ -86,7 +86,7 @@
           <div class="row">
             <div class="col-5">
               <label class="btn btn-default p-0">
-                <input type="file" ref="file" @change="selectFiles" multiple />
+                <input type="file" ref="file" @change="selectFiles" />
               </label>
             </div>
           </div>
@@ -141,7 +141,7 @@ import FixEquipmentRecord from "@/types/FixEquipmentRecord";
 import User from "@/types/User";
 import UserService from "@/services/user/UserService";
 import FixEquipmentService from "@/services/fixEquipment/FixEquipmentService";
-import ImageInfo from "../types/ImageInfo";
+import FileInfo from "../types/FileInfo";
 @Options({
   components: {
     Datepicker,
@@ -152,7 +152,7 @@ export default class AddFixEquipment extends Vue {
   @Prop(String) equipment_name!: string;
   @Prop(String) equipment_id!: string;
 
-  record :any = {
+  record: any = {
     equipment_id: "",
     fixing_time: "",
     fixer: "",
@@ -166,7 +166,7 @@ export default class AddFixEquipment extends Vue {
   private options: User[] = [];
   user: User | null = null;
   fixer: User | null = null;
-  public allFileInfo: ImageInfo[] = [];
+  public allFileInfo: FileInfo[] = [];
   @Emit("changeAddFixEquipmentShow")
   changeShow(data: boolean) {
     return data;
