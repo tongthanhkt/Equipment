@@ -515,13 +515,13 @@ export default class Historical extends Vue {
       });
   }
 
-  retrieveRecordsBySearch() {
+  async retrieveRecordsBySearch() {
     console.log(this.keyPerformer);
     if (this.currentActionType == "-1") this.currentActionType = null;
     if (this.keyPerformer == "") this.keyPerformer = null;
 
     this.currentPage = 1;
-    this.handleDataUpdate()
+    await this.retrieveRecords(this.getQueryParams());
   }
 
   getQueryParams() {
@@ -558,7 +558,7 @@ export default class Historical extends Vue {
 
   handleDataUpdate() {
     this.retrieveRecords(this.getQueryParams());
-    //this.$emit('changeData')
+    this.$emit('changeData')
   }
 
   async onClickFirstPage() {
