@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "notiwind": "^1.2.6",
+    "vue-simple-alert": "^1.1.1"
+  }
+}
