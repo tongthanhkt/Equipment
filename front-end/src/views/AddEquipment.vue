@@ -241,7 +241,6 @@ export default class AddEquipment extends Vue {
     updated_by: null,
     updated_time: null,
     take_over_person_id: null,
-    take_over_person_name: null,
     id: null,
     metadata_info: null,
     category_name: null,

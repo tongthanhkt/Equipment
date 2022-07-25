@@ -78,16 +78,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
           val checkEquipmentStatus = takeBackService.checkequipmentForTakeBack(request.equipmentId)
           var takeOverId = takeBackService.getTakeOverIdForTackBack(request.equipmentId)
 
-          if (takeBackService.checkUserExist(request.username) == 0) {
-            response.internalServerError.jsonError("Username not exists.")
-          } else if (takeBackService.checkUserExist(request.takeBackPerson) == 0) {
-            response.internalServerError.jsonError("Take back person not exists.")
-          } else if (takeBackService.checkUserExist(request.verifier) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
-          } else if (takeBackService.checkUserExist(request.createdBy) == 0) {
-            response.internalServerError.jsonError("Created by not exists. ")
-          }
-          else if(convertString.toBigInt(request.takeBackTime).get<convertString.toBigInt(takeOverId.takeOverTime).get){
+         if(convertString.toBigInt(request.takeBackTime).get<convertString.toBigInt(takeOverId.takeOverTime).get){
             response.internalServerError.jsonError("Take back time must > take over time");
           }
           else if (checkEquipmentStatus == -1) {
@@ -135,16 +126,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
         println(request)
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
-          if (takeBackService.checkUserExist(request.username) == 0) {
-            response.internalServerError.jsonError("Username not exists.")
-          } else if (takeBackService.checkUserExist(request.takeBackPerson) == 0) {
-            response.internalServerError.jsonError("Take back person not exists.")
-          } else if (takeBackService.checkUserExist(request.verifier) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
-          }else if (takeBackService.checkUserExist(request.updatedBy) == 0) {
-            response.internalServerError.jsonError("Updated by not exists.")
-          }
-          else{
+
             val result = takeBackService.updateById(request)
             if (result == 1) {
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
@@ -156,7 +138,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
                  |"errors" : [${JSON.write()}]
                  |}"""
             )
-          }
+
         }
         else{
           response.badRequest.json(
@@ -191,18 +173,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
         }
       }
     }
-    get("/get_user"){request:SearchUserRequest=>
-      try {
-        val result : util.ArrayList[User] = takeBackService.searchUser(request);
-        response.ok.body(SearchUserResponse(userList = result))
-      }catch {
-        case ex: Exception => {
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
 
-    }
 
   }
 }

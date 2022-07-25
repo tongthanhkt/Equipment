@@ -24,17 +24,15 @@ class CRUDEquipmentService @Inject() (
     val equipments = new util.ArrayList[Equipment]
       val sql = """
       SELECT *
-      FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
+      FROM equipment_management.equipment e left join (SELECT username,equipment_id
                                                   FROM takeover_equipment_info o
-                                                  WHERE not exists (SELECT *
-                                                                    FROM takeback_equipment_info b
-                                                                    where b.takeover_id = o.id ))
+                                                  WHERE o.takeback_status=0)
                                                 as used on used.equipment_id=e.id
-                                            left join  user u on used.take_over_person_id = u.username
+
       WHERE e.device_status != ?
       and (? is null or e.name LIKE CONCAT('%' ,?,'%') or e.device_id LIKE CONCAT('%',?,'%') )
       and (? is null or e.category_id = ? )
-      and (? is null or u.username LIKE CONCAT('%',?,'%') or u.fullname LIKE CONCAT('%',?,'%') )
+      and (? is null or used.username LIKE CONCAT('%',?,'%')  )
       and (? is null or e.device_status = ? )
       and (? is null or e.takeover_status = ? )
       and (? is null or e.compensation_status = ? )
@@ -49,15 +47,15 @@ class CRUDEquipmentService @Inject() (
       pst.setString(6,searchRequest.categoryId)
       pst.setString(7, searchRequest.takeOverPerson)
       pst.setString(8, searchRequest.takeOverPerson)
-      pst.setString(9, searchRequest.takeOverPerson)
-      pst.setString(10, searchRequest.deviceStatus)//null
-      pst.setString(11,searchRequest.deviceStatus) //device status
-      pst.setString(12, searchRequest.takeOverStatus)//null
-      pst.setString(13, searchRequest.takeOverStatus)//take over status
+
+      pst.setString(9, searchRequest.deviceStatus)//null
+      pst.setString(10,searchRequest.deviceStatus) //device status
+      pst.setString(11, searchRequest.takeOverStatus)//null
+      pst.setString(12, searchRequest.takeOverStatus)//take over status
+    pst.setString(13, isCompensation)
     pst.setString(14, isCompensation)
-    pst.setString(15, isCompensation)
-      pst.setInt(16,searchRequest.limit) //litmit
-      pst.setInt(17,offset) //offset
+      pst.setInt(15,searchRequest.limit) //litmit
+      pst.setInt(16,offset) //offset
       val rs = pst.executeQuery
       while ( rs.next) {
         val e = Equipment(id=rs.getString("id"),
@@ -77,7 +75,6 @@ class CRUDEquipmentService @Inject() (
           updatedBy = rs.getString("updated_by"),
           updatedTime = rs.getString("updated_time"),
           takeOverPersonId = rs.getString("username"),
-          takeOverPersonName = rs.getString("fullname"),
           compensationStatus = rs.getString("compensation_status"),
           metadataInfo = toMap(rs.getString("metadata_info")));
 
@@ -93,17 +90,14 @@ class CRUDEquipmentService @Inject() (
   def countBySearch(keyword:String,category:String,takeOverPerson:String,takeOverStatus:String,deviceStatus:String,isCompensation:String): Int ={
     val sql = """
       SELECT count(*) as total
-      FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
+      FROM equipment_management.equipment e left join (SELECT username,equipment_id
                                                   FROM takeover_equipment_info o
-                                                  WHERE not exists (SELECT *
-                                                                    FROM takeback_equipment_info b
-                                                                    where b.takeover_id = o.id ))
+                                                  WHERE o.takeback_status=0)
                                                 as used on used.equipment_id=e.id
-                                            left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ?
       and (? is null or e.name LIKE CONCAT('%',?,'%') or e.device_id LIKE CONCAT('%',?,'%') )
       and (? is null or e.category_id = ? )
-      and (? is null or u.username LIKE CONCAT('%',?,'%') or u.fullname LIKE CONCAT('%',?,'%') )
+      and (? is null or used.username LIKE CONCAT('%',?,'%')  )
       and (? is null or e.device_status = ? )
       and (? is null or e.takeover_status = ? )
       and (? is null or e.compensation_status = ? )
@@ -118,13 +112,12 @@ class CRUDEquipmentService @Inject() (
       pst.setString(6,category)
       pst.setString(7, takeOverPerson)
       pst.setString(8, takeOverPerson)
-    pst.setString(9, takeOverPerson)
-      pst.setString(10, deviceStatus)
-      pst.setString(11,deviceStatus)
+      pst.setString(9, deviceStatus)
+      pst.setString(10,deviceStatus)
+      pst.setString(11, takeOverStatus)
       pst.setString(12, takeOverStatus)
-      pst.setString(13, takeOverStatus)
+      pst.setString(13, isCompensation)
       pst.setString(14, isCompensation)
-      pst.setString(15, isCompensation)
 
       val rs = pst.executeQuery
       var total =0
@@ -154,13 +147,10 @@ class CRUDEquipmentService @Inject() (
 
       val sql = """
       SELECT *
-      FROM equipment_management.equipment e left join (SELECT username as take_over_person_id,equipment_id
+      FROM equipment_management.equipment e left join (SELECT username,equipment_id
                                                   FROM takeover_equipment_info o
-                                                  WHERE not exists (SELECT *
-                                                                    FROM takeback_equipment_info b
-                                                                    where b.takeover_id = o.id ))
+                                                  WHERE o.takeback_status=0)
                                                 as used on used.equipment_id=e.id
-                                            left join  user u on used.take_over_person_id = u.username
       WHERE e.device_status != ? and e.id = ?;"""
 
       var con = databaseConnection.getConnection()
@@ -187,7 +177,6 @@ class CRUDEquipmentService @Inject() (
           updatedBy = rs.getString("updated_by"),
           updatedTime = rs.getString("updated_time"),
           takeOverPersonId = rs.getString("username"),
-          takeOverPersonName = rs.getString("fullname"),
           compensationStatus = rs.getString("compensation_status"),
           metadataInfo = toMap(rs.getString("metadata_info")));
       }

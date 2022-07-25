@@ -28,7 +28,6 @@ case class Equipment(
                              updatedBy: String = null,
                              updatedTime: String = null,
                              takeOverPersonId: String = null,
-                             takeOverPersonName : String = null,
                              compensationStatus : String = null
                            ){
   def checkFitInsert(convertString: ConvertString): Map[Int,String]  ={

@@ -10,7 +10,6 @@ export default interface Equipment {
 	price: string | null;
 	start_status: string | null;
 	take_over_person_id: string | null;
-	take_over_person_name: string | null;
 	take_over_status: string | null;
 	updated_by: string | null;
 	updated_time: string | null;

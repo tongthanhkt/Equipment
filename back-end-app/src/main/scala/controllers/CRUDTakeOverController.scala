@@ -85,15 +85,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {
           val checkEquipmentStatus = takeOverService.checkEquipmentForTakeOver(request.equipmentId)
-          if (takeOverService.checkUserExist(request.username) == 0) {
-            response.internalServerError.jsonError("Username not exists.")
-          } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
-            response.internalServerError.jsonError("Take over person not exists.")
-          } else if (takeOverService.checkUserExist(request.verifier) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
-          }  else if (takeOverService.checkUserExist(request.createdBy) == 0) {
-            response.internalServerError.jsonError("Created by not valid. ")
-          }else if (checkEquipmentStatus == -1) {
+           if (checkEquipmentStatus == -1) {
             response.internalServerError.jsonError("Equipment is inventory")
           }else if (checkEquipmentStatus == 0) {
             response.internalServerError.jsonError("Equipment not exist.")
@@ -136,16 +128,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         val check = request.checkDataUpdate(convertString);
         if (check.isEmpty) { // check data
           println(takeOverService.checkUserExist(request.verifier))
-          if (takeOverService.checkUserExist(request.username) == 0) {
-            response.internalServerError.jsonError("Username not exists.")
-          } else if (takeOverService.checkUserExist(request.takeOverPerson) == 0) {
-            response.internalServerError.jsonError("Take over person not exists.")
-          } else if (takeOverService.checkUserExist(request.verifier) == 0) {
-            response.internalServerError.jsonError("Verifier not exists.")
-          }else if (takeOverService.checkUserExist(request.updatedBy) == 0) {
-            response.internalServerError.jsonError("Updater not exists.")
-          }
-          else{
+
             val result = takeOverService.updateById(request)
             if (result == 1)
               response.created.json(s"""{
@@ -156,7 +139,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
                  |"errors" : [${JSON.write()}]
                  |}"""
             )
-          }
+
         }
         else{
           response.badRequest.json(
@@ -191,18 +174,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           }
         }
       }
-    get("/get_user"){request:SearchUserRequest=>
-      try {
-        val result : util.ArrayList[User] = takeOverService.searchUser(request);
-        response.ok.body(SearchUserResponse(userList = result))
-      }catch {
-        case ex: Exception => {
-          println(ex)
-          response.internalServerError.jsonError(ex.getMessage)
-        }
-      }
 
-    }
 
   }
 

@@ -99,7 +99,7 @@
                     Người đang sử dụng
                   </div>
                   <p class="pl-1 text-slate-500">
-                    {{ equipment?.take_over_person_name }}
+                    {{ equipment?.take_over_person_id }}
                   </p>
                   <div class="p-1 text-base font-medium text-gray-700">
                     Thời gian thêm thông tin
@@ -242,7 +242,6 @@ export default class DetailEquipment extends Vue {
     price: null,
     start_status: null,
     take_over_person_id: null,
-    take_over_person_name: null,
     take_over_status: null,
     updated_by: null,
     updated_time: null,
