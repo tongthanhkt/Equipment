@@ -24,14 +24,16 @@ case class HistoricalRecord (
                               metadataInfo: Map[String, UploadFile]  = null,
                               reason : String= null,
                               takeOverStatus : String =null
-                            )
+                            ){
+
+}
 
 case class SearchHistoricalRequest(
                                       @QueryParam performer: String = null,
                                       @QueryParam equipmentId: String = null,
                                       @QueryParam typeAction: String = null,
                                       @QueryParam page: Int = 1,
-                                      @QueryParam limit: Int = 10,
+                                      @QueryParam size: Int = 10,
 
                                     )
 
@@ -42,13 +44,7 @@ case class GetRecordByIdRequest(
 
 case class SearchHistoricalResponse(
                                        records: util.ArrayList[HistoricalRecord],
-                                       empty: Boolean,
-                                       nPages: Int,
-                                       pageNumbers: util.ArrayList[Page],
-                                       firstPage: Boolean,
-                                       lastPage: Boolean,
-                                       previousPage: Int,
-                                       nextPage: Int
+                                       nPages: Int
                                      )
 
 case class HistoricalKey (

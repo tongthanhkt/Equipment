@@ -30,7 +30,7 @@ class HistoricalService @Inject()(databaseConnection:DatabaseConnection) {
     pst.setString(4,searchHistoricalRequest.equipmentId);
     pst.setString(5,searchHistoricalRequest.typeAction);
     pst.setString(6,searchHistoricalRequest.typeAction);
-    pst.setInt(7,searchHistoricalRequest.limit);
+    pst.setInt(7,searchHistoricalRequest.size);
     pst.setInt(8,offset);
 
     val rs = pst.executeQuery

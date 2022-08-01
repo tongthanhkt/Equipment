@@ -527,7 +527,7 @@ export default class Historical extends Vue {
   getQueryParams() {
     const queryParams: any = {
       page: this.currentPage,
-      limit: this.currentLimit,
+      size: this.currentLimit,
       performer: this.keyPerformer,
       type_action: this.currentActionType,
       equipment_id: this.$route.params.id,

@@ -14,16 +14,11 @@ class HistoricalController @Inject()(
     get("/search"){request : SearchHistoricalRequest =>{
     try {
       val totalRecords  = historicalService.countBySearch(request)
-      var nPages:Int = totalRecords/request.limit;
+      var nPages:Int = totalRecords/request.size;
       val currentPage = request.page
-      if(totalRecords%request.limit>0)
+      if(totalRecords%request.size>0)
         nPages+=1
-      var pageNumbers = new util.ArrayList[Page]
-      for( i <- 1 to nPages){
-
-        pageNumbers.add(Page(i,i==currentPage));
-      }
-      val offset = (currentPage-1)*request.limit
+      val offset = (currentPage-1)*request.size
       val recordKeys:util.ArrayList[HistoricalKey] =historicalService.search(request,offset);
       var result = new util.ArrayList[HistoricalRecord]
       for (i <- 0 until(recordKeys.size()) ){
@@ -43,10 +38,7 @@ class HistoricalController @Inject()(
             result.add(record)
         }
       }
-      response.ok.body(SearchHistoricalResponse(records = result,
-        empty = result.isEmpty,nPages =nPages,
-        pageNumbers = pageNumbers,firstPage = +request.page==1,
-        lastPage = +currentPage == nPages,previousPage = +currentPage-1,nextPage = +currentPage+1))
+      response.ok.body(SearchHistoricalResponse(records = result,nPages =nPages))
     } catch {
       case ex: Exception =>{
         println(ex)
@@ -54,6 +46,21 @@ class HistoricalController @Inject()(
       }
     }
   }}
+
+    get("/count_total"){request : SearchHistoricalRequest =>{
+      try {
+        val totalRecords  = historicalService.countBySearch(request)
+        response.ok.json(
+          s"""{
+             |"total" : $totalRecords
+             |}""".stripMargin)
+      } catch {
+        case ex: Exception =>{
+          println(ex)
+          response.internalServerError.jsonError(ex.getMessage)
+        }
+      }
+    }}
 
     get("/detail/:type_action/:id_action"){request:GetRecordByIdRequest=>{
       try {
