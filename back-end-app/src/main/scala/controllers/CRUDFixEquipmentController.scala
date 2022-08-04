@@ -87,8 +87,9 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                   if (fixEquipmentId >0) {
 
                     response.created.json(
-                      s"""|id: $fixEquipmentId
-                          |""".stripMargin)
+                      s"""|{
+                          |"msg": "Add successfully!!"
+                          |}""".stripMargin)
                   }
                   else if (fixEquipmentId == -1) {
                     response.badRequest.jsonError(s"Cannot fix equipment with id = ${request.equipmentId}. Try again!!")
@@ -150,7 +151,7 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
                         if (result >0) {
 
                           response.created.json(s"""{
-                                                   |"msg" : Update equipment successfully.
+                                                   |"msg" : "Update equipment successfully."
                                                    |}""".stripMargin)
                         }
                         else if (result == -1) {
@@ -200,7 +201,9 @@ class CRUDFixEquipmentController @Inject()(fixEquipmentService: CRUDFixEquipment
         else  if (checkStatus == 1 || checkStatus == 2){
           val result = fixEquipmentService.deleteById(id)
           if (result == 1) {
-            response.created.body(s"Delete take over with id =$id successfully .")
+            response.created.json(s"""{
+                                     |"msg" : "Delete take over with id =$id successfully ."
+                                     |}""".stripMargin)
           }
           else response.internalServerError.jsonError("Can not delete the fix equipment record. ")
         }

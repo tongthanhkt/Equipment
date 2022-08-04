@@ -79,7 +79,7 @@ class CRUDEquipmentController @Inject() (
           val result = equipmentService.deleteById(equipmentId)
           if (result ==1)
             response.created.json(s"""{
-                                     |"msg" : Delete equipment with id = $equipmentId successfully.
+                                     |"msg" : "Delete equipment with id = $equipmentId successfully."
                                      |}""".stripMargin)
           else
             response.internalServerError.
@@ -133,7 +133,7 @@ class CRUDEquipmentController @Inject() (
               if (result >0) {
 
                 response.created.json(
-                  s"""|id: $result
+                  s"""|"msg": "Add successflly!!"
                       |""".stripMargin)
               }
               else if (result == -1) {
@@ -178,7 +178,7 @@ class CRUDEquipmentController @Inject() (
                val result = equipmentService.updateById(request)
                if (result ==1)
                  response.created.json(s"""{
-                                          |"msg" : Update equipment successfully.
+                                          |"msg" :" Update equipment successfully."
                                           |}""".stripMargin)
                else response.internalServerError.jsonError("Can not update equipment")
              }

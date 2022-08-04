@@ -49,7 +49,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
           println(result)
           if (result == 1) {
             response.created.json(s"""{
-                                     |"msg" : Delete take over with id =$takeOverId successfully.
+                                     |"msg" : "Delete take over with id =$takeOverId successfully."
                                      |}""".stripMargin)
           }
           else response.internalServerError.jsonError("Can not delete take over. Take over id not exist.")
@@ -102,7 +102,9 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
             if (result == 1) {
 
               response.created.json(
-                s"""|Add take over successfully !!
+                s"""|{
+                    |"msg":"Add take over successfully !!"
+                    |}
                     |""".stripMargin)
             } else response.internalServerError.jsonError("Can not add new takeOver")
           }
@@ -110,7 +112,6 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
         else
           response.badRequest.json(
             s"""{
-               |
                |"errors" : [${JSON.write(check)}]
                |}""".stripMargin)
       }
@@ -132,7 +133,7 @@ class CRUDTakeOverController @Inject()(takeOverService: CRUDTakeOverService,
             val result = takeOverService.updateById(request)
             if (result == 1)
               response.created.json(s"""{
-                                       |"msg" : Update take over successfully.
+                                       |"msg" : "Update take over successfully."
                                        |}""".stripMargin)
             else response.badRequest.json(
               s"""{

@@ -387,7 +387,7 @@ class CRUDTakeOverService @Inject()(databaseConnection:DatabaseConnection,conver
            take_over_time = if(? is not null, ?,take_over_time),status = if(? is not null, ?,status),
            verifier = if(? is not null, ?,verifier),take_over_person = if(? is not null, ?, take_over_person),
            type = if(? is not null, ?,type),
-           message = if(? is not null,?,message),cost = if(? is null,?,cost),
+           message = if(? is not null,?,message),cost = if(? is not null,?,cost),
            updated_by = ?,updated_time = ?,
            metadata_info = if(? is not null, ?,metadata_info)
            WHERE status != ? and id = ?;"""

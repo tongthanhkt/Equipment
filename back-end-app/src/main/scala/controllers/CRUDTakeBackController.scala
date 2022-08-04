@@ -102,8 +102,9 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
 
               response.created.json(
-                s"""|id: Add take back successfully !!
-                    |""".stripMargin)
+                s"""|{
+                    |"msg": "Add take back successfully !!"
+                    |}""".stripMargin)
             } else response.internalServerError.jsonError("Can not add new take back")
           }
         }
@@ -131,7 +132,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
             if (result == 1) {
               val updateStatusEquipment = takeBackService.updateEquipment(request.equipmentId,request.typeTakeBack);
               response.created.json(s"""{
-                                       |"msg" : Update take over successfully.
+                                       |"msg" : "Update take over successfully."
                                        |}""".stripMargin)
             } else response.badRequest.json(
               s"""{
