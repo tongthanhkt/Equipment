@@ -71,6 +71,7 @@ class CRUDTakeBackController @Inject()(takeBackService:CRUDTakeBackService,conve
 //    }
 //    }
     post("/add") { request: TakeBack => {
+      println(request)
       try {
         val check = request.checkDataInsert(convertString);
         if (check.isEmpty) {

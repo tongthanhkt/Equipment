@@ -46,7 +46,7 @@ case class TakeOver(
 
     if (cost!= null && !convertString.isDouble(cost))
       check = check + (15 -> "The 'Cost' field : type mismatch, required : Double. ")
-    else if (convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
+    else if (cost!= null && convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
       check = check + (16 -> "Cost of take over must be > 0. ")
     return check
   }
@@ -57,9 +57,9 @@ case class TakeOver(
     if(username=="") check=check + (2->"The field 'username' cannot be blank . ")
     if(takeOverTime=="")
       check=check + (3->"The field 'takeOverTime' cannot be blank . ")
-    else if(!convertString.isLong(takeOverTime))
+    else if(takeOverTime != null && !convertString.isLong(takeOverTime))
       check = check + (4 -> "The 'TakeOver Time' field : type mismatch, required : Long. ")
-    else if (convertString.isLong(takeOverTime) && (convertString.toLong(takeOverTime).get < 0 ))
+    else if (takeOverTime != null && convertString.isLong(takeOverTime) && (convertString.toLong(takeOverTime).get < 0 ))
       check = check + (5 -> "TakeOver Time of device is incorrect. ")
 
     if(verifier=="") check=check + (6->"The field 'verifier' cannot be blank . ")
@@ -67,20 +67,21 @@ case class TakeOver(
     if(updatedBy=="") check=check + (8->"The field 'update By' cannot be blank . ")
 
     if(typeTakeOver=="") check=check + (9->"The field 'Type' cannot be blank . ")
-    else if (!convertString.isInt(typeTakeOver)) check = check + (10 -> "The 'TakeOver Time' field : type mismatch, required : Int. ")
-    else if (convertString.isInt(typeTakeOver)&&(convertString.toInt(typeTakeOver).get>2)||convertString.toInt(typeTakeOver).get<1)
+    else if (typeTakeOver != null && !convertString.isInt(typeTakeOver)) check = check + (10 -> "The 'TakeOver Time' field : type mismatch, required : Int. ")
+    else if (typeTakeOver != null && convertString.isInt(typeTakeOver))
+      if ((convertString.toInt(typeTakeOver).get>2)||convertString.toInt(typeTakeOver).get<1)
       check=check + (11 -> "The typeTakeOver is incorrect ! ")
 
 
 
     if (cost!=null && !convertString.isDouble(cost))
       check = check + (15 -> "The 'Cost' field : type mismatch, required : Double. ")
-    else if (convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
+    else if (cost!=null && convertString.isDouble(cost) && (convertString.toDouble(cost).get < 0))
       check = check + (16 -> "Cost of take over must be > 0. ")
 
     if (status != null && !convertString.isInt(status))
       check = check + (17-> "The 'Status' field : type mismatch, required : Int.  ")
-    else if (convertString.isInt(status) && (convertString.toInt(status).get > 1 || convertString.toInt(status).get < 0))
+    else if (status != null && convertString.isInt(status) && (convertString.toInt(status).get > 1 || convertString.toInt(status).get < 0))
       check = check + (18 -> "Status of take_over record is incorrect. ")
 
     return check
